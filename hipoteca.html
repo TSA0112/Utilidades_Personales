@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Calculadora Hipotecaria</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  background: #0d1117;
+  color: #c9d1d9;
+  padding: 20px;
+  line-height: 1.5;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  text-align: center;
+  color: #58a6ff;
+  margin-bottom: 30px;
+  font-size: 2em;
+}
+
+h2 {
+  color: #58a6ff;
+  margin-bottom: 15px;
+  font-size: 1.4em;
+}
+
+.form-section {
+  background: #161b22;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 25px;
+  margin-bottom: 25px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  color: #8b949e;
+  font-weight: 600;
+  font-size: 0.9em;
+  margin-bottom: 8px;
+}
+
+input, select {
+  width: 100%;
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  color: #c9d1d9;
+  padding: 12px 15px;
+  font-size: 1rem;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 0.2s;
+}
+
+input:focus, select:focus {
+  border-color: #58a6ff;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+}
+
+.buttons {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 30px 0;
+}
+
+button {
+  padding: 14px 32px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  border-radius: 8px;
+  border: none;
+  min-width: 160px;
+  transition: all 0.3s ease;
+  touch-action: manipulation;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+.btn-calc {
+  background-color: #238636;
+  color: white;
+}
+
+.btn-reset {
+  background-color: #da3633;
+  color: white;
+}
+
+.btn-excel {
+  background-color: #1f6feb;
+  color: white;
+}
+
+.resumen-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.resumen-column {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.resumen-column h3 {
+  color: #58a6ff;
+  font-size: 1em;
+  margin-bottom: 10px;
+  border-bottom: 2px solid #30363d;
+  padding-bottom: 8px;
+}
+
+.resumen-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 0.85em;
+  border-bottom: 1px solid #21262d;
+}
+
+.resumen-item:last-child {
+  border-bottom: none;
+}
+
+.resumen-item span:first-child {
+  color: #8b949e;
+}
+
+.resumen-item span:last-child {
+  color: #c9d1d9;
+  font-weight: 600;
+  text-align: right;
+}
+
+.resumen-total {
+  background: #238636;
+  color: white;
+  font-weight: 700;
+  padding: 12px;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 1.2em;
+  margin-top: 15px;
+}
+
+.campo-editable {
+  background: #1c2128;
+  border: 2px solid #58a6ff;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+.campo-editable label {
+  color: #58a6ff;
+  font-size: 0.9em;
+  margin-bottom: 8px;
+}
+
+.campo-editable input {
+  font-size: 1.3em;
+  font-weight: 700;
+  color: #58a6ff;
+  background: #0d1117;
+  border: 2px solid #30363d;
+  text-align: right;
+}
+
+.dinero-disponible {
+  background: #3fb950;
+  color: #0d1117;
+  font-weight: 700;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1.3em;
+  margin: 20px 0;
+}
+
+.resultados-cuotas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.resultado-item {
+  background: #1c2128;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  padding: 15px;
+  text-align: center;
+}
+
+.resultado-item label {
+  color: #8b949e;
+  font-size: 0.85em;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.resultado-item .valor {
+  color: #3fb950;
+  font-size: 1.4em;
+  font-weight: 700;
+}
+
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .resumen-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  h1 {
+    font-size: 1.5em;
+  }
+  
+  button {
+    min-width: 120px;
+    padding: 12px 20px;
+    font-size: 0.9rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>💰 Calculadora Hipotecaria</h1>
+
+  <div class="form-section">
+    <h2>📋 Datos de la Vivienda y Comprador</h2>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Provincia:</label>
+        <input type="text" id="provincia" value="Barcelona">
+      </div>
+      
+      <div class="form-group">
+        <label>Nº de compradores:</label>
+        <input type="number" id="numCompradores" value="1" min="1">
+      </div>
+      
+      <div class="form-group">
+        <label>Fecha de nacimiento (persona mayor):</label>
+        <input type="date" id="fechaNacimiento" value="1970-12-01" oninput="calcularEdad()">
+      </div>
+      
+      <div class="form-group">
+        <label>Edad:</label>
+        <input type="number" id="edad" value="55" readonly style="background: #1c2128;">
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Tipo de empleo:</label>
+        <select id="tipoEmpleo">
+          <option value="Funcionario" selected>Funcionario</option>
+          <option value="Cuenta ajena">Cuenta ajena</option>
+          <option value="Autónomo">Autónomo</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Años de antigüedad:</label>
+        <input type="number" id="antiguedad" value="34" min="0">
+      </div>
+      
+      <div class="form-group">
+        <label>Ingresos mensuales netos (€):</label>
+        <input type="number" id="ingresosMensuales" value="1750" step="0.01" oninput="calcularIngresoMedio()">
+      </div>
+      
+      <div class="form-group">
+        <label>Número de pagas:</label>
+        <input type="number" id="numeroPagas" value="15" min="12" oninput="calcularIngresoMedio()">
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Ingreso medio mensual (€):</label>
+        <input type="number" id="ingresoMedio" value="2187.50" readonly style="background: #1c2128; color: #3fb950; font-weight: 700;">
+      </div>
+      
+      <div class="form-group">
+        <label>Otros créditos/pagos mensuales (€):</label>
+        <input type="number" id="otrosCreditos" value="0" step="0.01">
+      </div>
+      
+      <div class="form-group">
+        <label>Dinero disponible en cuenta (€):</label>
+        <input type="number" id="dineroCuenta" value="170000" step="0.01" oninput="calcular()">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <h2>🏠 Datos de la Vivienda y Gastos</h2>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Precio de la vivienda (€):</label>
+        <input type="number" id="precioVivienda" value="205000" step="0.01" oninput="calcular()">
+      </div>
+      
+      <div class="form-group">
+        <label>Coste de tasación (€):</label>
+        <input type="number" id="costeTasacion" value="400" step="0.01" oninput="calcular()">
+      </div>
+      
+      <div class="form-group">
+        <label>IVA/ITP (%):</label>
+        <input type="number" id="porcentajeIVA" value="7" step="0.01" min="0" max="100" oninput="calcular()">
+      </div>
+      
+      <div class="form-group">
+        <label>Notaría + Registro + Gestoría (%):</label>
+        <input type="number" id="gastosNotaria" value="1" step="0.01" min="0" max="100" oninput="calcular()">
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Otros gastos (Broker, etc) (€):</label>
+        <input type="number" id="otrosGastos" value="0" step="0.01" oninput="calcular()">
+      </div>
+      
+      <div class="form-group">
+        <label>Seguro de Vida/Amortización (€/año):</label>
+        <input type="number" id="seguroVida" value="0" step="0.01" oninput="calcular()">
+      </div>
+      
+      <div class="form-group">
+        <label>Comisión de apertura (%):</label>
+        <input type="number" id="comisionApertura" value="0" step="0.01" min="0" max="100" oninput="calcular()">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <h2>📊 Condiciones del Préstamo</h2>
+    
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Años del préstamo:</label>
+        <input type="number" id="anosPrestamo" value="20" min="1" max="40" oninput="calcular()">
+      </div>
+      
+      <div class="form-group">
+        <label>Tipo de interés (%):</label>
+        <input type="number" id="tipoInteres" value="2.29" step="0.01" min="0" oninput="calcular()">
+      </div>
+      
+      <div class="form-group">
+        <label>Comisión cancelación anticipada (%):</label>
+        <input type="number" id="comisionCancelacion" value="0" step="0.01" min="0">
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Bonificada con nómina:</label>
+        <select id="bonificaNomina">
+          <option value="Sí" selected>Sí</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Bonificada con seguro hogar:</label>
+        <select id="bonificaSeguroHogar">
+          <option value="Sí" selected>Sí</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label>Bonificada con seguro de vida:</label>
+        <select id="bonificaSeguroVida">
+          <option value="Sí" selected>Sí</option>
+          <option value="No">No</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <div class="buttons">
+    <button class="btn-calc" onclick="calcular()">🔄 Recalcular</button>
+    <button class="btn-reset" onclick="resetear()">♻️ Resetear</button>
+    <button class="btn-excel" onclick="descargarExcel()">📊 Descargar Excel</button>
+  </div>
+
+  <div class="form-section">
+    <h2>📈 Resumen de la Hipoteca</h2>
+
+    <div class="resumen-grid">
+      <div class="resumen-column">
+        <h3>📊 Datos Económicos del Solicitante</h3>
+        <div class="resumen-item">
+          <span>Ingresos mensuales netos:</span>
+          <span id="resumenIngresos">1.750,00 €</span>
+        </div>
+        <div class="resumen-item">
+          <span>Número de pagas:</span>
+          <span id="resumenPagas">15</span>
+        </div>
+        <div class="resumen-item">
+          <span>Ingreso medio mensual:</span>
+          <span id="resumenIngresoMedio">2.187,50 €</span>
+        </div>
+        <div class="resumen-item">
+          <span>Otros créditos/pagos:</span>
+          <span id="resumenOtrosCreditos">0,00 €</span>
+        </div>
+        <div class="resumen-item">
+          <span>Edad del titular:</span>
+          <span id="resumenEdad">55 años</span>
+        </div>
+        <div class="resumen-item">
+          <span>Tipo de empleo:</span>
+          <span id="resumenEmpleo">Funcionario</span>
+        </div>
+        <div class="resumen-item">
+          <span>Años de antigüedad:</span>
+          <span id="resumenAntiguedad">34 años</span>
+        </div>
+      </div>
+
+      <div class="resumen-column">
+        <h3>🏠 Desglose de Gastos de Compra</h3>
+        <div class="resumen-item">
+          <span>Precio vivienda:</span>
+          <span id="resumenPrecio">205.000,00 €</span>
+        </div>
+        <div class="resumen-item">
+          <span>Tasación:</span>
+          <span id="resumenTasacion">400,00 €</span>
+        </div>
+        <div class="resumen-item">
+          <span>IVA/ITP:</span>
+          <span id="resumenIVA">14.350,00 €</span>
+        </div>
+        <div class="resumen-item">
+          <span>Notaría + Registro + Gestoría:</span>
+          <span id="resumenNotaria">2.665,00 €</span>
+        </div>
+        <div class="resumen-item">
+          <span>Otros gastos:</span>
+          <span id="resumenOtros">0,00 €</span>
+        </div>
+        <div class="resumen-item">
+          <span>Seguro Vida/Amortización:</span>
+          <span id="resumenSeguro">4.534,00 €</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="resumen-total" id="resumenTotal">
+      TOTAL VIVIENDA + GASTOS: 226.949,00 €
+    </div>
+
+    <div class="campo-editable">
+      <label>💰 Hipoteca a solicitar (editable):</label>
+      <input type="number" id="hipotecaSolicitar" value="95000" step="0.01" oninput="ajustarDesdeHipoteca()">
+    </div>
+
+    <div class="campo-editable">
+      <label>💵 Dinero a aportar (editable):</label>
+      <input type="number" id="dineroAportar" value="131949" step="0.01" oninput="ajustarDesdeAportacion()">
+    </div>
+
+    <div class="dinero-disponible" id="dineroDisponible">
+      💎 Dinero disponible para reformas/muebles: 38.051,00 €
+    </div>
+
+    <div class="resultados-cuotas">
+      <div class="resultado-item">
+        <label>📅 Cuota mensual:</label>
+        <div class="valor" id="cuotaMensual">493,75 €</div>
+      </div>
+      <div class="resultado-item">
+        <label>💳 Total pagado del crédito:</label>
+        <div class="valor" id="totalPagado">118.498,91 €</div>
+      </div>
+      <div class="resultado-item">
+        <label>📈 Intereses pagados:</label>
+        <div class="valor" id="interesesPagados">23.498,91 €</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function formatoCurrency(valor) {
+  return new Intl.NumberFormat('es-ES', {
+    style: 'currency',
+    currency: 'EUR',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(valor);
+}
+
+function formatoNumero(valor) {
+  return new Intl.NumberFormat('es-ES', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  }).format(valor);
+}
+
+function calcularEdad() {
+  const fechaNac = new Date(document.getElementById('fechaNacimiento').value);
+  const hoy = new Date();
+  let edad = hoy.getFullYear() - fechaNac.getFullYear();
+  const mes = hoy.getMonth() - fechaNac.getMonth();
+  if (mes < 0 || (mes === 0 && hoy.getDate() < fechaNac.getDate())) {
+    edad--;
+  }
+  document.getElementById('edad').value = edad;
+  calcular();
+}
+
+function calcularIngresoMedio() {
+  const ingresos = parseFloat(document.getElementById('ingresosMensuales').value) || 0;
+  const pagas = parseFloat(document.getElementById('numeroPagas').value) || 12;
+  const ingresoMedio = (ingresos * pagas) / 12;
+  document.getElementById('ingresoMedio').value = ingresoMedio.toFixed(2);
+  calcular();
+}
+
+function calcular() {
+  // Obtener valores
+  const precioVivienda = parseFloat(document.getElementById('precioVivienda').value) || 0;
+  const costeTasacion = parseFloat(document.getElementById('costeTasacion').value) || 0;
+  const porcentajeIVA = parseFloat(document.getElementById('porcentajeIVA').value) || 0;
+  const gastosNotariaPerc = parseFloat(document.getElementById('gastosNotaria').value) || 0;
+  const otrosGastos = parseFloat(document.getElementById('otrosGastos').value) || 0;
+  const seguroVida = parseFloat(document.getElementById('seguroVida').value) || 0;
+  
+  // Calcular gastos
+  const ivaImporte = (precioVivienda * porcentajeIVA) / 100;
+  const gastosNotariaImporte = (precioVivienda * gastosNotariaPerc) / 100;
+  const totalGastos = precioVivienda + costeTasacion + ivaImporte + gastosNotariaImporte + otrosGastos + seguroVida;
+  
+  // Actualizar resumen
+  document.getElementById('resumenIngresos').textContent = formatoCurrency(parseFloat(document.getElementById('ingresosMensuales').value) || 0);
+  document.getElementById('resumenPagas').textContent = document.getElementById('numeroPagas').value;
+  document.getElementById('resumenIngresoMedio').textContent = formatoCurrency(parseFloat(document.getElementById('ingresoMedio').value) || 0);
+  document.getElementById('resumenOtrosCreditos').textContent = formatoCurrency(parseFloat(document.getElementById('otrosCreditos').value) || 0);
+  document.getElementById('resumenEdad').textContent = document.getElementById('edad').value + ' años';
+  document.getElementById('resumenEmpleo').textContent = document.getElementById('tipoEmpleo').value;
+  document.getElementById('resumenAntiguedad').textContent = document.getElementById('antiguedad').value + ' años';
+  
+  document.getElementById('resumenPrecio').textContent = formatoCurrency(precioVivienda);
+  document.getElementById('resumenTasacion').textContent = formatoCurrency(costeTasacion);
+  document.getElementById('resumenIVA').textContent = formatoCurrency(ivaImporte);
+  document.getElementById('resumenNotaria').textContent = formatoCurrency(gastosNotariaImporte);
+  document.getElementById('resumenOtros').textContent = formatoCurrency(otrosGastos);
+  document.getElementById('resumenSeguro').textContent = formatoCurrency(seguroVida);
+  document.getElementById('resumenTotal').textContent = 'TOTAL VIVIENDA + GASTOS: ' + formatoCurrency(totalGastos);
+  
+  // Calcular hipoteca y aportación
+  const hipoteca = parseFloat(document.getElementById('hipotecaSolicitar').value) || 0;
+  const aportacion = totalGastos - hipoteca;
+  document.getElementById('dineroAportar').value = aportacion.toFixed(2);
+  
+  // Calcular dinero disponible
+  const dineroCuenta = parseFloat(document.getElementById('dineroCuenta').value) || 0;
+  const dineroDisponible = dineroCuenta - aportacion;
+  document.getElementById('dineroDisponible').textContent = '💎 Dinero disponible para reformas/muebles: ' + formatoCurrency(dineroDisponible);
+  
+  // Calcular cuota
+  const anos = parseFloat(document.getElementById('anosPrestamo').value) || 20;
+  const interes = parseFloat(document.getElementById('tipoInteres').value) || 0;
+  
+  if (hipoteca > 0 && interes > 0) {
+    const tasaMensual = (interes / 100) / 12;
+    const numCuotas = anos * 12;
+    const cuota = (hipoteca * tasaMensual * Math.pow(1 + tasaMensual, numCuotas)) / (Math.pow(1 + tasaMensual, numCuotas) - 1);
+    const totalPagado = cuota * numCuotas;
+    const interesesPagados = totalPagado - hipoteca;
+    
+    document.getElementById('cuotaMensual').textContent = formatoCurrency(cuota);
+    document.getElementById('totalPagado').textContent = formatoCurrency(totalPagado);
+    document.getElementById('interesesPagados').textContent = formatoCurrency(interesesPagados);
+  } else {
+    document.getElementById('cuotaMensual').textContent = '0,00 €';
+    document.getElementById('totalPagado').textContent = '0,00 €';
+    document.getElementById('interesesPagados').textContent = '0,00 €';
+  }
+}
+
+function ajustarDesdeHipoteca() {
+  const precioVivienda = parseFloat(document.getElementById('precioVivienda').value) || 0;
+  const costeTasacion = parseFloat(document.getElementById('costeTasacion').value) || 0;
+  const porcentajeIVA = parseFloat(document.getElementById('porcentajeIVA').value) || 0;
+  const gastosNotariaPerc = parseFloat(document.getElementById('gastosNotaria').value) || 0;
+  const otrosGastos = parseFloat(document.getElementById('otrosGastos').value) || 0;
+  const seguroVida = parseFloat(document.getElementById('seguroVida').value) || 0;
+  
+  const ivaImporte = (precioVivienda * porcentajeIVA) / 100;
+  const gastosNotariaImporte = (precioVivienda * gastosNotariaPerc) / 100;
+  const totalGastos = precioVivienda + costeTasacion + ivaImporte + gastosNotariaImporte + otrosGastos + seguroVida;
+  
+  const hipoteca = parseFloat(document.getElementById('hipotecaSolicitar').value) || 0;
+  const aportacion = totalGastos - hipoteca;
+  document.getElementById('dineroAportar').value = aportacion.toFixed(2);
+  
+  calcular();
+}
+
+function ajustarDesdeAportacion() {
+  const precioVivienda = parseFloat(document.getElementById('precioVivienda').value) || 0;
+  const costeTasacion = parseFloat(document.getElementById('costeTasacion').value) || 0;
+  const porcentajeIVA = parseFloat(document.getElementById('porcentajeIVA').value) || 0;
+  const gastosNotariaPerc = parseFloat(document.getElementById('gastosNotaria').value) || 0;
+  const otrosGastos = parseFloat(document.getElementById('otrosGastos').value) || 0;
+  const seguroVida = parseFloat(document.getElementById('seguroVida').value) || 0;
+  
+  const ivaImporte = (precioVivienda * porcentajeIVA) / 100;
+  const gastosNotariaImporte = (precioVivienda * gastosNotariaPerc) / 100;
+  const totalGastos = precioVivienda + costeTasacion + ivaImporte + gastosNotariaImporte + otrosGastos + seguroVida;
+  
+  const aportacion = parseFloat(document.getElementById('dineroAportar').value) || 0;
+  const hipoteca = totalGastos - aportacion;
+  document.getElementById('hipotecaSolicitar').value = hipoteca.toFixed(2);
+  
+  calcular();
+}
+
+function resetear() {
+  document.getElementById('provincia').value = 'Barcelona';
+  document.getElementById('numCompradores').value = '1';
+  document.getElementById('fechaNacimiento').value = '1970-12-01';
+  document.getElementById('edad').value = '55';
+  document.getElementById('tipoEmpleo').value = 'Funcionario';
+  document.getElementById('antiguedad').value = '34';
+  document.getElementById('ingresosMensuales').value = '1750';
+  document.getElementById('numeroPagas').value = '15';
+  document.getElementById('ingresoMedio').value = '2187.50';
+  document.getElementById('otrosCreditos').value = '0';
+  document.getElementById('dineroCuenta').value = '170000';
+  document.getElementById('precioVivienda').value = '205000';
+  document.getElementById('costeTasacion').value = '400';
+  document.getElementById('porcentajeIVA').value = '7';
+  document.getElementById('gastosNotaria').value = '1.3';
+  document.getElementById('otrosGastos').value = '0';
+  document.getElementById('seguroVida').value = '4534';
+  document.getElementById('comisionApertura').value = '0';
+  document.getElementById('anosPrestamo').value = '20';
+  document.getElementById('tipoInteres').value = '2.29';
+  document.getElementById('comisionCancelacion').value = '0';
+  document.getElementById('bonificaNomina').value = 'Sí';
+  document.getElementById('bonificaSeguroHogar').value = 'Sí';
+  document.getElementById('bonificaSeguroVida').value = 'Sí';
+  document.getElementById('hipotecaSolicitar').value = '95000';
+  calcular();
+}
+
+function descargarExcel() {
+  const precioVivienda = parseFloat(document.getElementById('precioVivienda').value) || 0;
+  const costeTasacion = parseFloat(document.getElementById('costeTasacion').value) || 0;
+  const porcentajeIVA = parseFloat(document.getElementById('porcentajeIVA').value) || 0;
+  const gastosNotariaPerc = parseFloat(document.getElementById('gastosNotaria').value) || 0;
+  const otrosGastos = parseFloat(document.getElementById('otrosGastos').value) || 0;
+  const seguroVida = parseFloat(document.getElementById('seguroVida').value) || 0;
+  
+  const ivaImporte = (precioVivienda * porcentajeIVA) / 100;
+  const gastosNotariaImporte = (precioVivienda * gastosNotariaPerc) / 100;
+  const totalGastos = precioVivienda + costeTasacion + ivaImporte + gastosNotariaImporte + otrosGastos + seguroVida;
+  
+  const hipoteca = parseFloat(document.getElementById('hipotecaSolicitar').value) || 0;
+  const aportacion = parseFloat(document.getElementById('dineroAportar').value) || 0;
+  const dineroCuenta = parseFloat(document.getElementById('dineroCuenta').value) || 0;
+  const dineroDisponible = dineroCuenta - aportacion;
+  
+  const anos = parseFloat(document.getElementById('anosPrestamo').value) || 20;
+  const interes = parseFloat(document.getElementById('tipoInteres').value) || 0;
+  const tasaMensual = (interes / 100) / 12;
+  const numCuotas = anos * 12;
+  const cuota = (hipoteca * tasaMensual * Math.pow(1 + tasaMensual, numCuotas)) / (Math.pow(1 + tasaMensual, numCuotas) - 1);
+  const totalPagado = cuota * numCuotas;
+  const interesesPagados = totalPagado - hipoteca;
+  
+  const wb = XLSX.utils.book_new();
+  
+  // Hoja 1: Datos del Solicitante
+  const datosPersonales = [
+    ['DATOS DEL SOLICITANTE', ''],
+    ['Provincia', document.getElementById('provincia').value],
+    ['Número de compradores', document.getElementById('numCompradores').value],
+    ['Fecha de nacimiento', document.getElementById('fechaNacimiento').value],
+    ['Edad', document.getElementById('edad').value + ' años'],
+    ['Tipo de empleo', document.getElementById('tipoEmpleo').value],
+    ['Años de antigüedad', document.getElementById('antiguedad').value],
+    ['Ingresos mensuales netos', formatoCurrency(parseFloat(document.getElementById('ingresosMensuales').value) || 0)],
+    ['Número de pagas', document.getElementById('numeroPagas').value],
+    ['Ingreso medio mensual', formatoCurrency(parseFloat(document.getElementById('ingresoMedio').value) || 0)],
+    ['Otros créditos/pagos', formatoCurrency(parseFloat(document.getElementById('otrosCreditos').value) || 0)],
+    ['Dinero disponible', formatoCurrency(dineroCuenta)]
+  ];
+  const ws1 = XLSX.utils.aoa_to_sheet(datosPersonales);
+  XLSX.utils.book_append_sheet(wb, ws1, 'Datos Solicitante');
+  
+  // Hoja 2: Vivienda y Gastos
+  const datosVivienda = [
+    ['VIVIENDA Y GASTOS', ''],
+    ['Precio de la vivienda', formatoCurrency(precioVivienda)],
+    ['Coste de tasación', formatoCurrency(costeTasacion)],
+    ['IVA/ITP (' + porcentajeIVA + '%)', formatoCurrency(ivaImporte)],
+    ['Notaría + Registro + Gestoría (' + gastosNotariaPerc + '%)', formatoCurrency(gastosNotariaImporte)],
+    ['Otros gastos', formatoCurrency(otrosGastos)],
+    ['Seguro Vida/Amortización', formatoCurrency(seguroVida)],
+    ['TOTAL VIVIENDA + GASTOS', formatoCurrency(totalGastos)]
+  ];
+  const ws2 = XLSX.utils.aoa_to_sheet(datosVivienda);
+  XLSX.utils.book_append_sheet(wb, ws2, 'Vivienda y Gastos');
+  
+  // Hoja 3: Condiciones Préstamo
+  const datosPrestamo = [
+    ['CONDICIONES DEL PRÉSTAMO', ''],
+    ['Años del préstamo', anos],
+    ['Número de cuotas', numCuotas],
+    ['Tipo de interés', interes + '%'],
+    ['Comisión de apertura', document.getElementById('comisionApertura').value + '%'],
+    ['Comisión cancelación anticipada', document.getElementById('comisionCancelacion').value + '%'],
+    ['Bonificada con nómina', document.getElementById('bonificaNomina').value],
+    ['Bonificada con seguro hogar', document.getElementById('bonificaSeguroHogar').value],
+    ['Bonificada con seguro de vida', document.getElementById('bonificaSeguroVida').value]
+  ];
+  const ws3 = XLSX.utils.aoa_to_sheet(datosPrestamo);
+  XLSX.utils.book_append_sheet(wb, ws3, 'Condiciones Préstamo');
+  
+  // Hoja 4: Resultado
+  const datosResultado = [
+    ['RESULTADO HIPOTECA', ''],
+    ['Hipoteca a solicitar', formatoCurrency(hipoteca)],
+    ['Dinero a aportar', formatoCurrency(aportacion)],
+    ['Dinero disponible reformas/muebles', formatoCurrency(dineroDisponible)],
+    ['Cuota mensual', formatoCurrency(cuota)],
+    ['Total pagado del crédito', formatoCurrency(totalPagado)],
+    ['Intereses pagados', formatoCurrency(interesesPagados)]
+  ];
+  const ws4 = XLSX.utils.aoa_to_sheet(datosResultado);
+  XLSX.utils.book_append_sheet(wb, ws4, 'Resultado');
+  
+  XLSX.writeFile(wb, 'Calculadora_Hipotecaria.xlsx');
+}
+
+// Inicializar al cargar
+window.onload = function() {
+  calcularEdad();
+  calcularIngresoMedio();
+  calcular();
+};
+</script>
+
+</body>
+</html>

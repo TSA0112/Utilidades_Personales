@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora IMC</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#2d3748;padding:28px 16px;}
+.wrap{max-width:720px;margin:0 auto;}
+h1{text-align:center;font-size:1.75rem;color:#2b6cb0;margin-bottom:6px;}
+.sub{text-align:center;font-size:.9rem;color:#718096;margin-bottom:26px;}
+.card{background:#fff;border-radius:14px;padding:26px;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,.08);}
+.card-title{font-size:1rem;font-weight:700;color:#2b6cb0;margin-bottom:18px;padding-bottom:9px;border-bottom:2px solid #bee3f8;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+@media(max-width:540px){.g3,.g2{grid-template-columns:1fr;}}
+.fld{display:flex;flex-direction:column;gap:5px;}
+.fld label{font-size:.82rem;font-weight:700;color:#4a5568;display:flex;align-items:center;gap:5px;}
+.tip{position:relative;display:inline-flex;align-items:center;justify-content:center;
+     width:15px;height:15px;background:#2b6cb0;color:#fff;border-radius:50%;
+     font-size:.6rem;font-weight:900;cursor:default;flex-shrink:0;}
+.tip span{display:none;position:absolute;bottom:125%;left:50%;transform:translateX(-50%);
+          background:#2d3748;color:#fff;font-size:.72rem;padding:7px 10px;border-radius:7px;
+          width:185px;line-height:1.4;z-index:20;white-space:normal;pointer-events:none;}
+.tip:hover span{display:block;}
+input[type=number],select{padding:9px 12px;border:1.5px solid #cbd5e0;border-radius:8px;
+  font-size:.93rem;background:#f7fafc;width:100%;transition:border .15s;}
+input:focus,select:focus{outline:none;border-color:#2b6cb0;background:#fff;}
+.bad-in{border-color:#e53e3e!important;background:#fff5f5!important;}
+.emsg{font-size:.73rem;color:#e53e3e;display:none;}
+.btns{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+.btn{padding:10px 24px;border:none;border-radius:8px;font-size:.88rem;font-weight:700;cursor:pointer;transition:background .15s;}
+.b1{background:#2b6cb0;color:#fff;}.b1:hover{background:#2c5282;}
+.b2{background:#e53e3e;color:#fff;}.b2:hover{background:#c53030;}
+.b3{background:#38a169;color:#fff;}.b3:hover{background:#276749;}
+
+/* ---- figuras + barra ---- */
+.figure-row{display:flex;align-items:flex-end;gap:10px;margin-bottom:10px;}
+.fig-box{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;}
+.fig-box .fig-lbl{font-size:.72rem;font-weight:700;color:#4a5568;text-align:center;line-height:1.3;}
+.fig-box .fig-imc{font-size:.78rem;font-weight:800;color:#2b6cb0;}
+.fig-center{flex:1;display:flex;flex-direction:column;gap:0;}
+
+/* barra IMC */
+.barwrap{position:relative;height:22px;border-radius:11px;margin:4px 0 6px;
+  background:linear-gradient(to right,#3182ce 0%,#63b3ed 17%,#68d391 27%,#38a169 44%,#ecc94b 57%,#ed8936 71%,#e53e3e 84%,#9b2c2c 100%);}
+.pin{position:absolute;top:-10px;width:5px;height:42px;background:#1a202c;
+     border-radius:3px;transform:translateX(-50%);box-shadow:0 2px 5px rgba(0,0,0,.5);transition:left .4s ease;}
+.pin::before{content:'';position:absolute;top:-7px;left:50%;transform:translateX(-50%);
+             width:13px;height:13px;background:#1a202c;border-radius:50%;}
+.barlbls{display:flex;justify-content:space-between;font-size:.62rem;color:#718096;margin-bottom:4px;}
+
+/* tabla resultado */
+.rtable{border:1.5px solid #bee3f8;border-radius:11px;overflow:hidden;margin-top:8px;
+        background:linear-gradient(135deg,#ebf8ff,#e6fffa);}
+.rrow{display:flex;justify-content:space-between;align-items:center;
+      padding:10px 16px;border-bottom:1px solid #e2e8f0;flex-wrap:wrap;gap:8px;}
+.rrow:last-child{border-bottom:none;}
+.rl{font-size:.83rem;font-weight:600;color:#4a5568;flex:1;min-width:160px;}
+.rv{font-size:.92rem;font-weight:800;color:#2b6cb0;text-align:right;}
+.rv.g{color:#276749;}.rv.w{color:#b7791f;}.rv.r{color:#c53030;}.rv.b{color:#2a4365;}
+.bdg{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.74rem;font-weight:800;margin-left:6px;}
+.dg{background:#c6f6d5;color:#22543d;}.dw{background:#fefcbf;color:#744210;}
+.dr{background:#fed7d7;color:#742a2a;}.db{background:#bee3f8;color:#2a4365;}
+.section-lbl{font-size:.75rem;font-weight:800;color:#fff;background:#4a5568;
+             padding:5px 16px;letter-spacing:.05em;text-transform:uppercase;}
+
+.formula{font-size:.73rem;color:#718096;background:#edf2f7;border-left:3px solid #2b6cb0;
+         padding:8px 12px;border-radius:0 6px 6px 0;margin-top:12px;line-height:1.7;}
+.consejo{margin-top:12px;padding:13px 15px;border-radius:9px;font-size:.83rem;line-height:1.6;border:1.5px solid;}
+.cok{background:#f0fff4;border-color:#c6f6d5;color:#22543d;}
+.cwarn{background:#fffbeb;border-color:#f6e05e;color:#744210;}
+.cbad{background:#fff5f5;border-color:#feb2b2;color:#742a2a;}
+.clow{background:#ebf8ff;border-color:#90cdf4;color:#2a4365;}
+
+.fat-bar-wrap{margin:8px 0 2px;}
+.fat-bar-bg{width:100%;height:13px;border-radius:7px;position:relative;
+  background:linear-gradient(to right,#3182ce 0%,#63b3ed 20%,#68d391 35%,#38a169 55%,#ecc94b 70%,#e53e3e 85%,#9b2c2c 100%);}
+.fat-pin{position:absolute;top:-4px;width:4px;height:21px;background:#1a202c;
+         border-radius:2px;transform:translateX(-50%);transition:left .4s ease;box-shadow:0 1px 4px rgba(0,0,0,.5);}
+.fat-pin::before{content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);
+                 width:9px;height:9px;background:#1a202c;border-radius:50%;}
+.fat-labels{display:flex;justify-content:space-between;font-size:.62rem;color:#718096;margin-top:3px;}
+
+.ic{border:1.5px solid #e2e8f0;border-radius:10px;padding:14px;text-align:center;background:#fff;}
+.ic .v{font-size:1.2rem;font-weight:800;color:#2b6cb0;margin-bottom:3px;}
+.ic .l{font-size:.72rem;color:#718096;}
+.ic.hl{border-color:#68d391;background:#f0fff4;}.ic.hl .v{color:#276749;}
+.note{font-size:.72rem;color:#718096;margin-top:14px;padding:10px 12px;
+      background:#f7fafc;border-radius:8px;border:1px solid #e2e8f0;line-height:1.6;}
+
+/* SVG figura */
+svg.figura{display:block;}
+@media(max-width:480px){
+  .fig-box svg{width:60px!important;height:auto!important;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<h1>&#128202; Calculadora de IMC</h1>
+<p class="sub">Índice de Masa Corporal &mdash; Resultados ajustados por género y edad</p>
+
+<!-- ENTRADA -->
+<div class="card">
+  <div class="card-title">Datos personales</div>
+  <div class="g3">
+    <div class="fld">
+      <label>Género <span class="tip">?<span>Afecta el peso ideal, % grasa saludable, umbrales de riesgo y figura corporal.</span></span></label>
+      <select id="xgenero">
+        <option value="hombre">Mujer</option>
+        <option value="mujer">Hombre</option>
+      </select>
+    </div>
+    <div class="fld">
+      <label>Edad (años) <span class="tip">?<span>Ajusta el rango saludable de IMC y el % de grasa corporal esperado.</span></span></label>
+      <input type="number" id="xedad" value="19" min="18" max="100">
+      <span class="emsg" id="eedad">Edad válida: 18-100</span>
+    </div>
+    <div class="fld">
+      <label>Altura (cm) <span class="tip">?<span>Introduce tu altura en centímetros. Ejemplo: 173 cm.</span></span></label>
+      <input type="number" id="xaltura" value="162" min="100" max="250">
+      <span class="emsg" id="ealtura">Altura válida: 100-250 cm</span>
+    </div>
+    <div class="fld">
+      <label>Peso (kg) <span class="tip">?<span>Introduce tu peso en kilogramos. Ejemplo: 80 kg.</span></span></label>
+      <input type="number" id="xpeso" value="43" min="30" max="300" step="0.1">
+      <span class="emsg" id="epeso">Peso válido: 30-300 kg</span>
+    </div>
+    <div class="fld">
+      <label>Cintura (cm) <span class="tip">?<span>Opcional. Mide a la altura del ombligo.</span></span></label>
+      <input type="number" id="xcintura" placeholder="Opcional" min="40" max="200">
+    </div>
+    <div class="fld">
+      <label>Cadera (cm) <span class="tip">?<span>Opcional. Para calcular el Índice Cintura-Cadera (ICC).</span></span></label>
+      <input type="number" id="xcadera" placeholder="Opcional" min="40" max="200">
+    </div>
+  </div>
+  <div class="btns">
+    <button class="btn b1" onclick="run()">&#128290; Calcular</button>
+    <button class="btn b2" onclick="rst()">&#8635; Resetear</button>
+    <button class="btn b3" onclick="exp()">&#11015; Exportar</button>
+  </div>
+</div>
+
+<!-- RESULTADO -->
+<div class="card">
+  <div class="card-title">Resultado IMC</div>
+
+  <!-- Figuras + barra -->
+  <div class="figure-row">
+
+    <!-- Figura actual -->
+    <div class="fig-box">
+      <div class="fig-lbl">Tu figura<br>actual</div>
+      <svg id="svgActual" class="figura" width="80" height="180" viewBox="0 0 80 180"></svg>
+      <div class="fig-imc" id="figImcActual">—</div>
+    </div>
+
+    <!-- Barra central -->
+    <div class="fig-center">
+      <div class="barlbls">
+        <span>Bajo<br>&lt;18.5</span>
+        <span>Normal<br>18.5-25</span>
+        <span>Sobre<br>25-30</span>
+        <span>Ob.I<br>30-35</span>
+        <span>Ob.II+<br>&ge;35</span>
+      </div>
+      <div class="barwrap"><div class="pin" id="pin" style="left:30%"></div></div>
+    </div>
+
+    <!-- Figura ideal -->
+    <div class="fig-box">
+      <div class="fig-lbl">Figura<br>ideal</div>
+      <svg id="svgIdeal" class="figura" width="80" height="180" viewBox="0 0 80 180"></svg>
+      <div class="fig-imc" id="figImcIdeal">IMC 22</div>
+    </div>
+  </div>
+
+  <!-- Tabla resultados -->
+  <div class="rtable">
+    <div class="section-lbl">IMC estándar</div>
+    <div class="rrow"><span class="rl">Tu IMC actual</span><span class="rv" id="oIMC">—</span></div>
+    <div class="rrow"><span class="rl">Clasificación OMS</span><span class="rv" id="oCLAS">—</span></div>
+    <div class="rrow"><span class="rl">Rango saludable (peso)</span><span class="rv g" id="oRANGO">—</span></div>
+
+    <div class="section-lbl">Ajuste por edad y género</div>
+    <div class="rrow"><span class="rl">IMC saludable ajustado</span><span class="rv g" id="oIMCajust">—</span></div>
+    <div class="rrow"><span class="rl">Clasificación ajustada</span><span class="rv" id="oCLASajust">—</span></div>
+
+    <div class="section-lbl">Peso ideal por género</div>
+    <div class="rrow"><span class="rl">Peso ideal — Devine</span><span class="rv g" id="oDevine">—</span></div>
+    <div class="rrow"><span class="rl">Peso ideal — Lorentz</span><span class="rv g" id="oLorentz">—</span></div>
+    <div class="rrow"><span class="rl">Peso ideal — Hamwi</span><span class="rv g" id="oHamwi">—</span></div>
+    <div class="rrow"><span class="rl">Diferencia con Devine</span><span class="rv" id="oDIFF">—</span></div>
+
+    <div class="section-lbl">% Grasa corporal estimado (Deurenberg)</div>
+    <div class="rrow"><span class="rl">% Grasa corporal</span><span class="rv" id="oGRASA">—</span></div>
+    <div class="rrow"><span class="rl">Rango saludable de grasa</span><span class="rv g" id="oGRASARANGO">—</span></div>
+    <div class="rrow"><span class="rl">Valoración</span><span class="rv" id="oGRASACLAS">—</span></div>
+
+    <div class="section-lbl" id="sectICC" style="display:none">Índices abdominales</div>
+    <div class="rrow" id="rowICC" style="display:none"><span class="rl">Índice Cintura-Cadera (ICC)</span><span class="rv" id="oICC">—</span></div>
+    <div class="rrow" id="rowCINT" style="display:none"><span class="rl">Riesgo perímetro cintura</span><span class="rv" id="oCINT">—</span></div>
+  </div>
+
+  <div class="fat-bar-wrap">
+    <div style="font-size:.75rem;font-weight:700;color:#4a5568;margin-bottom:4px;">Indicador % grasa corporal</div>
+    <div class="fat-bar-bg"><div class="fat-pin" id="fatpin" style="left:30%"></div></div>
+    <div class="fat-labels"><span>Bajo</span><span>Atlético</span><span>Saludable</span><span>Elevado</span><span>Alto</span></div>
+  </div>
+
+  <div class="formula">
+    <strong>IMC</strong> = Peso(kg) / [Altura(m)]² &nbsp;|&nbsp;
+    <strong>Devine(H)</strong>: 50+2.3×pulg.sobre5pies &nbsp;|&nbsp; <strong>Devine(M)</strong>: 45.5+2.3×pulg.sobre5pies<br>
+    <strong>Lorentz(H)</strong>: Alt-100-(Alt-150)/4 &nbsp;|&nbsp; <strong>Lorentz(M)</strong>: Alt-100-(Alt-150)/2<br>
+    <strong>Hamwi(H)</strong>: 48+1.1×cm sobre 152 &nbsp;|&nbsp; <strong>Hamwi(M)</strong>: 45.5+0.9×cm sobre 152<br>
+    <strong>%Grasa(Deurenberg)</strong>: 1.20×IMC + 0.23×Edad - 10.8×sexo - 5.4 &nbsp;[H=1, M=0]
+  </div>
+  <div class="consejo cok" id="consejo">Pulsa <strong>Calcular</strong> para ver los resultados.</div>
+</div>
+
+<!-- COMPARATIVA -->
+<div class="card">
+  <div class="card-title">&#128203; Comparativa: estado actual vs. ideal</div>
+  <div class="g2" style="margin-bottom:12px;">
+    <div class="ic"><div class="v" id="cPA">—</div><div class="l">Peso actual (kg)</div></div>
+    <div class="ic hl"><div class="v" id="cPI">—</div><div class="l">Peso ideal Devine (kg)</div></div>
+    <div class="ic"><div class="v" id="cIA">—</div><div class="l">IMC actual</div></div>
+    <div class="ic hl"><div class="v" id="cIMCid">—</div><div class="l">IMC objetivo ajustado</div></div>
+    <div class="ic"><div class="v" id="cGA">—</div><div class="l">% Grasa actual (est.)</div></div>
+    <div class="ic hl"><div class="v" id="cGI">—</div><div class="l">% Grasa saludable ideal</div></div>
+    <div class="ic"><div class="v" id="cCA">—</div><div class="l">Clasificación actual</div></div>
+    <div class="ic hl"><div class="v">Saludable</div><div class="l">Clasificación objetivo</div></div>
+  </div>
+  <div class="note">
+    <strong>Nota:</strong> El IMC es un indicador orientativo de uso poblacional. Las fórmulas de peso ideal
+    (Devine, Lorentz, Hamwi) son estimaciones basadas en talla y género. El % de grasa estimado por
+    Deurenberg tiene un margen de ±3-4%. Las figuras son representaciones esquemáticas ilustrativas.
+    Consulta siempre con un profesional de salud.
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<script>
+function gi(id){ return document.getElementById(id); }
+function num(id){ var v=gi(id).value; return(v===''||v===null)?NaN:parseFloat(v); }
+function f(n,d){ if(d===undefined)d=1; if(isNaN(n))return'—'; return n.toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+function setText(id,t){ gi(id).textContent=t; }
+function setHTML(id,h){ gi(id).innerHTML=h; }
+function setCls(id,c){ gi(id).className=c; }
+
+/* =====================================================
+   GENERADOR DE FIGURA SVG
+   imc     : valor IMC para escalar la silueta
+   genero  : 'hombre' | 'mujer'
+   tipo    : 'actual' | 'ideal'  (solo afecta color)
+   ===================================================== */
+function buildFigura(svgEl, imc, genero, tipo){
+  var esH = (genero === 'hombre');
+  var esIdeal = (tipo === 'ideal');
+
+  /* --- colores --- */
+  var skinColor   = esIdeal ? '#f5cba7' : '#e8a87c';
+  var bodyColor, strokeC;
+  if(esIdeal){
+    bodyColor = esH ? '#2b6cb0' : '#805ad5';
+    strokeC   = esH ? '#1a4a8a' : '#553c9a';
+  } else {
+    // color según IMC
+    if(imc < 18.5)     { bodyColor='#63b3ed'; strokeC='#2b6cb0'; }
+    else if(imc < 25)  { bodyColor='#48bb78'; strokeC='#276749'; }
+    else if(imc < 30)  { bodyColor='#ecc94b'; strokeC='#b7791f'; }
+    else if(imc < 35)  { bodyColor='#ed8936'; strokeC='#c05621'; }
+    else               { bodyColor='#e53e3e'; strokeC='#9b2c2c'; }
+  }
+
+  /* --- escala de "gordura" según IMC (1.0 = IMC 22, más = más ancho) ---
+     factor va de 0.72 (IMC 15) a 1.6 (IMC 40+)                           */
+  var fatF = Math.min(Math.max((imc - 15) / (40 - 15), 0), 1);
+  var w    = 0.75 + fatF * 0.85;   // factor ancho torso  0.75..1.6
+  var belly= 0.5  + fatF * 1.1;    // factor barriga       0.5..1.6
+
+  /* --- proporciones base (viewBox 0 0 80 180) --- */
+  var cx    = 40;           // centro X
+  var headR = 11;           // radio cabeza
+  var headY = 18;           // centro cabeza Y
+  var neckT = headY + headR + 1;   // tope cuello
+  var neckB = neckT + 8;           // base cuello
+  var shouldY = neckB;             // hombros Y
+
+  // ancho hombros y caderas por género e IMC
+  var shouldW = esH ? (18 + w*10) : (15 + w*8);
+  var hipW    = esH ? (14 + w*9)  : (18 + w*12);
+  var torsoH  = 48;
+  var waistY  = shouldY + torsoH * 0.45;
+  var hipY    = shouldY + torsoH;
+
+  // barriga en la cintura
+  var waistBulge = esH ? belly * 9 : belly * 5;
+  var waistW = Math.min(shouldW, hipW) + waistBulge;
+
+  // piernas
+  var legTop  = hipY;
+  var legBot  = legTop + 55;
+  var legW    = esH ? (6 + w*3) : (7 + w*3.5);
+  var legGap  = esH ? (4 + w*2) : (3 + w*1.5);
+
+  // brazos
+  var armTopY = shouldY + 4;
+  var armBotY = waistY + 14;
+  var armW    = esH ? (5 + w*2) : (4 + w*1.5);
+  var armOffX = esH ? shouldW+2 : shouldW+1;
+
+  // pies
+  var footW = esH ? 10 : 8;
+  var footH = 5;
+
+  /* ---- cabello (mujer) ---- */
+  var hairSVG = '';
+  if(!esH){
+    var hc = esIdeal ? '#6b3a2a' : '#8B4513';
+    // pelo largo: dos curvas a los lados + parte superior
+    hairSVG =
+      '<ellipse cx="'+cx+'" cy="'+(headY-4)+'" rx="'+(headR+2)+'" ry="'+(headR*0.7)+'" fill="'+hc+'"/>' +
+      '<rect x="'+(cx-headR-1)+'" y="'+(headY-3)+'" width="5" height="22" rx="2" fill="'+hc+'"/>' +
+      '<rect x="'+(cx+headR-4)+'" y="'+(headY-3)+'" width="5" height="22" rx="2" fill="'+hc+'"/>';
+  }
+
+  /* ---- construcción del SVG ---- */
+  var s = '';
+
+  // sombra suave
+  s += '<ellipse cx="'+cx+'" cy="'+(legBot+footH+2)+'" rx="'+(hipW*0.8)+'" ry="4" fill="rgba(0,0,0,0.08)"/>';
+
+  // brazos (detrás del cuerpo)
+  // brazo izquierdo
+  s += '<path d="M '+(cx-shouldW)+' '+armTopY+
+       ' Q '+(cx-armOffX-4)+' '+(armTopY+20)+' '+(cx-armOffX)+' '+armBotY+
+       '" stroke="'+bodyColor+'" stroke-width="'+(armW*2)+'" stroke-linecap="round" fill="none"/>';
+  // brazo derecho
+  s += '<path d="M '+(cx+shouldW)+' '+armTopY+
+       ' Q '+(cx+armOffX+4)+' '+(armTopY+20)+' '+(cx+armOffX)+' '+armBotY+
+       '" stroke="'+bodyColor+'" stroke-width="'+(armW*2)+'" stroke-linecap="round" fill="none"/>';
+
+  // pierna izquierda
+  s += '<rect x="'+(cx-legGap-legW*2)+'" y="'+legTop+'" width="'+(legW*2)+'" height="'+(legBot-legTop)+
+       '" rx="'+(legW)+'" fill="'+bodyColor+'" stroke="'+strokeC+'" stroke-width="1"/>';
+  // pierna derecha
+  s += '<rect x="'+(cx+legGap)+'" y="'+legTop+'" width="'+(legW*2)+'" height="'+(legBot-legTop)+
+       '" rx="'+(legW)+'" fill="'+bodyColor+'" stroke="'+strokeC+'" stroke-width="1"/>';
+
+  // pies
+  s += '<ellipse cx="'+(cx-legGap-legW)+'" cy="'+(legBot+footH/2)+'" rx="'+footW+'" ry="'+footH+'" fill="'+strokeC+'"/>';
+  s += '<ellipse cx="'+(cx+legGap+legW)+'" cy="'+(legBot+footH/2)+'" rx="'+footW+'" ry="'+footH+'" fill="'+strokeC+'"/>';
+
+  // torso (polígono con cintura)
+  s += '<path d="'+
+       'M '+(cx-shouldW)+' '+shouldY+
+       ' Q '+(cx-waistW)+' '+waistY+' '+(cx-hipW)+' '+hipY+
+       ' L '+(cx+hipW)+' '+hipY+
+       ' Q '+(cx+waistW)+' '+waistY+' '+(cx+shouldW)+' '+shouldY+
+       ' Z" fill="'+bodyColor+'" stroke="'+strokeC+'" stroke-width="1.2"/>';
+
+  // cuello
+  s += '<rect x="'+(cx-5)+'" y="'+neckT+'" width="10" height="'+(neckB-neckT+1)+'" rx="3" fill="'+skinColor+'"/>';
+
+  // cabello mujer (delante del cuello)
+  s += hairSVG;
+
+  // cabeza
+  s += '<circle cx="'+cx+'" cy="'+headY+'" r="'+headR+'" fill="'+skinColor+'" stroke="#c9956a" stroke-width="1"/>';
+
+  // rasgos cara
+  // ojos
+  s += '<circle cx="'+(cx-4)+'" cy="'+(headY-1)+'" r="1.4" fill="#2d3748"/>';
+  s += '<circle cx="'+(cx+4)+'" cy="'+(headY-1)+'" r="1.4" fill="#2d3748"/>';
+  // brillos ojos
+  s += '<circle cx="'+(cx-3.3)+'" cy="'+(headY-1.7)+'" r=".5" fill="#fff"/>';
+  s += '<circle cx="'+(cx+4.7)+'" cy="'+(headY-1.7)+'" r=".5" fill="#fff"/>';
+  // nariz
+  s += '<ellipse cx="'+cx+'" cy="'+(headY+1.5)+'" rx="1" ry="0.8" fill="#c9956a"/>';
+  // boca (sonrisa o neutra)
+  if(esIdeal || imc < 25){
+    s += '<path d="M '+(cx-3)+' '+(headY+4.5)+' Q '+cx+' '+(headY+7)+' '+(cx+3)+' '+(headY+4.5)+
+         '" stroke="#a0522d" stroke-width="1.2" fill="none" stroke-linecap="round"/>';
+  } else {
+    s += '<path d="M '+(cx-3)+' '+(headY+6)+' Q '+cx+' '+(headY+4)+' '+(cx+3)+' '+(headY+6)+
+         '" stroke="#a0522d" stroke-width="1.2" fill="none" stroke-linecap="round"/>';
+  }
+
+  // detalle mujer: pecho
+  if(!esH){
+    var bustY = shouldY + torsoH*0.22;
+    var bustR = 4.5 + w*2;
+    s += '<ellipse cx="'+(cx-6)+'" cy="'+bustY+'" rx="'+bustR+'" ry="'+(bustR*0.7)+'" fill="'+strokeC+'" opacity=".35"/>';
+    s += '<ellipse cx="'+(cx+6)+'" cy="'+bustY+'" rx="'+bustR+'" ry="'+(bustR*0.7)+'" fill="'+strokeC+'" opacity=".35"/>';
+  }
+
+  // cinturón/línea cintura hombre
+  if(esH){
+    s += '<rect x="'+(cx-waistW+2)+'" y="'+(waistY-2)+'" width="'+((waistW)*2-4)+'" height="4" rx="2" fill="'+strokeC+'" opacity=".4"/>';
+  }
+
+  svgEl.innerHTML = s;
+}
+
+/* =====================================================
+   CÁLCULO PRINCIPAL
+   ===================================================== */
+function run(){
+  var genero  = gi('xgenero').value;
+  var edad    = num('xedad');
+  var altura  = num('xaltura');
+  var peso    = num('xpeso');
+  var cintura = num('xcintura');
+  var cadera  = num('xcadera');
+
+  var eE=(isNaN(edad)||edad<18||edad>100);
+  var eA=(isNaN(altura)||altura<100||altura>250);
+  var eP=(isNaN(peso)||peso<30||peso>300);
+  gi('xedad').className   = eE?'bad-in':''; gi('eedad').style.display   = eE?'block':'none';
+  gi('xaltura').className = eA?'bad-in':''; gi('ealtura').style.display = eA?'block':'none';
+  gi('xpeso').className   = eP?'bad-in':''; gi('epeso').style.display   = eP?'block':'none';
+  if(eE||eA||eP) return;
+
+  var esH = (genero==='hombre');
+  var h   = altura/100;
+  var h2  = h*h;
+
+  /* IMC */
+  var imc  = peso/h2;
+  var pMin = 18.5*h2, pMax = 24.9*h2;
+
+  /* IMC ajustado */
+  var imcAjMin = edad<65 ? 18.5 : 22.0;
+  var imcAjMax = edad<65 ? 24.9 : 27.0;
+
+  /* Peso ideal */
+  var pulgsobre5 = Math.max((altura-152.4)/2.54, 0);
+  var devine  = esH ? (50+2.3*pulgsobre5)   : (45.5+2.3*pulgsobre5);
+  var lorentz = esH ? (altura-100-(altura-150)/4) : (altura-100-(altura-150)/2);
+  var hamwi   = esH ? (48+1.1*Math.max(altura-152,0)) : (45.5+0.9*Math.max(altura-152,0));
+
+  /* % grasa Deurenberg */
+  var grasa = (1.20*imc)+(0.23*edad)-(10.8*(esH?1:0))-5.4;
+  var gMin = esH ? (edad<40?8:edad<60?11:13) : (edad<40?21:edad<60?23:24);
+  var gMax = esH ? (edad<40?19:edad<60?22:25): (edad<40?32:edad<60?33:35);
+
+  /* clasificacion OMS */
+  var label,vcls,bdg,ccls,ctxt;
+  if(imc<18.5){label='Bajo peso';vcls='rv b';bdg='bdg db';ccls='consejo clow';
+    ctxt='&#9660; Tu IMC indica <strong>bajo peso</strong>. Consulta con tu médico o nutricionista.';}
+  else if(imc<25){label='Normopeso';vcls='rv g';bdg='bdg dg';ccls='consejo cok';
+    ctxt='&#10003; Tu IMC está en el <strong>rango saludable OMS</strong>. Mantén hábitos saludables.';}
+  else if(imc<30){label='Sobrepeso';vcls='rv w';bdg='bdg dw';ccls='consejo cwarn';
+    ctxt='&#9888; Tu IMC indica <strong>sobrepeso</strong>. Revisa tus hábitos e incrementa la actividad física.';}
+  else if(imc<35){label='Obesidad I';vcls='rv r';bdg='bdg dr';ccls='consejo cbad';
+    ctxt='&#9940; Tu IMC indica <strong>obesidad grado I</strong>. Consulta con un médico.';}
+  else if(imc<40){label='Obesidad II';vcls='rv r';bdg='bdg dr';ccls='consejo cbad';
+    ctxt='&#9940; Tu IMC indica <strong>obesidad grado II</strong>. Busca atención médica especializada.';}
+  else{label='Obesidad III';vcls='rv r';bdg='bdg dr';ccls='consejo cbad';
+    ctxt='&#9940; Tu IMC indica <strong>obesidad mórbida</strong>. Busca atención médica urgente.';}
+
+  /* clasificacion ajustada */
+  var labelAj,vclsAj;
+  if(imc<imcAjMin){labelAj='Bajo peso (ajustado)';vclsAj='rv b';}
+  else if(imc<=imcAjMax){labelAj='Saludable (ajustado) &#10003;';vclsAj='rv g';}
+  else if(imc<imcAjMax+5){labelAj='Sobrepeso (ajustado)';vclsAj='rv w';}
+  else{labelAj='Obesidad (ajustado)';vclsAj='rv r';}
+
+  /* clasificacion grasa */
+  var gLabel,gCls;
+  if(grasa<gMin-5){gLabel='Bajo (posible riesgo)';gCls='rv b';}
+  else if(grasa<gMin){gLabel='Atlético/bajo';gCls='rv b';}
+  else if(grasa<=gMax){gLabel='Saludable &#10003;';gCls='rv g';}
+  else if(grasa<=gMax+5){gLabel='Elevado';gCls='rv w';}
+  else{gLabel='Alto (riesgo)';gCls='rv r';}
+
+  /* diferencia Devine */
+  var diff=peso-devine, dTxt, dCls;
+  if(diff>0.5){dTxt='+'+f(diff,1)+' kg (exceso vs. Devine)';dCls='rv w';}
+  else if(diff<-0.5){dTxt=f(diff,1)+' kg (déficit vs. Devine)';dCls='rv w';}
+  else{dTxt='En el peso ideal (Devine)';dCls='rv g';}
+
+  /* ---- ESCRIBIR ---- */
+  setText('oIMC', f(imc,1)+' kg/m²'); setCls('oIMC', vcls);
+  setHTML('oCLAS', label+' <span class="'+bdg+'">'+label.split(' ')[0]+'</span>'); setCls('oCLAS',vcls);
+  setText('oRANGO', f(pMin,1)+' – '+f(pMax,1)+' kg');
+  setText('oIMCajust', imcAjMin+' – '+imcAjMax+(edad>=65?' (65+ años)':' (18-64 años)'));
+  setHTML('oCLASajust',labelAj); setCls('oCLASajust',vclsAj);
+  setText('oDevine', f(devine,1)+' kg');
+  setText('oLorentz',f(lorentz,1)+' kg');
+  setText('oHamwi',  f(hamwi,1)+' kg');
+  setText('oDIFF', dTxt); setCls('oDIFF',dCls);
+  setText('oGRASA', f(grasa,1)+' %'); setCls('oGRASA',gCls);
+  setText('oGRASARANGO', gMin+'% – '+gMax+'%');
+  setHTML('oGRASACLAS', gLabel); setCls('oGRASACLAS',gCls);
+
+  /* ICC */
+  var hayICC=(!isNaN(cintura)&&cintura>40&&!isNaN(cadera)&&cadera>40);
+  var hayCINT=(!isNaN(cintura)&&cintura>40);
+  gi('sectICC').style.display=(hayICC||hayCINT)?'':'none';
+  gi('rowICC').style.display=hayICC?'':'none';
+  gi('rowCINT').style.display=hayCINT?'':'none';
+  if(hayICC){
+    var icc=cintura/cadera;
+    var ir=esH?(icc>1.0?'Alto':icc>0.9?'Moderado':'Bajo'):(icc>0.85?'Alto':icc>0.8?'Moderado':'Bajo');
+    setText('oICC',f(icc,2)+' → Riesgo '+ir); setCls('oICC','rv '+(ir==='Alto'?'r':ir==='Moderado'?'w':'g'));
+  }
+  if(hayCINT){
+    var umb=esH?102:88;
+    setText('oCINT',cintura>=umb?'Alto ('+cintura+' cm >= '+umb+' cm)':'Normal ('+cintura+' cm < '+umb+' cm)');
+    setCls('oCINT','rv '+(cintura>=umb?'r':'g'));
+  }
+
+  /* agujas */
+  var pct=(imc-14)/(42-14)*100;
+  gi('pin').style.left=Math.min(Math.max(pct,1),99)+'%';
+  var gSMin=esH?3:10, gSMax=esH?40:50;
+  var fpct=(grasa-gSMin)/(gSMax-gSMin)*100;
+  gi('fatpin').style.left=Math.min(Math.max(fpct,1),99)+'%';
+
+  /* consejo */
+  setHTML('consejo',ctxt); setCls('consejo',ccls);
+
+  /* comparativa */
+  var imcIdMid=((imcAjMin+imcAjMax)/2).toFixed(1);
+  setText('cPA',f(peso,1)+' kg'); setText('cPI',f(devine,1)+' kg');
+  setText('cIA',f(imc,1));        setText('cIMCid',imcIdMid);
+  setText('cGA',f(grasa,1)+'%'); setText('cGI',gMin+'% – '+gMax+'%');
+  setText('cCA',label);
+
+  /* ---- FIGURAS SVG ---- */
+  var imcIdeal = (imcAjMin+imcAjMax)/2;
+  buildFigura(gi('svgActual'), imc,      genero, 'actual');
+  buildFigura(gi('svgIdeal'),  imcIdeal, genero, 'ideal');
+
+  gi('figImcActual').textContent = 'IMC '+f(imc,1);
+  gi('figImcIdeal').textContent  = 'IMC '+imcIdeal.toFixed(1);
+}
+
+function rst(){
+  gi('xgenero').value='hombre'; gi('xedad').value='57';
+  gi('xaltura').value='173';    gi('xpeso').value='80';
+  gi('xcintura').value='';      gi('xcadera').value='';
+  ['xedad','xaltura','xpeso'].forEach(function(id){gi(id).className='';});
+  ['eedad','ealtura','epeso'].forEach(function(id){gi(id).style.display='none';});
+  run();
+}
+
+function exp(){
+  var fecha=new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'long',year:'numeric'});
+  var t=[
+    '================================================',
+    '     INFORME DE ÍNDICE DE MASA CORPORAL (IMC)',
+    '================================================',
+    'Fecha   : '+fecha,
+    'Género  : '+(gi('xgenero').value==='hombre'?'Hombre':'Mujer'),
+    'Edad    : '+gi('xedad').value+' años',
+    'Altura  : '+gi('xaltura').value+' cm',
+    'Peso    : '+gi('xpeso').value+' kg',
+    '------------------------------------------------',
+    'IMC actual            : '+gi('oIMC').textContent,
+    'Clasificación OMS     : '+gi('oCLAS').textContent,
+    'Rango saludable       : '+gi('oRANGO').textContent,
+    'IMC ajustado          : '+gi('oIMCajust').textContent,
+    'Clasificación ajustada: '+gi('oCLASajust').textContent,
+    '------------------------------------------------',
+    'Peso ideal Devine     : '+gi('oDevine').textContent,
+    'Peso ideal Lorentz    : '+gi('oLorentz').textContent,
+    'Peso ideal Hamwi      : '+gi('oHamwi').textContent,
+    'Diferencia vs. Devine : '+gi('oDIFF').textContent,
+    '------------------------------------------------',
+    '% Grasa corporal      : '+gi('oGRASA').textContent,
+    'Rango grasa saludable : '+gi('oGRASARANGO').textContent,
+    'Valoración grasa      : '+gi('oGRASACLAS').textContent,
+    '------------------------------------------------',
+    'AVISO: Indicadores orientativos. Consulte a su médico.',
+    '================================================'
+  ].join('\n');
+  var a=document.createElement('a');
+  a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(t);
+  a.download='informe_IMC.txt';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+gi('xgenero').addEventListener('change',run);
+gi('xedad').addEventListener('input',run);
+gi('xaltura').addEventListener('input',run);
+gi('xpeso').addEventListener('input',run);
+gi('xcintura').addEventListener('input',run);
+gi('xcadera').addEventListener('input',run);
+
+run();
+</script>
+</body>
+</html>

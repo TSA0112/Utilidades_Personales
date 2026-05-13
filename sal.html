@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora Piscina Clorador Salino</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(135deg, #e0f7fa 0%, #e8f5e9 100%);
+    min-height: 100vh;
+    padding: 20px;
+    color: #2c3e50;
+  }
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  header {
+    background: linear-gradient(135deg, #0077b6, #00b4d8);
+    color: white;
+    border-radius: 14px 14px 0 0;
+    padding: 24px 28px 18px;
+    text-align: center;
+    box-shadow: 0 4px 18px rgba(0,119,182,0.18);
+  }
+  header h1 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.45;
+    letter-spacing: 0.01em;
+  }
+  header p.subtitle {
+    font-size: 0.8rem;
+    margin-top: 7px;
+    opacity: 0.85;
+    font-style: italic;
+  }
+  .card {
+    background: #ffffff;
+    border-radius: 0 0 14px 14px;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.09);
+    padding: 28px 32px 26px;
+  }
+  .section-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #0077b6;
+    margin-bottom: 16px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid #e0f7fa;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 24px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 520px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .card { padding: 20px 14px 18px; }
+    header { padding: 18px 14px 14px; }
+    header h1 { font-size: 0.97rem; }
+  }
+  .field-wrap { display: flex; flex-direction: column; }
+  .field-wrap label {
+    font-size: 0.83rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+    color: #34495e;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .tooltip-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background: #0077b6;
+    color: white;
+    border-radius: 50%;
+    font-size: 0.67rem;
+    font-weight: 700;
+    cursor: help;
+    position: relative;
+    flex-shrink: 0;
+  }
+  .tooltip-icon::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2c3e50;
+    color: white;
+    padding: 7px 10px;
+    border-radius: 7px;
+    font-size: 0.72rem;
+    white-space: pre-wrap;
+    width: 210px;
+    line-height: 1.45;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 10;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+    font-weight: 400;
+  }
+  .tooltip-icon::before {
+    content: '';
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #2c3e50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 10;
+  }
+  .tooltip-icon:hover::after,
+  .tooltip-icon:hover::before { opacity: 1; }
+  .input-unit-wrap {
+    display: flex;
+    align-items: center;
+    border: 1.5px solid #b2dfdb;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+    background: #f9fffe;
+  }
+  .input-unit-wrap:focus-within {
+    border-color: #0077b6;
+    box-shadow: 0 0 0 3px rgba(0,119,182,0.12);
+    background: #fff;
+  }
+  .input-unit-wrap input {
+    border: none;
+    outline: none;
+    padding: 9px 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    width: 100%;
+    background: transparent;
+    color: #2c3e50;
+  }
+  .input-unit-wrap .unit {
+    padding: 9px 10px 9px 6px;
+    font-size: 0.78rem;
+    color: #7f8c8d;
+    white-space: nowrap;
+    font-weight: 600;
+    user-select: none;
+  }
+  input.error-field {
+    color: #e74c3c;
+  }
+  .error-msg {
+    font-size: 0.72rem;
+    color: #e74c3c;
+    margin-top: 4px;
+    min-height: 14px;
+  }
+  /* Buttons */
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 26px;
+  }
+  .btn {
+    flex: 1;
+    min-width: 100px;
+    padding: 11px 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.1s, box-shadow 0.18s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    letter-spacing: 0.02em;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-calc {
+    background: linear-gradient(135deg, #0077b6, #00b4d8);
+    color: white;
+    box-shadow: 0 3px 10px rgba(0,119,182,0.22);
+  }
+  .btn-calc:hover { background: linear-gradient(135deg, #005f91, #0096b4); box-shadow: 0 4px 14px rgba(0,119,182,0.32); }
+  .btn-reset {
+    background: #ecf0f1;
+    color: #555;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.07);
+  }
+  .btn-reset:hover { background: #dde3e5; }
+  .btn-export {
+    background: linear-gradient(135deg, #27ae60, #2ecc71);
+    color: white;
+    box-shadow: 0 3px 10px rgba(39,174,96,0.22);
+  }
+  .btn-export:hover { background: linear-gradient(135deg, #1e8449, #27ae60); }
+  .btn-export:disabled { background: #bdc3c7; box-shadow: none; cursor: not-allowed; }
+  /* Results panel */
+  .results-panel {
+    background: linear-gradient(135deg, #f0f9ff 0%, #e8f8f5 100%);
+    border: 1.5px solid #b2dfdb;
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-bottom: 22px;
+  }
+  .results-panel.has-error {
+    background: #fff5f5;
+    border-color: #f5c6cb;
+  }
+  .result-main {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .result-label {
+    font-size: 0.85rem;
+    color: #555;
+    font-weight: 600;
+  }
+  .result-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0077b6;
+    line-height: 1.1;
+  }
+  .result-unit {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #0077b6;
+  }
+  .result-note {
+    font-size: 0.78rem;
+    color: #7f8c8d;
+    margin-top: 2px;
+    line-height: 1.4;
+  }
+  .result-zero {
+    color: #27ae60;
+  }
+  .formula-box {
+    background: #f8f9fa;
+    border-left: 4px solid #00b4d8;
+    border-radius: 0 8px 8px 0;
+    padding: 14px 16px;
+    margin-top: 18px;
+  }
+  .formula-box .formula-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #0077b6;
+    margin-bottom: 8px;
+    letter-spacing: 0.08em;
+  }
+  .formula-box .formula-line {
+    font-size: 0.82rem;
+    color: #34495e;
+    margin-bottom: 4px;
+    line-height: 1.5;
+  }
+  .formula-box .formula-line code {
+    background: #e8f4fd;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.82rem;
+    color: #0077b6;
+  }
+  .formula-box .formula-result {
+    margin-top: 8px;
+    font-weight: 700;
+    color: #0077b6;
+    font-size: 0.85rem;
+  }
+  .alert-msg {
+    font-size: 0.82rem;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  .alert-info { background: #e8f4fd; color: #0077b6; border-left: 4px solid #0077b6; }
+  .alert-warn { background: #fef9e7; color: #b7770d; border-left: 4px solid #f39c12; }
+  .alert-ok   { background: #e9f7ef; color: #1e8449; border-left: 4px solid #27ae60; }
+  footer {
+    text-align: center;
+    font-size: 0.72rem;
+    color: #95a5a6;
+    margin-top: 18px;
+    padding-bottom: 10px;
+  }
+  .divider {
+    border: none;
+    border-top: 1.5px solid #ecf0f1;
+    margin: 22px 0;
+  }
+  #placeholder-msg {
+    text-align: center;
+    color: #95a5a6;
+    font-size: 0.88rem;
+    padding: 10px 0;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>🏊 Cálculo de Kg de Sal necesarios para una Piscina con clorador Salino</h1>
+    <p class="subtitle">TSA &copy; &nbsp;·&nbsp; IA</p>
+  </header>
+  <div class="card">
+
+    <!-- INPUTS -->
+    <div class="section-title">📋 Datos de la piscina</div>
+    <div class="form-grid">
+
+      <!-- Tamaño -->
+      <div class="field-wrap">
+        <label for="volumen">
+          Volumen de la piscina
+          <span class="tooltip-icon" data-tip="Capacidad total de agua de la piscina en metros cúbicos. 1 m³ = 1.000 litros.">?</span>
+        </label>
+        <div class="input-unit-wrap">
+          <input type="number" id="volumen" min="0.1" step="0.1" value="12" oninput="calcular()" placeholder="ej. 12">
+          <span class="unit">m³</span>
+        </div>
+        <div class="error-msg" id="err-volumen"></div>
+      </div>
+
+      <!-- Temperatura -->
+      <div class="field-wrap">
+        <label for="temperatura">
+          Temperatura del agua
+          <span class="tooltip-icon" data-tip="Temperatura actual del agua. A mayor temperatura, el clorador necesita menos sal. Rango recomendado: 10–40 °C.">?</span>
+        </label>
+        <div class="input-unit-wrap">
+          <input type="number" id="temperatura" min="1" max="50" step="0.5" value="20" oninput="calcular()" placeholder="ej. 20">
+          <span class="unit">°C</span>
+        </div>
+        <div class="error-msg" id="err-temperatura"></div>
+      </div>
+
+      <!-- Nivel actual de sal -->
+      <div class="field-wrap">
+        <label for="salActual">
+          Nivel de sal actual
+          <span class="tooltip-icon" data-tip="Concentración de sal actual en el agua, en g/L (gramos por litro). Mídela con un salinómetro o tiras reactivas.">?</span>
+        </label>
+        <div class="input-unit-wrap">
+          <input type="number" id="salActual" min="0" step="0.1" value="3.8" oninput="calcular()" placeholder="ej. 3.8">
+          <span class="unit">g/L</span>
+        </div>
+        <div class="error-msg" id="err-salActual"></div>
+      </div>
+
+      <!-- Nivel objetivo de sal -->
+      <div class="field-wrap">
+        <label for="salObjetivo">
+          Nivel de sal objetivo
+          <span class="tooltip-icon" data-tip="Concentración de sal deseada en g/L. La mayoría de cloradores salinos funcionan bien entre 4–6 g/L. Consulta el manual de tu equipo.">?</span>
+        </label>
+        <div class="input-unit-wrap">
+          <input type="number" id="salObjetivo" min="0" step="0.1" value="5" oninput="calcular()" placeholder="ej. 5">
+          <span class="unit">g/L</span>
+        </div>
+        <div class="error-msg" id="err-salObjetivo"></div>
+      </div>
+
+    </div>
+
+    <!-- BOTONES -->
+    <div class="btn-row">
+      <button class="btn btn-calc" onclick="calcular()">▶ Calcular</button>
+      <button class="btn btn-reset" onclick="resetear()">↺ Resetear</button>
+      <button class="btn btn-export" id="btn-export" onclick="exportarExcel()" disabled>📥 Exportar a Excel</button>
+    </div>
+
+    <!-- RESULTADOS -->
+    <div class="section-title">📊 Resultado</div>
+    <div class="results-panel" id="results-panel">
+      <div id="placeholder-msg">Introduce los datos y pulsa <strong>Calcular</strong> o modifica cualquier campo.</div>
+      <div id="result-content" style="display:none">
+
+        <div id="alert-box"></div>
+
+        <div class="result-main">
+          <span class="result-label">Sal a añadir:</span>
+          <span class="result-value" id="res-kg">—</span>
+          <span class="result-unit">kg</span>
+        </div>
+        <div class="result-note" id="res-note"></div>
+
+        <hr class="divider">
+
+        <div class="formula-box">
+          <div class="formula-title">🔢 Cómo se calcula</div>
+          <div class="formula-line">La sal necesaria se obtiene multiplicando el déficit de concentración por el volumen de agua:</div>
+          <div class="formula-line" style="margin-top:8px">
+            <code>Sal (kg) = (Sal objetivo − Sal actual) × Volumen (m³)</code>
+          </div>
+          <div class="formula-line" style="margin-top:6px; color:#7f8c8d; font-size:0.78rem">
+            Nota: 1 m³ = 1.000 L · La diferencia de concentración en g/L multiplicada por el volumen en m³ da el resultado directamente en kg, ya que: g/L × m³ = g/L × 1.000 L × (1 kg / 1.000 g) = kg.
+          </div>
+          <div class="formula-result" id="formula-sustitucion"></div>
+          <div class="formula-line" style="margin-top:10px; color:#888; font-size:0.77rem" id="nota-temperatura"></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <footer>
+    TSA &copy; · Calculadora de sal para clorador salino · Herramienta informativa — consulta siempre el manual de tu equipo
+  </footer>
+</div>
+
+<script>
+  // ---- Utilidades ----
+  function getVal(id) {
+    return parseFloat(document.getElementById(id).value);
+  }
+  function clearErrors() {
+    ['volumen','temperatura','salActual','salObjetivo'].forEach(id => {
+      document.getElementById('err-' + id).textContent = '';
+      document.getElementById(id).classList.remove('error-field');
+    });
+  }
+  function setError(id, msg) {
+    document.getElementById('err-' + id).textContent = msg;
+    document.getElementById(id).classList.add('error-field');
+  }
+
+  // ---- Validación ----
+  function validar(v, t, sa, so) {
+    let ok = true;
+    if (!v || v <= 0)        { setError('volumen',      'Introduce un volumen mayor que 0.'); ok = false; }
+    if (!t || t <= 0 || t > 60) { setError('temperatura', 'Temperatura entre 1 y 60 °C.'); ok = false; }
+    if (sa === '' || isNaN(sa) || sa < 0) { setError('salActual',  'Introduce un valor ≥ 0.'); ok = false; }
+    if (!so || so <= 0)      { setError('salObjetivo', 'El nivel objetivo debe ser mayor que 0.'); ok = false; }
+    return ok;
+  }
+
+  // ---- Nota de temperatura ----
+  function notaTemperatura(t) {
+    if (t < 15) return '⚠️ Con agua fría (< 15 °C) la electrólisis es menos eficiente. Puede que necesites ajustar el clorador.';
+    if (t >= 15 && t < 25) return '✅ Temperatura en rango óptimo para la electrólisis salina.';
+    if (t >= 25 && t < 35) return '☀️ Agua caliente: mayor evaporación y consumo de cloro. Vigila el nivel de sal con más frecuencia.';
+    return '🔥 Temperatura muy elevada. Revisa el nivel de sal regularmente y protege el equipo del calor.';
+  }
+
+  // ---- Cálculo principal ----
+  let ultimoResultado = null;
+
+  function calcular() {
+    clearErrors();
+    const v  = getVal('volumen');
+    const t  = getVal('temperatura');
+    const sa = getVal('salActual');
+    const so = getVal('salObjetivo');
+
+    const panel   = document.getElementById('results-panel');
+    const content = document.getElementById('result-content');
+    const placeholder = document.getElementById('placeholder-msg');
+
+    if (!validar(v, t, sa, so)) {
+      content.style.display = 'none';
+      placeholder.style.display = 'block';
+      placeholder.innerHTML = '❌ Corrige los errores marcados en rojo.';
+      panel.classList.add('has-error');
+      document.getElementById('btn-export').disabled = true;
+      ultimoResultado = null;
+      return;
+    }
+
+    panel.classList.remove('has-error');
+    placeholder.style.display = 'none';
+    content.style.display = 'block';
+
+    const diferencia = so - sa;
+    // Sal (kg) = diferencia (g/L) × volumen (m³) × 1000 L/m³ / 1000 g/kg = diferencia × volumen
+    const kgSal = diferencia * v;
+
+    const resKg   = document.getElementById('res-kg');
+    const resNote = document.getElementById('res-note');
+    const alertBox = document.getElementById('alert-box');
+    const formulaSust = document.getElementById('formula-sustitucion');
+    const notaTemp = document.getElementById('nota-temperatura');
+
+    formulaSust.innerHTML = `📌 Sustitución: <code>(${so} - ${sa}) × ${v} = <strong>${diferencia.toFixed(2)} × ${v} = ${kgSal >= 0 ? kgSal.toFixed(1) : '—'} kg</strong></code>`;
+    notaTemp.textContent = notaTemperatura(t);
+
+    if (diferencia <= 0) {
+      resKg.textContent = '0.0';
+      resKg.className = 'result-value result-zero';
+      if (diferencia === 0) {
+        resNote.textContent = 'El nivel de sal ya está en el objetivo. No es necesario añadir sal.';
+        alertBox.innerHTML = '<div class="alert-msg alert-ok">✅ El agua ya tiene el nivel de sal correcto. No se necesita añadir sal.</div>';
+      } else {
+        resNote.textContent = 'El nivel actual supera el objetivo. Considera realizar una dilución parcial (añadir agua limpia).';
+        alertBox.innerHTML = '<div class="alert-msg alert-warn">⚠️ El nivel actual de sal supera el objetivo. No añadas sal — considera diluir el agua.</div>';
+      }
+      ultimoResultado = { v, t, sa, so, kgSal: 0 };
+    } else {
+      resKg.textContent = kgSal.toFixed(1);
+      resKg.className = 'result-value';
+      resNote.textContent = `Para subir de ${sa} g/L a ${so} g/L en ${v} m³ de agua.`;
+      alertBox.innerHTML = `<div class="alert-msg alert-info">ℹ️ Añade <strong>${kgSal.toFixed(1)} kg</strong> de sal específica para piscinas (NaCl ≥ 99% pureza). Distribúyela por todo el vaso con la bomba en marcha.</div>`;
+      ultimoResultado = { v, t, sa, so, kgSal: kgSal.toFixed(1) };
+    }
+
+    document.getElementById('btn-export').disabled = (ultimoResultado === null);
+  }
+
+  // ---- Resetear ----
+  function resetear() {
+    document.getElementById('volumen').value     = '12';
+    document.getElementById('temperatura').value = '20';
+    document.getElementById('salActual').value   = '3.8';
+    document.getElementById('salObjetivo').value = '5';
+    clearErrors();
+    document.getElementById('result-content').style.display = 'none';
+    document.getElementById('placeholder-msg').style.display = 'block';
+    document.getElementById('placeholder-msg').innerHTML = 'Introduce los datos y pulsa <strong>Calcular</strong> o modifica cualquier campo.';
+    document.getElementById('results-panel').classList.remove('has-error');
+    document.getElementById('btn-export').disabled = true;
+    ultimoResultado = null;
+    calcular();
+  }
+
+  // ---- Exportar a Excel (CSV) ----
+  function exportarExcel() {
+    if (!ultimoResultado) return;
+    const { v, t, sa, so, kgSal } = ultimoResultado;
+    const diferencia = (so - sa).toFixed(2);
+    const fecha = new Date().toLocaleDateString('es-ES');
+
+    const filas = [
+      ['Campo', 'Valor', 'Unidad'],
+      ['Fecha de cálculo', fecha, ''],
+      ['Volumen de la piscina', v, 'm³'],
+      ['Temperatura del agua', t, '°C'],
+      ['Nivel de sal actual', sa, 'g/L'],
+      ['Nivel de sal objetivo', so, 'g/L'],
+      ['Diferencia de sal', diferencia, 'g/L'],
+      ['', '', ''],
+      ['RESULTADO: Sal a añadir', kgSal, 'kg'],
+      ['', '', ''],
+      ['Fórmula aplicada', '(Sal objetivo - Sal actual) × Volumen', ''],
+      ['Sustitución', `(${so} - ${sa}) × ${v}`, `= ${kgSal} kg`],
+      ['Herramienta', 'TSA © Calculadora Piscina Clorador Salino', ''],
+    ];
+
+    const csvContent = filas.map(fila =>
+      fila.map(celda => `"${String(celda).replace(/"/g, '""')}"`).join(';')
+    ).join('\r\n');
+
+    // BOM UTF-8 para compatibilidad con Excel
+    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'calculo_sal_piscina.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // ---- Cálculo inicial al cargar ----
+  window.addEventListener('DOMContentLoaded', calcular);
+</script>
+</body>
+</html>

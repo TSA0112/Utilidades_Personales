@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Hipoteca</title>
+<style>
+:root { --primary: #2a7bd3; --accent: #27ae60; --danger: #e74c3c; --warning: #f39c12; --bg: #f5f7fa; --card: #ffffff; --text: #2c3e50; --muted: #6b7280; --border: #e5e7eb; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; background: linear-gradient(135deg, #f5f7fa 0%, #e9eef5 100%); color: var(--text); padding: 20px; min-height: 100vh; }
+.container { max-width: 1400px; margin: 0 auto; background: white; border-radius: 16px; padding: 30px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); }
+h1 { text-align: center; font-size: 2rem; color: var(--primary); margin-bottom: 6px; }
+.subtitle { text-align: center; color: var(--muted); margin-bottom: 28px; font-size: 1rem; }
+.inputs-section { background: #f8fbfe; border: 1px solid #dce8f8; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+.inputs-section h2 { font-size: 1.1rem; color: var(--text); margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid var(--primary); padding-bottom: 8px; }
+.inputs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+label { font-weight: 600; font-size: 0.88rem; color: var(--text); display: flex; align-items: center; gap: 5px; }
+.tip { display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; background: var(--primary); color: white; border-radius: 50%; font-size: 11px; font-weight: 700; cursor: help; flex-shrink: 0; }
+input[type="number"], input[type="month"] { padding: 10px 12px; border: 2px solid var(--border); border-radius: 8px; font-size: 14px; color: var(--text); transition: border-color 0.2s, box-shadow 0.2s; background: white; }
+input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(42,123,211,0.15); }
+input.error { border-color: var(--danger); }
+.amort-section { background: #fff8f0; border: 1px solid #fde8c8; border-radius: 12px; padding: 20px; margin-bottom: 24px; }
+.amort-section h2 { font-size: 1.1rem; color: #d35400; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; border-bottom: 2px solid #f39c12; padding-bottom: 8px; }
+.amort-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+.button-group { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 20px 0; }
+.btn { padding: 12px 24px; border-radius: 9px; border: none; font-weight: 700; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+.btn-calc { background: var(--primary); color: white; }
+.btn-reset { background: #6b7280; color: white; }
+.btn-excel { background: var(--accent); color: white; }
+.btn-html { background: #8e44ad; color: white; }
+.resumen-box { background: white; border: 1px solid var(--border); border-radius: 12px; padding: 18px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+.resumen-box h3 { font-size: 1rem; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.resumen-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+.resumen-item { background: #f8fbfe; border: 1px solid #dce8f8; border-radius: 8px; padding: 10px 14px; }
+.resumen-item .r-label { font-size: 0.78rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+.resumen-item .r-value { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-top: 4px; }
+.formula-box { background: #fffbea; border-left: 4px solid #f4b400; border-radius: 6px; padding: 10px 14px; font-size: 0.83rem; color: #555; margin-top: 14px; }
+.escenarios-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+@media (max-width: 900px) { .escenarios-grid { grid-template-columns: 1fr; } .tables-grid { flex-direction: column; } }
+.escenario-card { border-radius: 12px; padding: 18px; border: 2px solid; }
+.esc1 { border-color: #3498db; background: #f0f7ff; }
+.esc2 { border-color: #9b59b6; background: #f9f0ff; }
+.esc-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.esc1 .esc-title { color: #2980b9; }
+.esc2 .esc-title { color: #8e44ad; }
+.esc-resumen { background: white; border-radius: 8px; padding: 12px; border: 1px solid rgba(0,0,0,0.08); }
+.esc-resumen h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 10px; color: #374151; }
+.esc-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f3f4f6; font-size: 0.9rem; }
+.esc-row:last-child { border-bottom: none; }
+.esc-row .el { color: #555; font-weight: 500; }
+.esc-row .ev { font-weight: 700; color: var(--text); }
+.ev-green { color: #27ae60 !important; }
+.ev-red { color: #e74c3c !important; }
+.ahorro-banner { margin-top: 12px; background: linear-gradient(135deg, #d4edda, #c3e6cb); border-radius: 8px; padding: 10px 14px; text-align: center; font-weight: 700; color: #155724; font-size: 0.95rem; }
+.tables-grid { display: flex; gap: 20px; margin-top: 10px; }
+.table-card { flex: 1; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; max-height: 540px; display: flex; flex-direction: column; }
+.table-header { background: #f3f4f6; padding: 12px 16px; font-weight: 700; font-size: 0.92rem; text-align: center; color: var(--text); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.table-scroll { overflow-y: auto; flex: 1; }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+thead th { background: #374151; color: white; padding: 9px 8px; text-align: right; font-size: 0.78rem; position: sticky; top: 0; z-index: 2; }
+thead th:first-child, thead th:nth-child(2) { text-align: left; }
+tbody td { padding: 8px; border-bottom: 1px solid #f0f0f0; text-align: right; color: #374151; }
+tbody td:first-child, tbody td:nth-child(2) { text-align: left; }
+tbody tr:hover { background: #f9fafb; }
+.row-amort { background: #fff3cd !important; font-weight: 700; }
+.row-amort td { color: #856404 !important; }
+.nueva-cuota-cell { background: #d4edda !important; color: #155724 !important; font-weight: 700; border-radius: 4px; }
+.msg-info { text-align: center; color: var(--muted); padding: 30px; font-size: 0.95rem; }
+@media (max-width: 600px) { body { padding: 10px; } .container { padding: 16px; } .btn { padding: 10px 14px; font-size: 13px; } table { font-size: 0.75rem; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🏠 Calculadora de Hipoteca</h1>
+  <p class="subtitle">Calcula tu cuota hipotecaria y simula amortizaciones parciales</p>
+
+  <div class="inputs-section">
+    <h2>📋 Datos de la Hipoteca</h2>
+    <div class="inputs-grid">
+      <div class="field">
+        <label>Capital Inicial (€) <span class="tip" title="Importe total del préstamo hipotecario">?</span></label>
+        <input type="number" id="capital" value="185000" min="1000" step="1000">
+      </div>
+      <div class="field">
+        <label>Plazo (años) <span class="tip" title="Duración del préstamo en años. Acepta decimales, el número de cuotas se redondeará al entero más cercano">?</span></label>
+        <input type="number" id="plazo" value="18" min="1" max="50" step="0.5">
+      </div>
+      <div class="field">
+        <label>Tipo Interés Anual (%) <span class="tip" title="Tipo de interés anual nominal (TIN)">?</span></label>
+        <input type="number" id="interes" value="2.00" min="0" max="20" step="0.01">
+      </div>
+      <div class="field">
+        <label>Fecha de Inicio <span class="tip" title="Mes y año de la primera cuota">?</span></label>
+        <input type="month" id="fechaInicio" value="2026-02">
+      </div>
+    </div>
+  </div>
+
+  <div class="amort-section">
+    <h2>💰 Amortización Parcial del Capital</h2>
+    <div class="amort-grid">
+      <div class="field">
+        <label>Cantidad a Amortizar (€) <span class="tip" title="Importe del pago extraordinario de capital">?</span></label>
+        <input type="number" id="amortizacion" value="10000" min="0" step="1000">
+      </div>
+      <div class="field">
+        <label>Año de Amortización <span class="tip" title="Año del préstamo en que se realiza la amortización (1 = primer año)">?</span></label>
+        <input type="number" id="anioAmort" value="1" min="1" step="1">
+      </div>
+      <div class="field">
+        <label>Mes de Amortización <span class="tip" title="Mes del año seleccionado en que se realiza la amortización (1-12)">?</span></label>
+        <input type="number" id="mesAmort" value="9" min="1" max="12" step="1">
+      </div>
+    </div>
+  </div>
+
+  <div class="button-group">
+    <button class="btn btn-calc" onclick="calcular()">🧮 Calcular</button>
+    <button class="btn btn-reset" onclick="resetear()">🔄 Resetear</button>
+    <button class="btn btn-excel" onclick="exportarExcel()">📊 Exportar Excel</button>
+    <button class="btn btn-html" onclick="exportarHTML()">💾 Exportar HTML</button>
+  </div>
+
+  <div class="resumen-box">
+    <h3>📊 Resumen de la Hipoteca (sin amortización)</h3>
+    <div class="resumen-grid">
+      <div class="resumen-item"><div class="r-label">Cuota Mensual</div><div class="r-value" id="r-cuota">—</div></div>
+      <div class="resumen-item"><div class="r-label">Nº Cuotas</div><div class="r-value" id="r-ncuotas">—</div></div>
+      <div class="resumen-item"><div class="r-label">Total a Pagar</div><div class="r-value" id="r-total">—</div></div>
+      <div class="resumen-item"><div class="r-label">Total Intereses</div><div class="r-value" id="r-intereses">—</div></div>
+      <div class="resumen-item"><div class="r-label">Fecha Final</div><div class="r-value" id="r-fecha">—</div></div>
+    </div>
+    <div class="formula-box">
+      <strong>Fórmula utilizada:</strong> Cuota = C × [(1+i)^n × i] / [(1+i)^n - 1]<br>
+      Donde C = Capital, i = Interés mensual, n = Número de cuotas
+    </div>
+  </div>
+
+  <div class="escenarios-grid">
+    <div class="escenario-card esc1">
+      <div class="esc-title">🔥 Escenario 1: Reducción de Cuota</div>
+      <div class="esc-resumen">
+        <h4>Resumen del Escenario</h4>
+        <div class="esc-row"><span class="el">Nueva Cuota Mensual:</span><span class="ev ev-green" id="e1-nuevaCuota">—</span></div>
+        <div class="esc-row"><span class="el">Reducción de Cuota:</span><span class="ev ev-green" id="e1-reduccion">—</span></div>
+        <div class="esc-row"><span class="el">Total a Pagar:</span><span class="ev" id="e1-total">—</span></div>
+        <div class="esc-row"><span class="el">Total Intereses:</span><span class="ev" id="e1-intereses">—</span></div>
+        <div class="esc-row"><span class="el">Nº Cuotas:</span><span class="ev" id="e1-ncuotas">—</span></div>
+        <div class="esc-row"><span class="el">Fecha Final:</span><span class="ev" id="e1-fecha">—</span></div>
+        <div class="ahorro-banner" id="e1-ahorro">💰 Ahorro: —</div>
+      </div>
+    </div>
+    <div class="escenario-card esc2">
+      <div class="esc-title">⏱ Escenario 2: Reducción de Plazo</div>
+      <div class="esc-resumen">
+        <h4>Resumen del Escenario</h4>
+        <div class="esc-row"><span class="el">Cuota Mensual:</span><span class="ev" id="e2-cuota">—</span></div>
+        <div class="esc-row"><span class="el">Total a Pagar:</span><span class="ev" id="e2-total">—</span></div>
+        <div class="esc-row"><span class="el">Total Intereses:</span><span class="ev" id="e2-intereses">—</span></div>
+        <div class="esc-row"><span class="el">Nuevo Plazo:</span><span class="ev" id="e2-ncuotas">—</span></div>
+        <div class="esc-row"><span class="el">Reducción de Plazo:</span><span class="ev ev-green" id="e2-reduccion">—</span></div>
+        <div class="esc-row"><span class="el">Fecha Final:</span><span class="ev" id="e2-fecha">—</span></div>
+        <div class="ahorro-banner" id="e2-ahorro">💰 Ahorro: —</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tables-grid">
+    <div class="table-card">
+      <div class="table-header">📊 Tabla de Amortización - Reducción de Cuota</div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Nº</th><th>Fecha</th><th>Cuota (€)</th><th>Capital (€)</th><th>Interés (€)</th><th>Pendiente (€)</th></tr></thead>
+          <tbody id="tbody1"><tr><td colspan="6" class="msg-info">Pulsa Calcular para ver la tabla</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="table-card">
+      <div class="table-header">📊 Tabla de Amortización - Reducción de Plazo</div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Nº</th><th>Fecha</th><th>Cuota (€)</th><th>Capital (€)</th><th>Interés (€)</th><th>Pendiente (€)</th></tr></thead>
+          <tbody id="tbody2"><tr><td colspan="6" class="msg-info">Pulsa Calcular para ver la tabla</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── UTILIDADES ───────────────────────────────────────────────────────────────
+const fmt = n => new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',minimumFractionDigits:2}).format(n);
+const fmtFecha = d => d.toLocaleDateString('es-ES',{year:'numeric',month:'long'});
+function addMes(fecha, n) { return new Date(fecha.getFullYear(), fecha.getMonth() + n, 1); }
+function cuotaMensual(C, i, n) {
+  if (i === 0) return C / n;
+  return C * (i * Math.pow(1+i, n)) / (Math.pow(1+i, n) - 1);
+}
+
+// ─── LEER INPUTS ──────────────────────────────────────────────────────────────
+// CORRECCIÓN: parseFloat + Math.round para que el plazo acepte decimales
+// pero siempre genere un número entero de cuotas
+function leerInputs() {
+  const capital = parseFloat(document.getElementById('capital').value) || 0;
+  const plazo   = parseFloat(document.getElementById('plazo').value) || 0;
+  const interes = parseFloat(document.getElementById('interes').value) || 0;
+  const fechaStr = document.getElementById('fechaInicio').value;
+  const amort     = parseFloat(document.getElementById('amortizacion').value) || 0;
+  const anioAmort = parseInt(document.getElementById('anioAmort').value) || 1;
+  const mesAmort  = parseInt(document.getElementById('mesAmort').value) || 1;
+  let fechaInicio = new Date(2026,1,1);
+  if (fechaStr) {
+    const [y,m] = fechaStr.split('-').map(Number);
+    fechaInicio = new Date(y, m-1, 1);
+  }
+  return { capital, plazo, interes, fechaInicio, amort, anioAmort, mesAmort };
+}
+
+// ─── CALCULAR TABLA ESCENARIO 1: Reducción de Cuota ──────────────────────────
+function calcTablaReduccionCuota(capital, iMes, nTotal, cuotaOrig, amort, cuotaAmort) {
+  const filas = [];
+  let pendiente = capital;
+  let cuotaActual = cuotaOrig;
+  let totalPagado = 0;
+  let totalInteresesPagados = 0;
+  let amortizacionAplicada = false;
+
+  for (let k = 1; k <= nTotal; k++) {
+    if (!amortizacionAplicada && amort > 0 && k === cuotaAmort) {
+      filas.push({ num: k, esAmort: true, cuota: amort, capitalAmort: amort, interes: 0,
+                   pendiente: Math.max(0, pendiente - amort), nuevaCuota: false });
+      pendiente = Math.max(0, pendiente - amort);
+      totalPagado += amort;
+      amortizacionAplicada = true;
+      const cuotasRestantes = nTotal - k;
+      if (cuotasRestantes > 0 && pendiente > 0) {
+        cuotaActual = cuotaMensual(pendiente, iMes, cuotasRestantes);
+      }
+      const intMes = pendiente * iMes;
+      const capMes = Math.min(cuotaActual - intMes, pendiente);
+      pendiente = Math.max(0, pendiente - capMes);
+      totalPagado += cuotaActual;
+      totalInteresesPagados += intMes;
+      filas.push({ num: k, esAmort: false, esNuevaCuota: true, cuota: cuotaActual,
+                   capitalAmort: capMes, interes: intMes, pendiente: pendiente, nuevaCuota: true });
+      continue;
+    }
+    if (pendiente <= 0) break;
+    const intMes = pendiente * iMes;
+    let capMes = cuotaActual - intMes;
+    if (capMes >= pendiente) { capMes = pendiente; cuotaActual = capMes + intMes; }
+    pendiente = Math.max(0, pendiente - capMes);
+    totalPagado += cuotaActual;
+    totalInteresesPagados += intMes;
+    filas.push({ num: k, esAmort: false, esNuevaCuota: false, cuota: cuotaActual,
+                 capitalAmort: capMes, interes: intMes, pendiente: pendiente, nuevaCuota: false });
+  }
+  return { filas, totalPagado, totalInteresesPagados, cuotaNueva: cuotaActual };
+}
+
+// ─── CALCULAR TABLA ESCENARIO 2: Reducción de Plazo ──────────────────────────
+function calcTablaReduccionPlazo(capital, iMes, cuotaOrig, amort, cuotaAmort) {
+  const filas = [];
+  let pendiente = capital;
+  let totalPagado = 0;
+  let totalInteresesPagados = 0;
+  let amortizacionAplicada = false;
+  let k = 0;
+
+  while (pendiente > 0.005) {
+    k++;
+    if (!amortizacionAplicada && amort > 0 && k === cuotaAmort) {
+      filas.push({ num: k, esAmort: true, cuota: amort, capitalAmort: amort, interes: 0,
+                   pendiente: Math.max(0, pendiente - amort) });
+      pendiente = Math.max(0, pendiente - amort);
+      totalPagado += amort;
+      amortizacionAplicada = true;
+      if (pendiente <= 0.005) break;
+      const intMes = pendiente * iMes;
+      let capMes = cuotaOrig - intMes;
+      if (capMes >= pendiente) { capMes = pendiente; }
+      pendiente = Math.max(0, pendiente - capMes);
+      const cuotaReal = capMes + intMes;
+      totalPagado += cuotaReal;
+      totalInteresesPagados += intMes;
+      filas.push({ num: k, esAmort: false, cuota: cuotaReal, capitalAmort: capMes,
+                   interes: intMes, pendiente: pendiente });
+      continue;
+    }
+    const intMes = pendiente * iMes;
+    let capMes = cuotaOrig - intMes;
+    let cuotaReal = cuotaOrig;
+    if (capMes >= pendiente) { capMes = pendiente; cuotaReal = capMes + intMes; }
+    pendiente = Math.max(0, pendiente - capMes);
+    totalPagado += cuotaReal;
+    totalInteresesPagados += intMes;
+    filas.push({ num: k, esAmort: false, cuota: cuotaReal, capitalAmort: capMes,
+                 interes: intMes, pendiente: pendiente });
+    if (k > 2000) break;
+  }
+  return { filas, totalPagado, totalInteresesPagados, nCuotas: k };
+}
+
+// ─── RENDERIZAR TABLA ─────────────────────────────────────────────────────────
+function renderTabla(tbodyId, filas, fechaInicio) {
+  const tbody = document.getElementById(tbodyId);
+  tbody.innerHTML = '';
+  let contadorCuota = 0;
+  filas.forEach(f => {
+    const tr = document.createElement('tr');
+    if (f.esAmort) {
+      tr.className = 'row-amort';
+      const fecha = addMes(fechaInicio, contadorCuota);
+      tr.innerHTML = `<td><strong>${f.num}</strong></td><td>${fmtFecha(fecha)}</td>
+        <td>${fmt(f.cuota)}</td><td>${fmt(f.capitalAmort)}</td>
+        <td>0,00 €</td><td>${fmt(f.pendiente)}</td>`;
+    } else {
+      const fecha = addMes(fechaInicio, contadorCuota);
+      contadorCuota++;
+      const td3class = f.esNuevaCuota ? ' class="nueva-cuota-cell"' : '';
+      tr.innerHTML = `<td>${f.num}</td><td>${fmtFecha(fecha)}</td>
+        <td${td3class}>${fmt(f.cuota)}</td><td>${fmt(f.capitalAmort)}</td>
+        <td>${fmt(f.interes)}</td><td>${fmt(Math.max(0,f.pendiente))}</td>`;
+    }
+    tbody.appendChild(tr);
+  });
+}
+
+// ─── CALCULAR PRINCIPAL ───────────────────────────────────────────────────────
+function calcular() {
+  const { capital, plazo, interes, fechaInicio, amort, anioAmort, mesAmort } = leerInputs();
+  if (!capital || !plazo || capital <= 0 || plazo <= 0) return;
+
+  const iMes   = interes / 100 / 12;
+  // Math.round aquí para que el redondeo al entero ocurra DESPUÉS de multiplicar
+  const nTotal = Math.round(plazo * 12);
+  const cuota  = cuotaMensual(capital, iMes, nTotal);
+
+  // ── Resumen hipoteca ──
+  const totalOrig     = cuota * nTotal;
+  const interesesOrig = totalOrig - capital;
+  const fechaFinalOrig = addMes(fechaInicio, nTotal - 1);
+  document.getElementById('r-cuota').textContent    = fmt(cuota);
+  document.getElementById('r-ncuotas').textContent  = nTotal + ' cuotas';
+  document.getElementById('r-total').textContent    = fmt(totalOrig);
+  document.getElementById('r-intereses').textContent = fmt(interesesOrig);
+  document.getElementById('r-fecha').textContent    = fmtFecha(fechaFinalOrig);
+
+  const cuotaAmort = (anioAmort - 1) * 12 + mesAmort;
+
+  // ── ESCENARIO 1: Reducción de Cuota ──
+  let res1 = amort <= 0
+    ? calcTablaReduccionCuota(capital, iMes, nTotal, cuota, 0, cuotaAmort)
+    : calcTablaReduccionCuota(capital, iMes, nTotal, cuota, amort, cuotaAmort);
+
+  const nuevaCuotaEsc1 = amort > 0 ? res1.cuotaNueva : cuota;
+  const reduccionCuota = amort > 0 ? Math.max(0, cuota - nuevaCuotaEsc1) : 0;
+  const totalEsc1      = res1.totalPagado;
+  const interesesEsc1  = res1.totalInteresesPagados;
+  const ahorroEsc1     = totalOrig - totalEsc1;
+  const fechaFinalEsc1 = addMes(fechaInicio, nTotal - 1);
+
+  // Nº de cuotas reales en escenario 1: contar solo filas que no son pago extraordinario
+  const nCuotasEsc1 = res1.filas.filter(f => !f.esAmort).length;
+
+  document.getElementById('e1-nuevaCuota').textContent = fmt(nuevaCuotaEsc1);
+  document.getElementById('e1-reduccion').textContent  = fmt(reduccionCuota);
+  document.getElementById('e1-total').textContent      = fmt(totalEsc1);
+  document.getElementById('e1-intereses').textContent  = fmt(interesesEsc1);
+  document.getElementById('e1-ncuotas').textContent    = nCuotasEsc1 + ' cuotas';
+  document.getElementById('e1-fecha').textContent      = fmtFecha(fechaFinalEsc1);
+  document.getElementById('e1-ahorro').textContent     = '💰 Ahorro: ' + fmt(ahorroEsc1);
+
+  // ── ESCENARIO 2: Reducción de Plazo ──
+  let res2 = amort <= 0
+    ? calcTablaReduccionPlazo(capital, iMes, cuota, 0, cuotaAmort)
+    : calcTablaReduccionPlazo(capital, iMes, cuota, amort, cuotaAmort);
+
+  const nCuotasEsc2   = res2.nCuotas;
+  const totalEsc2     = res2.totalPagado;
+  const interesesEsc2 = res2.totalInteresesPagados;
+  const reduccionPlazo = nTotal - nCuotasEsc2;
+  const ahorroEsc2    = totalOrig - totalEsc2;
+  const fechaFinalEsc2 = addMes(fechaInicio, nCuotasEsc2 - 1);
+
+  // Nº de cuotas reales en escenario 2: contar solo filas que no son pago extraordinario
+  const nCuotasRealesEsc2 = res2.filas.filter(f => !f.esAmort).length;
+
+  document.getElementById('e2-cuota').textContent     = fmt(cuota);
+  document.getElementById('e2-total').textContent     = fmt(totalEsc2);
+  document.getElementById('e2-intereses').textContent = fmt(interesesEsc2);
+  document.getElementById('e2-ncuotas').textContent   = nCuotasRealesEsc2 + ' cuotas';
+  document.getElementById('e2-reduccion').textContent = reduccionPlazo > 0 ? reduccionPlazo + ' cuotas menos' : 'Sin cambio';
+  document.getElementById('e2-fecha').textContent     = fmtFecha(fechaFinalEsc2);
+  document.getElementById('e2-ahorro').textContent    = '💰 Ahorro: ' + fmt(ahorroEsc2);
+
+  // ── Renderizar tablas ──
+  renderTabla('tbody1', res1.filas, fechaInicio);
+  renderTabla('tbody2', res2.filas, fechaInicio);
+}
+
+// ─── RESETEAR ─────────────────────────────────────────────────────────────────
+function resetear() {
+  document.getElementById('capital').value      = '185000';
+  document.getElementById('plazo').value        = '18';
+  document.getElementById('interes').value      = '2.00';
+  document.getElementById('fechaInicio').value  = '2026-02';
+  document.getElementById('amortizacion').value = '10000';
+  document.getElementById('anioAmort').value    = '1';
+  document.getElementById('mesAmort').value     = '9';
+  calcular();
+}
+
+// ─── EXPORTAR EXCEL (CSV) ─────────────────────────────────────────────────────
+function exportarExcel() {
+  const { capital, plazo, interes, amort, anioAmort, mesAmort } = leerInputs();
+  const iMes   = interes / 100 / 12;
+  const nTotal = Math.round(plazo * 12);
+  const cuota  = cuotaMensual(capital, iMes, nTotal);
+  const cuotaAmort = (anioAmort - 1) * 12 + mesAmort;
+
+  let csv = 'sep;\n';
+  csv += 'CALCULADORA DE HIPOTECA\n\n';
+  csv += `Capital;${capital}\nPlazo (años);${plazo}\nInterés Anual (%);${interes}\nAmortización;${amort}\n\n`;
+
+  csv += 'ESCENARIO 1 - REDUCCIÓN DE CUOTA\n';
+  csv += 'Nº;Fecha;Cuota (€);Capital (€);Interés (€);Pendiente (€)\n';
+  document.getElementById('tbody1').querySelectorAll('tr').forEach(tr => {
+    const tds = tr.querySelectorAll('td');
+    csv += Array.from(tds).map(td => td.textContent.replace(/\./g,'').replace(',','.')).join(';') + '\n';
+  });
+
+  csv += '\nESCENARIO 2 - REDUCCIÓN DE PLAZO\n';
+  csv += 'Nº;Fecha;Cuota (€);Capital (€);Interés (€);Pendiente (€)\n';
+  document.getElementById('tbody2').querySelectorAll('tr').forEach(tr => {
+    const tds = tr.querySelectorAll('td');
+    csv += Array.from(tds).map(td => td.textContent.replace(/\./g,'').replace(',','.')).join(';') + '\n';
+  });
+
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'Hipoteca_' + new Date().toISOString().slice(0,10) + '.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+// ─── EXPORTAR HTML ────────────────────────────────────────────────────────────
+function exportarHTML() {
+  const html = '<!DOCTYPE html>\n<html lang="es">\n' + document.documentElement.innerHTML + '\n</html>';
+  const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+  const a = document.createElement('a');
+  const fecha = new Date();
+  const nombre = `Hipoteca_${fecha.getFullYear()}${String(fecha.getMonth()+1).padStart(2,'0')}${String(fecha.getDate()).padStart(2,'0')}_${String(fecha.getHours()).padStart(2,'0')}${String(fecha.getMinutes()).padStart(2,'0')}.html`;
+  a.href = URL.createObjectURL(blob);
+  a.download = nombre;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+calcular();
+</script>
+</body>
+</html>
