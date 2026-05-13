@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1e3a8a" />
+  <title>MisCalculadoras</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #2563eb;
+      --accent: #3b82f6;
+      --bg: #f0f4ff;
+      --white: #ffffff;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --radius: 16px;
+      --shadow: 0 4px 24px rgba(30,58,138,0.10);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      min-height: 100dvh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #3b82f6 100%);
+      color: white;
+      padding: 28px 20px 22px;
+      text-align: center;
+    }
+    header h1 {
+      font-size: clamp(1.3rem, 5vw, 1.9rem);
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      margin-bottom: 6px;
+    }
+    header p {
+      font-size: 0.88rem;
+      opacity: 0.82;
+    }
+
+    /* ── MAIN MENU ── */
+    #menu {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 24px 16px 48px;
+    }
+    .menu-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      text-align: center;
+    }
+    .cards {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 18px 20px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.18s, transform 0.14s, box-shadow 0.18s;
+      text-decoration: none;
+      color: inherit;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .card:hover, .card:focus {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(37,99,235,0.16);
+      outline: none;
+    }
+    .card:active {
+      transform: translateY(0);
+    }
+    .card-icon {
+      font-size: 2.4rem;
+      flex-shrink: 0;
+      width: 58px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+    }
+    .card-body { flex: 1; min-width: 0; }
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    .card-desc {
+      font-size: 0.79rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .card-arrow {
+      font-size: 1.2rem;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    /* Colores por app */
+    .c1 { background: #eff6ff; }
+    .c2 { background: #fff7ed; }
+    .c3 { background: #f0fdf4; }
+    .c4 { background: #ecfeff; }
+    .c5 { background: #faf5ff; }
+
+    /* ── APP VIEWER ── */
+    #viewer {
+      display: none;
+      position: fixed;
+      inset: 0;
+      flex-direction: column;
+      background: white;
+      z-index: 100;
+    }
+    #viewer.active { display: flex; }
+
+    #viewer-topbar {
+      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      flex-shrink: 0;
+      min-height: 52px;
+    }
+    #btn-back {
+      background: rgba(255,255,255,0.18);
+      border: none;
+      color: white;
+      font-size: 1.1rem;
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: background 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    #btn-back:hover { background: rgba(255,255,255,0.28); }
+    #viewer-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    #app-frame {
+      flex: 1;
+      border: none;
+      width: 100%;
+      background: white;
+    }
+
+    /* ── INSTALL BANNER ── */
+    #install-banner {
+      display: none;
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e3a8a;
+      color: white;
+      border-radius: 14px;
+      padding: 14px 20px;
+      box-shadow: 0 8px 32px rgba(30,58,138,0.35);
+      z-index: 200;
+      max-width: calc(100vw - 32px);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 0.88rem;
+    }
+    #install-banner span { flex: 1; line-height: 1.4; }
+    #btn-install {
+      background: white;
+      color: #1e3a8a;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    #btn-close-banner {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.7);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+    }
+    @media(max-width:400px) {
+      #install-banner { flex-wrap: wrap; }
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+<!-- MENU PRINCIPAL -->
+<header>
+  <h1>🧮 Mis Calculadoras</h1>
+  <p>Selecciona una herramienta para comenzar</p>
+</header>
+
+<main id="menu">
+  <p class="menu-title">📱 Herramientas disponibles</p>
+  <div class="cards">
+
+    <button class="card" onclick="openApp('apps/hipoteca.html','🏠 Calculadora Hipotecaria')">
+      <div class="card-icon c1">🏠</div>
+      <div class="card-body">
+        <div class="card-title">Calculadora Hipotecaria</div>
+        <div class="card-desc">Calcula hipoteca necesaria, gastos de compra, cuota mensual y dinero requerido</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </button>
+
+    <button class="card" onclick="openApp('apps/amortizacion.html','📊 Hipoteca + Amortización')">
+      <div class="card-icon c2">📊</div>
+      <div class="card-body">
+        <div class="card-title">Hipoteca + Amortización</div>
+        <div class="card-desc">Simula aportaciones parciales: compara reducir cuota vs. reducir plazo</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </button>
+
+    <button class="card" onclick="openApp('apps/imc.html','⚖️ Calculadora de IMC')">
+      <div class="card-icon c3">⚖️</div>
+      <div class="card-body">
+        <div class="card-title">Calculadora de IMC</div>
+        <div class="card-desc">IMC actual y saludable ajustado por edad, sexo, altura y peso</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </button>
+
+    <button class="card" onclick="openApp('apps/sal.html','🏊 Calculadora Sal Piscina')">
+      <div class="card-icon c4">🏊</div>
+      <div class="card-body">
+        <div class="card-title">Calculadora Sal Piscina</div>
+        <div class="card-desc">Calcula los kg de sal necesarios para tu piscina con clorador salino</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </button>
+
+    <button class="card" onclick="openApp('apps/ahorro.html','🎯 Meta de Ahorro')">
+      <div class="card-icon c5">🎯</div>
+      <div class="card-body">
+        <div class="card-title">Meta de Ahorro</div>
+        <div class="card-desc">Planifica tu ahorro mensual para alcanzar una meta económica</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </button>
+
+  </div>
+</main>
+
+<footer>TSA © 2025 · Mis Calculadoras App</footer>
+
+<!-- APP VIEWER (overlay) -->
+<div id="viewer">
+  <div id="viewer-topbar">
+    <button id="btn-back" onclick="closeApp()">&#8592; Menú</button>
+    <span id="viewer-title">Calculadora</span>
+  </div>
+  <iframe id="app-frame" src="" title="Calculadora"></iframe>
+</div>
+
+<!-- INSTALL BANNER (PWA) -->
+<div id="install-banner" style="display:none;">
+  <span>📲 <strong>Instala la app</strong> en tu dispositivo para acceso rápido</span>
+  <button id="btn-install">Instalar</button>
+  <button id="btn-close-banner" title="Cerrar">✕</button>
+</div>
+
+<script>
+  // ── Navegacion apps ──
+  function openApp(src, title) {
+    document.getElementById('app-frame').src = src;
+    document.getElementById('viewer-title').textContent = title;
+    document.getElementById('viewer').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    history.pushState({ app: src }, title);
+  }
+  function closeApp() {
+    document.getElementById('viewer').classList.remove('active');
+    document.getElementById('app-frame').src = '';
+    document.body.style.overflow = '';
+  }
+  window.addEventListener('popstate', function(e) {
+    if (document.getElementById('viewer').classList.contains('active')) {
+      closeApp();
+    }
+  });
+
+  // ── PWA Install Banner ──
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    document.getElementById('install-banner').style.display = 'flex';
+  });
+  document.getElementById('btn-install').addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    document.getElementById('install-banner').style.display = 'none';
+  });
+  document.getElementById('btn-close-banner').addEventListener('click', () => {
+    document.getElementById('install-banner').style.display = 'none';
+  });
+
+  // ── Registrar Service Worker ──
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  }
+</script>
+</body>
+</html>
