@@ -362,9 +362,140 @@
 </head>
 <body>
 
+<script>
+var _SG = {
+  es: {
+    'viable': '✅ VIABLE — Alcanzarás la meta con margen de tiempo',
+    'ajustado': '⚠️ AJUSTADO — Alcanzarás la meta pero sin margen de seguridad',
+    'no_viable': '❌ NO VIABLE — Con el ahorro actual no alcanzarás la meta en el plazo indicado',
+    'meta_ahorro': 'Meta de ahorro',
+    'saldo_inicial': 'Saldo inicial: ',
+    'ahorro_mensual': 'Ahorro mensual disponible',
+    'sobre_ing': '% sobre ingresos',
+    'ahorro_nec': 'Ahorro necesario / mes',
+    'para_meses': 'Para',
+    'meses_plan': 'meses de plan',
+    'superavit': 'Superávit mensual',
+    'deficit': 'Déficit mensual',
+    'ahorraras': 'Ahorrarás más de lo necesario',
+    'reduce': 'Necesitas reducir gastos en este importe',
+    'ingresos_mensual': 'Ingresos mensuales reales',
+    'gastos_mensual': 'Gastos mensuales totales',
+    'fijos': 'Fijos: ',
+    'extra': ' | Extra: ',
+    'imprevistos': ' | Imprevistos: ',
+    'fecha_est': 'Fecha estimada para alcanzar la meta',
+    'fecha_obj': 'Fecha objetivo: ',
+    'plazo': 'Plazo del plan',
+    'meses': ' meses',
+    'excedente': 'Tendrás un excedente mensual de',
+    'invertir': 'que podrías invertir o usar como colchón adicional.',
+    'para_alcanzar': 'Para alcanzar la meta en plazo necesitas reducir gastos',
+    'mes': '/mes, o incrementar ingresos en',
+    'o_ampliar': ', o ampliar el plazo',
+    'meses_mas': ' meses más.',
+    'exito': '¡Vas muy bien! Con tu ritmo actual alcanzarás la meta el',
+    'formula_titulo': '📐 Fórmulas utilizadas:',
+    'form1': 'Ingresos mensuales reales',
+    'form1v': '= Salario neto + ((Nº pagas − 12) × Salario / 12) + (Ingresos extra anuales / 12)',
+    'form2': 'Gastos mensuales totales',
+    'form3': 'Ahorro mensual disponible',
+    'form3v': '= Ingresos mensuales − Gastos mensuales',
+    'form4': 'Ahorro necesario/mes',
+    'form4v': '= (Meta − Saldo inicial) / Nº meses del plan',
+    'form5': 'Saldo acumulado (mes N)',
+    'form5v': '= Saldo inicial + N × Ahorro mensual disponible',
+    'form6': 'Viabilidad',
+    'form6v': 'Ahorro disponible ≥ Ahorro necesario → META ALCANZABLE en plazo',
+    'leg_saldo': 'Saldo acumulado',
+    'leg_ingresos': 'Ingresos',
+    'leg_gastos': 'Gastos',
+    'leg_meta': 'Meta',
+    'no_alcanza': '⚠️ No se alcanza la meta en el plazo calculado',
+    'borrar': '¿Deseas borrar todos los datos y empezar de nuevo?',
+    'calcula': 'Primero calcula el plan de ahorro.'
+  },
+  en: {
+    'viable': '✅ VIABLE — You will reach your goal with time to spare',
+    'ajustado': '⚠️ TIGHT — You will reach the goal but with no safety margin',
+    'no_viable': '❌ NOT VIABLE — With current savings you will not reach the goal in time',
+    'meta_ahorro': 'Savings goal',
+    'saldo_inicial': 'Starting balance: ',
+    'ahorro_mensual': 'Available monthly savings',
+    'sobre_ing': '% of income',
+    'ahorro_nec': 'Required savings / month',
+    'para_meses': 'For',
+    'meses_plan': 'months plan',
+    'superavit': 'Monthly surplus',
+    'deficit': 'Monthly deficit',
+    'ahorraras': 'You will save more than needed',
+    'reduce': 'You need to reduce expenses by this amount',
+    'ingresos_mensual': 'Real monthly income',
+    'gastos_mensual': 'Total monthly expenses',
+    'fijos': 'Fixed: ',
+    'extra': ' | Extra: ',
+    'imprevistos': ' | Contingencies: ',
+    'fecha_est': 'Estimated date to reach goal',
+    'fecha_obj': 'Target date: ',
+    'plazo': 'Plan duration',
+    'meses': ' months',
+    'excedente': 'You will have a monthly surplus of',
+    'invertir': 'which you could invest or use as additional buffer.',
+    'para_alcanzar': 'To reach the goal on time you need to reduce expenses by',
+    'mes': '/month, or increase income by',
+    'o_ampliar': ', or extend the plan by',
+    'meses_mas': ' more months.',
+    'exito': 'You are doing great! At your current rate you will reach the goal on',
+    'formula_titulo': '📐 Formulas used:',
+    'form1': 'Real monthly income',
+    'form1v': '= Net salary + ((No. payments − 12) × Salary / 12) + (Annual extra income / 12)',
+    'form2': 'Total monthly expenses',
+    'form3': 'Available monthly savings',
+    'form3v': '= Monthly income − Monthly expenses',
+    'form4': 'Required savings/month',
+    'form4v': '= (Goal − Starting balance) / No. plan months',
+    'form5': 'Accumulated balance (month N)',
+    'form5v': '= Starting balance + N × Available monthly savings',
+    'form6': 'Viability',
+    'form6v': 'Available savings ≥ Required savings → GOAL REACHABLE on time',
+    'leg_saldo': 'Accumulated balance',
+    'leg_ingresos': 'Income',
+    'leg_gastos': 'Expenses',
+    'leg_meta': 'Goal',
+    'no_alcanza': '⚠️ Not reachable within the calculated period',
+    'borrar': 'Do you want to clear all data and start again?',
+    'calcula': 'Please calculate the savings plan first.'
+  }
+};
+function _s(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_SG[l]&&_SG[l][key])?_SG[l][key]:_SG['es'][key]; }
+</script>
+
+  <style>
+    .lang-switcher-float { position:fixed; top:10px; right:12px; z-index:9999; display:flex; gap:5px; }
+    .lang-btn-f { background:rgba(255,255,255,0.88); border:2px solid transparent; border-radius:6px;
+      cursor:pointer; padding:2px 3px; opacity:0.72; transition:opacity .2s,border-color .2s; line-height:1;
+      box-shadow:0 1px 5px rgba(0,0,0,0.18); }
+    .lang-btn-f:hover { opacity:1; }
+    .lang-btn-f.active { border-color:#2563eb; opacity:1; }
+  </style>
+  <div class="lang-switcher-float">
+    <button class="lang-btn-f" id="flag-es" onclick="setLang('es')" title="Español">
+      <svg width="30" height="20" viewBox="0 0 30 20"><rect width="30" height="20" fill="#c60b1e"/><rect y="5" width="30" height="10" fill="#f1bf00"/></svg>
+    </button>
+    <button class="lang-btn-f" id="flag-en" onclick="setLang('en')" title="English">
+      <svg width="30" height="20" viewBox="0 0 30 20"><rect width="30" height="20" fill="#012169"/>
+        <path d="M0,0 L30,20 M30,0 L0,20" stroke="white" stroke-width="3.5"/>
+        <path d="M0,0 L30,20 M30,0 L0,20" stroke="#C8102E" stroke-width="2.2"/>
+        <path d="M15,0 V20 M0,10 H30" stroke="white" stroke-width="5.5"/>
+        <path d="M15,0 V20 M0,10 H30" stroke="#C8102E" stroke-width="3.2"/>
+      </svg>
+    </button>
+  </div>
+
+
 <header>
-  <h1>🎯 Calculadora de Ahorro para conseguir una Meta</h1>
-  <div class="subtitle">TSA © — Herramienta de planificación financiera personal&nbsp;·&nbsp;IA</div>
+  <h1><span data-es="🎯 Calculadora de Ahorro para conseguir una Meta" data-en="🎯 Savings Goal Calculator">🎯 Calculadora de Ahorro para conseguir una Meta</span></h1>
+  <div class="subtitle"><span data-es="TSA © — Herramienta de planificación financiera personal&nbsp;·&nbsp;IA" data-en="TSA © — Personal financial planning tool&nbsp;·&nbsp;AI">TSA © — Herramienta de planificación financiera personal&nbsp;·&nbsp;IA</span></div>
 </header>
 
 <div class="app">
@@ -374,26 +505,26 @@
 
     <!-- Datos generales -->
     <div class="card">
-      <div class="card-title"><span class="icon">📋</span>Datos generales</div>
+      <div class="card-title"><span class="icon">📋</span><span data-es="Datos generales" data-en="General data">Datos generales</span></div>
       <div class="row2">
         <div class="form-group">
-          <label>Saldo inicial (€) <span class="tooltip" data-tip="Dinero ya ahorrado al inicio del plan.">?</span></label>
+          <label><span data-es="Saldo inicial (€)" data-en="Initial balance (€)">Saldo inicial (€)</span> <span class="tooltip" data-tip-es="Dinero ya ahorrado al inicio del plan." data-tip-en="Money already saved at the start of the plan." data-tip="Dinero ya ahorrado al inicio del plan.">?</span></label>
           <input type="number" id="saldoInicial" value="5000" min="0" step="100" oninput="calcular()">
         </div>
         <div class="form-group">
-          <label>Meta de ahorro (€) <span class="tooltip" data-tip="Cantidad total que deseas alcanzar (incluye saldo inicial).">?</span></label>
+          <label><span data-es="Meta de ahorro (€)" data-en="Savings goal (€)">Meta de ahorro (€)</span> <span class="tooltip" data-tip-es="Cantidad total que deseas alcanzar (incluye saldo inicial)." data-tip-en="Total amount you want to reach (includes initial balance)." data-tip="Cantidad total que deseas alcanzar (incluye saldo inicial).">?</span></label>
           <input type="number" id="meta" value="20000" min="1" step="500" oninput="calcular()">
           <div class="err-msg" id="err-meta">La meta debe ser mayor que el saldo inicial.</div>
         </div>
       </div>
       <div class="row2">
         <div class="form-group">
-          <label>Fecha inicial <span class="tooltip" data-tip="Mes y año de inicio del plan. Formato MM/AAAA">?</span></label>
+          <label><span data-es="Fecha inicial" data-en="Start date">Fecha inicial</span> <span class="tooltip" data-tip-es="Mes y año de inicio del plan. Formato MM/AAAA" data-tip-en="Month and year the plan starts. Format MM/YYYY" data-tip="Mes y año de inicio del plan. Formato MM/AAAA">?</span></label>
           <input type="text" id="fechaInicio" placeholder="MM/AAAA" oninput="calcular()">
           <div class="err-msg" id="err-fi">Formato: MM/AAAA (ej. 06/2026)</div>
         </div>
         <div class="form-group">
-          <label>Fecha objetivo <span class="tooltip" data-tip="Mes y año en que quieres haber alcanzado la meta. Formato MM/AAAA">?</span></label>
+          <label><span data-es="Fecha objetivo" data-en="Target date">Fecha objetivo</span> <span class="tooltip" data-tip-es="Mes y año en que quieres haber alcanzado la meta. Formato MM/AAAA" data-tip-en="Month and year by which you want to reach the goal. Format MM/YYYY" data-tip="Mes y año en que quieres haber alcanzado la meta. Formato MM/AAAA">?</span></label>
           <input type="text" id="fechaFin" placeholder="MM/AAAA" oninput="calcular()">
           <div class="err-msg" id="err-ff">Formato: MM/AAAA (ej. 12/2028)</div>
         </div>
@@ -402,23 +533,23 @@
 
     <!-- Ingresos -->
     <div class="card">
-      <div class="card-title"><span class="icon">💰</span>Ingresos</div>
+      <div class="card-title"><span class="icon">💰</span><span data-es="Ingresos" data-en="Income">Ingresos</span></div>
       <div class="row2">
         <div class="form-group">
-          <label>Ingresos netos mensuales (€) <span class="tooltip" data-tip="Salario neto mensual que ingresa en tu cuenta.">?</span></label>
+          <label><span data-es="Ingresos netos mensuales (€)" data-en="Monthly net income (€)">Ingresos netos mensuales (€)</span> <span class="tooltip" data-tip-es="Salario neto mensual que ingresa en tu cuenta." data-tip-en="Monthly net salary deposited in your account." data-tip="Salario neto mensual que ingresa en tu cuenta.">?</span></label>
           <input type="number" id="ingresosNetos" value="1450" min="0" step="50" oninput="calcular()">
         </div>
         <div class="form-group">
-          <label>Nº pagas al año <span class="tooltip" data-tip="12 = pagas ordinarias. 14 = incluye pagas extra en julio y diciembre.">?</span></label>
+          <label><span data-es="Nº pagas al año" data-en="No. of payments/year">Nº pagas al año</span> <span class="tooltip" data-tip-es="12 = pagas ordinarias. 14 = incluye pagas extra en julio y diciembre." data-tip-en="12 = standard payments. 14 = includes extra payments in July and December." data-tip="12 = pagas ordinarias. 14 = incluye pagas extra en julio y diciembre.">?</span></label>
           <input type="number" id="nPagas" value="15" min="12" max="16" step="1" oninput="calcular()">
         </div>
       </div>
       <div class="form-group">
-        <label>Ingresos extra netos anuales (€) <span class="tooltip" data-tip="Trabajos esporádicos, alquileres, freelance, dividendos, bonos… Total anual.">?</span></label>
+        <label><span data-es="Ingresos extra netos anuales (€)" data-en="Annual net extra income (€)">Ingresos extra netos anuales (€)</span> <span class="tooltip" data-tip-es="Trabajos esporádicos, alquileres, freelance, dividendos, bonos… Total anual." data-tip-en="Occasional work, rentals, freelance, dividends, bonuses… Annual total." data-tip="Trabajos esporádicos, alquileres, freelance, dividendos, bonos… Total anual.">?</span></label>
         <input type="number" id="ingresosExtra" value="0" min="0" step="100" oninput="calcular()">
       </div>
       <div class="section-note">
-        ℹ️ Con <strong>14 pagas</strong>, las 2 pagas extra se distribuyen mensualmente de forma automática.
+        <span data-es="ℹ️ Con <strong>14 pagas</strong>, las 2 pagas extra se distribuyen mensualmente de forma automática." data-en="ℹ️ With <strong>14 payments</strong>, the 2 extra payments are automatically distributed monthly.">ℹ️ Con <strong>14 pagas</strong>, las 2 pagas extra se distribuyen mensualmente de forma automática.</span>
       </div>
     </div>
 
@@ -429,29 +560,29 @@
 
     <!-- Gastos fijos -->
     <div class="card">
-      <div class="card-title"><span class="icon">💸</span>Gastos mensuales fijos</div>
+      <div class="card-title"><span class="icon">💸</span><span data-es="Gastos mensuales fijos" data-en="Fixed monthly expenses">Gastos mensuales fijos</span></div>
       <div class="expense-list" id="expenseList"></div>
-      <button class="btn-add-expense" onclick="addExpense()">＋ Añadir partida de gasto</button>
+      <button class="btn-add-expense" onclick="addExpense()"><span data-es="＋ Añadir partida de gasto" data-en="＋ Add expense item">＋ Añadir partida de gasto</span></button>
     </div>
 
     <!-- Gastos variables + botones -->
     <div class="card">
-      <div class="card-title"><span class="icon">🔧</span>Gastos variables y contingencias</div>
+      <div class="card-title"><span class="icon">🔧</span><span data-es="Gastos variables y contingencias" data-en="Variable expenses and contingencies">Gastos variables y contingencias</span></div>
       <div class="form-group">
-        <label>Gastos extraordinarios mensuales (€) <span class="tooltip" data-tip="Estimación mensual de reparaciones, regalos, viajes, médico, etc.">?</span></label>
+        <label><span data-es="Gastos extraordinarios mensuales (€)" data-en="Monthly extraordinary expenses (€)">Gastos extraordinarios mensuales (€)</span> <span class="tooltip" data-tip-es="Estimación mensual de reparaciones, regalos, viajes, médico, etc." data-tip-en="Monthly estimate for repairs, gifts, travel, medical, etc." data-tip="Estimación mensual de reparaciones, regalos, viajes, médico, etc.">?</span></label>
         <input type="number" id="gastosExtra" value="50" min="0" step="10" oninput="calcular()">
       </div>
       <div class="form-group">
-        <label>% de Imprevistos <span class="tooltip" data-tip="Colchón sobre el total de gastos para cubrir imprevistos. Recomendado: 5–15%.">?</span></label>
+        <label><span data-es="% de Imprevistos" data-en="% Contingencies">% de Imprevistos</span> <span class="tooltip" data-tip-es="Colchón sobre el total de gastos para cubrir imprevistos. Recomendado: 5–15%." data-tip-en="Buffer on total expenses to cover unexpected costs. Recommended: 5–15%." data-tip="Colchón sobre el total de gastos para cubrir imprevistos. Recomendado: 5–15%.">?</span></label>
         <input type="number" id="pctImprevisto" value="5" min="0" max="50" step="1" oninput="calcular()">
         <div class="err-msg" id="err-pct">Valor entre 0 y 50.</div>
       </div>
       <div style="margin-top:16px;">
-        <div style="font-size:0.78rem;font-weight:600;color:var(--text-light);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.04em;">Acciones</div>
+        <div style="font-size:0.78rem;font-weight:600;color:var(--text-light);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.04em;"><span data-es="Acciones" data-en="Actions">Acciones</span></div>
         <div class="btn-bar">
-          <button class="btn btn-primary" onclick="calcular()">🔄 Calcular</button>
-          <button class="btn btn-reset" onclick="resetear()">🗑️ Resetear</button>
-          <button class="btn btn-export" onclick="exportarExcel()">📊 Exportar a Excel</button>
+          <button class="btn btn-primary" onclick="calcular()"><span data-es="🔄 Calcular" data-en="🔄 Calculate">🔄 Calcular</span></button>
+          <button class="btn btn-reset" onclick="resetear()"><span data-es="🗑️ Resetear" data-en="🗑️ Reset">🗑️ Resetear</span></button>
+          <button class="btn btn-export" onclick="exportarExcel()"><span data-es="📊 Exportar a Excel" data-en="📊 Export to Excel">📊 Exportar a Excel</span></button>
         </div>
       </div>
     </div>
@@ -460,7 +591,7 @@
 
   <!-- ═══ FILA 3: Resumen resultados (ancho completo) ═══ -->
   <div class="card" id="cardResumen">
-    <div class="card-title"><span class="icon">📊</span>Resumen y resultados</div>
+    <div class="card-title"><span class="icon">📊</span><span data-es="Resumen y resultados" data-en="Summary and results">Resumen y resultados</span></div>
     <div id="resumenContent">
       <div class="empty-state">
         <div class="big-icon">🎯</div>
@@ -471,7 +602,7 @@
 
   <!-- ═══ FILA 4: Gráfico ═══ -->
   <div class="card" id="cardGrafico" style="display:none;">
-    <div class="card-title"><span class="icon">📈</span>Evolución económica mensual</div>
+    <div class="card-title"><span class="icon">📈</span><span data-es="Evolución económica mensual" data-en="Monthly financial evolution">Evolución económica mensual</span></div>
     <div class="chart-wrap">
       <canvas id="grafico" height="220"></canvas>
     </div>
@@ -479,17 +610,17 @@
 
   <!-- ═══ FILA 5: Tabla detalle ═══ -->
   <div class="card" id="cardTabla" style="display:none;">
-    <div class="card-title"><span class="icon">📅</span>Detalle mensual de evolución</div>
+    <div class="card-title"><span class="icon">📅</span><span data-es="Detalle mensual de evolución" data-en="Monthly evolution detail">Detalle mensual de evolución</span></div>
     <div class="tbl-wrap">
       <table id="tablaEvolucion">
         <thead>
           <tr>
             <th style="text-align:left">Mes</th>
-            <th>Ingresos</th>
-            <th>Gastos totales</th>
-            <th>Ahorro mensual</th>
-            <th>Saldo acumulado</th>
-            <th>% Meta</th>
+            <th><span data-es="Ingresos" data-en="Income">Ingresos</span></th>
+            <th><span data-es="Gastos totales" data-en="Total expenses">Gastos totales</span></th>
+            <th><span data-es="Ahorro mensual" data-en="Monthly savings">Ahorro mensual</span></th>
+            <th><span data-es="Saldo acumulado" data-en="Accumulated balance">Saldo acumulado</span></th>
+            <th><span data-es="% Meta" data-en="% Goal">% Meta</span></th>
           </tr>
         </thead>
         <tbody id="tablaBody"></tbody>
@@ -551,9 +682,20 @@ function addExpense(categoria = "", valor = 0) {
   const div = document.createElement('div');
   div.className = 'expense-item';
   div.id = `exp_${id}`;
+  var _lAdd = localStorage.getItem('pwa_lang')||'es';
+  var _catEnMap = (typeof _CAT_EN !== 'undefined') ? _CAT_EN : {};
+  // Reverse lookup: EN text -> ES key
+  var _catEnRev = {};
+  Object.keys(_catEnMap).forEach(function(k){ _catEnRev[_catEnMap[k]] = k; });
+  // Normalise the categoria: if it's an EN name, convert to ES key
+  var categoriaES = (typeof _catEnRev[categoria] !== 'undefined') ? _catEnRev[categoria] : categoria;
+  var customLabel = _lAdd==='en' ? '✏️ Custom...' : '✏️ Personalizado...';
   const selHTML = `<select id="cat_${id}" onchange="handleCatChange(${id}); calcular()">
-    ${CATEGORIAS.map(c => `<option value="${c}"${c===categoria?' selected':''}>${c}</option>`).join('')}
-    <option value="__custom__">✏️ Personalizado...</option>
+    ${CATEGORIAS.map(c => {
+      var label = (_lAdd==='en' && _catEnMap[c]) ? _catEnMap[c] : c;
+      return `<option value="${c}"${c===categoriaES?' selected':''}>${label}</option>`;
+    }).join('')}
+    <option value="__custom__">${customLabel}</option>
   </select>`;
   div.innerHTML = `
     ${selHTML}
@@ -567,7 +709,7 @@ function addExpense(categoria = "", valor = 0) {
 function handleCatChange(id) {
   const sel = document.getElementById(`cat_${id}`);
   const custom = document.getElementById(`custom_${id}`);
-  custom.style.display = (sel.value === '__custom__' || sel.value === 'Otros (especificar)') ? 'block' : 'none';
+  custom.style.display = (sel.value === '__custom__' || sel.value === 'Otros (especificar)' || sel.value === 'Other (specify)') ? 'block' : 'none';
 }
 
 function delExpense(id) {
@@ -654,7 +796,9 @@ function calcular() {
     const custEl = document.getElementById(`custom_${idStr}`);
     if (!catEl || !valEl) return;
     const v = parseFloat(valEl.value)||0;
-    const nombre = catEl.value === '__custom__' ? (custEl ? custEl.value||'Personalizado' : 'Personalizado') : catEl.value;
+    var _lCal = localStorage.getItem('pwa_lang')||'es';
+    var _customLabelC = _lCal==='en' ? 'Custom' : 'Personalizado';
+    const nombre = catEl.value === '__custom__' ? (custEl ? custEl.value||_customLabelC : _customLabelC) : ((_lCal==='en' && (typeof _CAT_EN !== 'undefined') && _CAT_EN[catEl.value]) ? _CAT_EN[catEl.value] : catEl.value);
     gastosFijosTotal += v;
     partidas.push({ nombre, valor: v });
   });
@@ -669,9 +813,9 @@ function calcular() {
   const pctAhorro           = ingMensual > 0 ? (ahorroDisponible / ingMensual)*100 : 0;
 
   let estado, estadoTxt;
-  if      (ahorroDisponible >= ahorroNecesarioPuro * 1.05) { estado='viable';    estadoTxt='✅ VIABLE — Alcanzarás la meta con margen de tiempo'; }
-  else if (ahorroDisponible >= ahorroNecesarioPuro)        { estado='ajustado';  estadoTxt='⚠️ AJUSTADO — Alcanzarás la meta pero sin margen de seguridad'; }
-  else                                                      { estado='no-viable'; estadoTxt='❌ NO VIABLE — Con el ahorro actual no alcanzarás la meta en el plazo indicado'; }
+  if      (ahorroDisponible >= ahorroNecesarioPuro * 1.05) { estado='viable';    estadoTxt=_s('viable'); }
+  else if (ahorroDisponible >= ahorroNecesarioPuro)        { estado='ajustado';  estadoTxt=_s('ajustado'); }
+  else                                                      { estado='no-viable'; estadoTxt=_s('no_viable'); }
 
   // Evolución mensual
   let saldoAcum = saldoInicial;
@@ -687,7 +831,7 @@ function calcular() {
     if (i > totalMeses && mesAlcanzado) break;
   }
 
-  const fechaRealTxt   = mesAlcanzado ? `${mesAlcanzado.fecha} (mes ${mesAlcanzado.mes})` : '⚠️ No se alcanza en el plazo calculado';
+  const fechaRealTxt   = mesAlcanzado ? `${mesAlcanzado.fecha} (mes ${mesAlcanzado.mes})` : _s('no_alcanza');
   const ahorroAdicional = Math.max(0, ahorroNecesarioPuro - ahorroDisponible);
 
   // ── Render resumen ──
@@ -695,42 +839,42 @@ function calcular() {
     <div class="status-badge ${estado}">${estadoTxt}</div>
     <div class="result-grid">
       <div class="kpi-box blue">
-        <div class="kpi-label">Meta de ahorro</div>
+        <div class="kpi-label">${_s('meta_ahorro')}</div>
         <div class="kpi-value big">${fmtEur(meta)}</div>
-        <div class="kpi-sub">Saldo inicial: ${fmtEur(saldoInicial)}</div>
+        <div class="kpi-sub">${_s('saldo_inicial')}${fmtEur(saldoInicial)}</div>
       </div>
       <div class="kpi-box ${estado==='viable'?'green':estado==='ajustado'?'amber':'red'}">
-        <div class="kpi-label">Ahorro mensual disponible</div>
+        <div class="kpi-label">${_s('ahorro_mensual')}</div>
         <div class="kpi-value">${fmtEur(ahorroDisponible)}</div>
-        <div class="kpi-sub">${pctAhorro.toFixed(1)}% sobre ingresos</div>
+        <div class="kpi-sub">${pctAhorro.toFixed(1)}% ${_s('sobre_ing')}</div>
       </div>
       <div class="kpi-box neutral">
-        <div class="kpi-label">Ahorro necesario / mes</div>
+        <div class="kpi-label">${_s('ahorro_nec')}</div>
         <div class="kpi-value">${fmtEur(ahorroNecesarioPuro)}</div>
-        <div class="kpi-sub">Para ${totalMeses} meses de plan</div>
+        <div class="kpi-sub">${_s('para_meses')} ${totalMeses} ${_s('meses_plan')}</div>
       </div>
       <div class="kpi-box ${ahorroAdicional>0?'red':'green'}">
-        <div class="kpi-label">${superavit>=0?'Superávit mensual':'Déficit mensual'}</div>
+        <div class="kpi-label">${superavit>=0?_s('superavit'):_s('deficit')}</div>
         <div class="kpi-value">${fmtEur(Math.abs(superavit))}</div>
-        <div class="kpi-sub">${superavit>=0?'Ahorrarás más de lo necesario':'Necesitas reducir gastos en este importe'}</div>
+        <div class="kpi-sub">${superavit>=0?_s('ahorraras'):_s('reduce')}</div>
       </div>
       <div class="kpi-box blue">
-        <div class="kpi-label">Ingresos mensuales reales</div>
+        <div class="kpi-label">${_s('ingresos_mensual')}</div>
         <div class="kpi-value">${fmtEur(ingMensual)}</div>
-        <div class="kpi-sub">Salario + pagas extra + otros ingresos/12</div>
+        <div class="kpi-sub">${localStorage.getItem('pwa_lang')==='en'?'Salary + extra payments + other income/12':'Salario + pagas extra + otros ingresos/12'}</div>
       </div>
       <div class="kpi-box ${gastosMensual>ingMensual?'red':'neutral'}">
-        <div class="kpi-label">Gastos mensuales totales</div>
+        <div class="kpi-label">${_s('gastos_mensual')}</div>
         <div class="kpi-value">${fmtEur(gastosMensual)}</div>
-        <div class="kpi-sub">Fijos: ${fmtEur(gastosFijosTotal)} | Extra: ${fmtEur(gastosExtraM)} | Imprevistos: ${fmtEur(imprevisto)}</div>
+        <div class="kpi-sub">${_s('fijos')}${fmtEur(gastosFijosTotal)}${_s('extra')}${fmtEur(gastosExtraM)}${_s('imprevistos')}${fmtEur(imprevisto)}</div>
       </div>
       <div class="kpi-box ${estado==='viable'?'green':estado==='ajustado'?'amber':'red'}">
-        <div class="kpi-label">Fecha estimada para alcanzar la meta</div>
+        <div class="kpi-label">${_s('fecha_est')}</div>
         <div class="kpi-value" style="font-size:1rem;">${fechaRealTxt}</div>
-        <div class="kpi-sub">Fecha objetivo: ${fmtFecha(ff)}</div>
+        <div class="kpi-sub">${_s('fecha_obj')}${fmtFecha(ff)}</div>
       </div>
       <div class="kpi-box neutral">
-        <div class="kpi-label">Plazo del plan</div>
+        <div class="kpi-label">${_s('plazo')}</div>
         <div class="kpi-value">${totalMeses} meses</div>
         <div class="kpi-sub">${fmtFecha(fi)} → ${fmtFecha(ff)}</div>
       </div>
@@ -797,13 +941,13 @@ function renderTabla(evolucion, totalMeses, meta, pctImp) {
     tbody.appendChild(tr);
   }
   document.getElementById('formulaBox').innerHTML = `
-    <strong>📐 Fórmulas utilizadas:</strong><br>
-    • <strong>Ingresos mensuales reales</strong> = Salario neto + ((Nº pagas − 12) × Salario / 12) + (Ingresos extra anuales / 12)<br>
-    • <strong>Gastos mensuales totales</strong> = Σ Gastos fijos + Gastos extraordinarios + (Gastos × ${(pctImp*100).toFixed(0)}% imprevistos)<br>
-    • <strong>Ahorro mensual disponible</strong> = Ingresos mensuales − Gastos mensuales<br>
-    • <strong>Ahorro necesario/mes</strong> = (Meta − Saldo inicial) / Nº meses del plan<br>
-    • <strong>Saldo acumulado (mes N)</strong> = Saldo inicial + N × Ahorro mensual disponible<br>
-    • <strong>Viabilidad</strong>: Ahorro disponible ≥ Ahorro necesario → META ALCANZABLE en plazo
+    <strong>${_s('formula_titulo')}</strong><br>
+    • <strong>${_s('form1')}</strong> ${_s('form1v')}<br>
+    • <strong>${_s('form2')}</strong> = Σ ${localStorage.getItem('pwa_lang')==='en'?'Fixed':'Gastos fijos'} + ${localStorage.getItem('pwa_lang')==='en'?'Extraordinary':'Extraordinarios'} + (${localStorage.getItem('pwa_lang')==='en'?'Expenses':'Gastos'} × ${(pctImp*100).toFixed(0)}% ${localStorage.getItem('pwa_lang')==='en'?'contingencies':'imprevistos'})<br>
+    • <strong>${_s('form3')}</strong> ${_s('form3v')}<br>
+    • <strong>${_s('form4')}</strong> ${_s('form4v')}<br>
+    • <strong>${_s('form5')}</strong> ${_s('form5v')}<br>
+    • <strong>${_s('form6')}</strong>: ${_s('form6v')}
   `;
 }
 
@@ -908,7 +1052,7 @@ function renderGrafico(evolucion, totalMeses, meta) {
   });
 
   // Leyenda
-  const ley = [['#2563eb','Saldo acumulado'],['#22c55e','Ingresos'],['#ef4444','Gastos'],['#16a34a','Meta']];
+  const ley = [['#2563eb',_s('leg_saldo')],['#22c55e',_s('leg_ingresos')],['#ef4444',_s('leg_gastos')],['#16a34a',_s('leg_meta')]];
   let lx = pad.l;
   ctx.font='10px system-ui';
   ley.forEach(([c,label]) => {
@@ -923,7 +1067,7 @@ function renderGrafico(evolucion, totalMeses, meta) {
 // RESETEAR
 // ─────────────────────────────────────────────────────────────
 function resetear() {
-  if (!confirm('¿Deseas borrar todos los datos y empezar de nuevo?')) return;
+  if (!confirm(_s('borrar'))) return;
   document.getElementById('saldoInicial').value   = 1000;
   document.getElementById('meta').value            = 15000;
   document.getElementById('ingresosNetos').value   = 2000;
@@ -937,18 +1081,18 @@ function resetear() {
   document.getElementById('fechaFin').value = `${String(fin.getMonth()+1).padStart(2,'0')}/${fin.getFullYear()}`;
   document.getElementById('expenseList').innerHTML = '';
   expenseCounter = 0;
-  addExpense("Alimentación/Supermercado",400);
-  addExpense("Alquiler vivienda",700);
-  addExpense("Electricidad",80);
-  addExpense("Internet",40);
-  addExpense("Teléfono móvil",30);
-  addExpense("Gasolina/Carburante",120);
-  addExpense("Ocio y entretenimiento",150);
+  addExpense("Alimentación/Supermercado", 400);
+  addExpense("Alquiler vivienda", 700);
+  addExpense("Electricidad", 80);
+  addExpense("Internet", 40);
+  addExpense("Teléfono móvil", 30);
+  addExpense("Gasolina/Carburante", 120);
+  addExpense("Ocio y entretenimiento", 150);
   document.getElementById('cardGrafico').style.display='none';
   document.getElementById('cardTabla').style.display='none';
   document.getElementById('resumenContent').innerHTML=`
     <div class="empty-state"><div class="big-icon">🎯</div>
-    <div>Completa los datos y pulsa <strong>Calcular</strong><br>para ver tu plan de ahorro.</div></div>`;
+    <div><span data-es="Completa los datos y pulsa <strong>Calcular</strong><br>para ver tu plan de ahorro." data-en="Fill in the data and press <strong>Calculate</strong><br>to see your savings plan.">Completa los datos y pulsa <strong>Calcular</strong><br>para ver tu plan de ahorro.</span></div></div>`;
   calcular();
 }
 
@@ -957,7 +1101,7 @@ function resetear() {
 // ─────────────────────────────────────────────────────────────
 function exportarExcel() {
   const rows = document.querySelectorAll('#tablaBody tr');
-  if (!rows.length) { alert('Primero calcula el plan de ahorro.'); return; }
+  if (!rows.length) { alert(_s('calcula')); return; }
 
   const saldoInicial = parseFloat(document.getElementById('saldoInicial').value)||0;
   const meta         = parseFloat(document.getElementById('meta').value)||0;
@@ -978,28 +1122,31 @@ function exportarExcel() {
     const custEl = document.getElementById(`custom_${idStr}`);
     if (!catEl || !valEl) return;
     const v = parseFloat(valEl.value)||0;
-    const nombre = catEl.value==='__custom__' ? (custEl?custEl.value||'Personalizado':'Personalizado') : catEl.value;
+    var _lEx = localStorage.getItem('pwa_lang')||'es';
+    var _customLabel = _lEx==='en' ? 'Custom' : 'Personalizado';
+    const nombre = catEl.value==='__custom__' ? (custEl?custEl.value||_customLabel:_customLabel) : ((_lEx==='en' && (typeof _CAT_EN !== 'undefined') && _CAT_EN[catEl.value]) ? _CAT_EN[catEl.value] : catEl.value);
     gastosFijosTotal += v;
     partidas.push({nombre, valor:v});
   });
 
   const sep = ';';
+  var isEN = (localStorage.getItem('pwa_lang')||'es')==='en';
   let csv = '\uFEFF';
-  csv += `CALCULADORA DE AHORRO PARA CONSEGUIR UNA META${sep}TSA (c) IA\n\n`;
-  csv += `DATOS DEL PLAN\n`;
-  csv += `Saldo inicial (€)${sep}${saldoInicial}\n`;
-  csv += `Meta de ahorro (€)${sep}${meta}\n`;
-  csv += `Fecha inicial${sep}${fi}\n`;
-  csv += `Fecha objetivo${sep}${ff}\n`;
-  csv += `Ingresos netos mensuales (€)${sep}${ingNetos}\n`;
-  csv += `Nº pagas al año${sep}${nPagas}\n`;
-  csv += `Ingresos extra anuales (€)${sep}${ingExtra}\n`;
-  csv += `Gastos extra mensuales (€)${sep}${gastosExtra}\n`;
-  csv += `% Imprevistos${sep}${pctImp}%\n\n`;
-  csv += `GASTOS FIJOS MENSUALES\nCategoría${sep}Importe (€)\n`;
+  csv += isEN ? `SAVINGS GOAL CALCULATOR${sep}TSA (c) AI\n\n` : `CALCULADORA DE AHORRO PARA CONSEGUIR UNA META${sep}TSA (c) IA\n\n`;
+  csv += isEN ? `PLAN DATA\n` : `DATOS DEL PLAN\n`;
+  csv += isEN ? `Starting balance (€)${sep}${saldoInicial}\n` : `Saldo inicial (€)${sep}${saldoInicial}\n`;
+  csv += isEN ? `Savings goal (€)${sep}${meta}\n` : `Meta de ahorro (€)${sep}${meta}\n`;
+  csv += isEN ? `Start date${sep}${fi}\n` : `Fecha inicial${sep}${fi}\n`;
+  csv += isEN ? `Target date${sep}${ff}\n` : `Fecha objetivo${sep}${ff}\n`;
+  csv += isEN ? `Monthly net income (€)${sep}${ingNetos}\n` : `Ingresos netos mensuales (€)${sep}${ingNetos}\n`;
+  csv += isEN ? `No. payments/year${sep}${nPagas}\n` : `Nº pagas al año${sep}${nPagas}\n`;
+  csv += isEN ? `Annual extra income (€)${sep}${ingExtra}\n` : `Ingresos extra anuales (€)${sep}${ingExtra}\n`;
+  csv += isEN ? `Monthly extra expenses (€)${sep}${gastosExtra}\n` : `Gastos extra mensuales (€)${sep}${gastosExtra}\n`;
+  csv += isEN ? `% Contingencies${sep}${pctImp}%\n\n` : `% Imprevistos${sep}${pctImp}%\n\n`;
+  csv += isEN ? `FIXED MONTHLY EXPENSES\nCategory${sep}Amount (€)\n` : `GASTOS FIJOS MENSUALES\nCategoría${sep}Importe (€)\n`;
   partidas.forEach(p => { csv += `${p.nombre}${sep}${p.valor}\n`; });
-  csv += `TOTAL GASTOS FIJOS${sep}${gastosFijosTotal}\n\n`;
-  csv += `EVOLUCIÓN MENSUAL\nMes${sep}Ingresos (€)${sep}Gastos totales (€)${sep}Ahorro mensual (€)${sep}Saldo acumulado (€)${sep}% Meta\n`;
+  csv += isEN ? `TOTAL FIXED EXPENSES${sep}${gastosFijosTotal}\n\n` : `TOTAL GASTOS FIJOS${sep}${gastosFijosTotal}\n\n`;
+  csv += isEN ? `MONTHLY EVOLUTION\nMonth${sep}Income (€)${sep}Total expenses (€)${sep}Monthly savings (€)${sep}Accumulated balance (€)${sep}% Goal\n` : `EVOLUCIÓN MENSUAL\nMes${sep}Ingresos (€)${sep}Gastos totales (€)${sep}Ahorro mensual (€)${sep}Saldo acumulado (€)${sep}% Meta\n`;
 
   rows.forEach(tr => {
     const tds = tr.querySelectorAll('td');
@@ -1022,5 +1169,55 @@ function exportarExcel() {
 let resizeTimer;
 window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer=setTimeout(calcular,200); });
 </script>
+<script>
+(function(){
+  var _L=localStorage.getItem('pwa_lang')||'es';
+  function applyLang(l){
+    document.querySelectorAll('[data-es]').forEach(function(el){
+      var v=el.getAttribute('data-'+l); if(v===null)return; el.innerHTML=v;
+    });
+    document.querySelectorAll('[data-tip-es]').forEach(function(el){
+      var tip=el.getAttribute('data-tip-'+l); if(tip) el.setAttribute('data-tip',tip);
+    });
+    document.getElementById('flag-es').classList.toggle('active',l==='es');
+    document.getElementById('flag-en').classList.toggle('active',l==='en');
+  }
+  window.setLang=function(l){_L=l;localStorage.setItem('pwa_lang',l);applyLang(l);if(typeof calcular==='function')calcular();};
+  document.addEventListener('DOMContentLoaded',function(){ applyLang(_L); });
+})();
+</script>
+
+<script>
+var _CAT_EN = {"Alquiler vivienda": "Rent/Housing", "Hipoteca": "Mortgage", "Comunidad": "Community fees", "Agua": "Water", "Gas": "Gas", "Electricidad": "Electricity", "Internet": "Internet", "Teléfono móvil": "Mobile phone", "Televisión/Streaming": "TV/Streaming", "Seguro hogar": "Home insurance", "Seguro de vida": "Life insurance", "Seguro de salud": "Health insurance", "Pago crédito/renting coche": "Car loan/leasing", "Gasolina/Carburante": "Fuel/Petrol", "Seguro coche": "Car insurance", "Impuestos": "Taxes", "Tabaco": "Tobacco", "Moto (seguro/gasolina)": "Motorbike (insurance/fuel)", "Mantenimiento moto": "Motorbike maintenance", "Tabaco": "Tobacco", "Alcohol": "Alcohol", "Transporte público": "Public transport", "Educación/Formación": "Education/Training", "Guardería/Colegios": "Childcare/School", "Mascota": "Pet", "Suscripciones (Spotify/Netflix/etc.)": "Subscriptions (Spotify/Netflix/etc.)", "Mantenimiento coche": "Car maintenance", "Tarjeta de crédito": "Credit card", "Préstamo personal": "Personal loan", "Alimentación/Supermercado": "Groceries/Supermarket", "Restaurantes/Comida fuera": "Restaurants/Eating out", "Ropa y calzado": "Clothing and footwear", "Higiene/Farmacia": "Hygiene/Pharmacy", "Gimnasio/Deporte": "Gym/Sport", "Ocio y entretenimiento": "Leisure and entertainment", "Viajes/Vacaciones": "Travel/Holidays", "Ahorro programado": "Planned savings", "Otros (especificar)": "Other (specify)"};
+// Override addExpense to show translated category names
+var _origAddExpense = null;
+document.addEventListener('DOMContentLoaded', function() {
+  // Translate category select options when in EN
+  function translateCategorySelects() {
+    var l = localStorage.getItem('pwa_lang') || 'es';
+    document.querySelectorAll('select[id^="cat_"]').forEach(function(sel) {
+      Array.from(sel.options).forEach(function(opt) {
+        var esVal = opt.value;
+        if (esVal === '__custom__') {
+          opt.textContent = l==='en' ? '✏️ Custom...' : '✏️ Personalizado...';
+        } else if(l === 'en' && _CAT_EN[esVal]) {
+          opt.textContent = _CAT_EN[esVal];
+        } else if(l === 'es' && _CAT_EN[esVal]) {
+          opt.textContent = esVal;
+        }
+      });
+    });
+  }
+  // Run translation on load
+  translateCategorySelects();
+  // Patch setLang to also update categories
+  var _origSetLang = window.setLang;
+  window.setLang = function(l) {
+    _origSetLang(l);
+    translateCategorySelects();
+  };
+});
+</script>
+
 </body>
 </html>
