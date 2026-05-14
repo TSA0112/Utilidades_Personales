@@ -1,13 +1,13 @@
-const CACHE = 'mis-calc-v1';
+const CACHE = 'mis-calc-v2';
 const PRECACHE = [
   './',
   './index.html',
   './manifest.json',
-  './apps/hipoteca.html',
-  './apps/amortizacion.html',
-  './apps/imc.html',
-  './apps/sal.html',
-  './apps/ahorro.html'
+  './hipoteca.html',
+  './amortizacion.html',
+  './imc.html',
+  './sal.html',
+  './ahorro.html'
 ];
 
 self.addEventListener('install', e => {
