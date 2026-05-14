@@ -1,4 +1,4 @@
-const CACHE = 'mis-calc-v2';
+const CACHE = 'mis-calc-v3';
 const PRECACHE = [
   './',
   './index.html',

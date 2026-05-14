@@ -411,7 +411,7 @@ var _SG = {
     'leg_ingresos': 'Ingresos',
     'leg_gastos': 'Gastos',
     'leg_meta': 'Meta',
-    'no_alcanza': '⚠️ No se alcanza la meta en el plazo calculado',
+    'no_alcanza': _s('no_alcanza'),
     'borrar': '¿Deseas borrar todos los datos y empezar de nuevo?',
     'calcula': 'Primero calcula el plan de ahorro.'
   },
@@ -495,7 +495,7 @@ function _s(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_SG[l]&&
 
 <header>
   <h1><span data-es="🎯 Calculadora de Ahorro para conseguir una Meta" data-en="🎯 Savings Goal Calculator">🎯 Calculadora de Ahorro para conseguir una Meta</span></h1>
-  <div class="subtitle"><span data-es="TSA © — Herramienta de planificación financiera personal&nbsp;·&nbsp;IA" data-en="TSA © — Personal financial planning tool&nbsp;·&nbsp;AI">TSA © — Herramienta de planificación financiera personal&nbsp;·&nbsp;IA</span></div>
+  <div class="subtitle">TSA © — Herramienta de planificación financiera personal&nbsp;·&nbsp;IA</div>
 </header>
 
 <div class="app">
@@ -505,26 +505,26 @@ function _s(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_SG[l]&&
 
     <!-- Datos generales -->
     <div class="card">
-      <div class="card-title"><span class="icon">📋</span><span data-es="Datos generales" data-en="General data">Datos generales</span></div>
+      <div class="card-title"><span class="icon">📋</span>Datos generales</div>
       <div class="row2">
         <div class="form-group">
-          <label><span data-es="Saldo inicial (€)" data-en="Initial balance (€)">Saldo inicial (€)</span> <span class="tooltip" data-tip-es="Dinero ya ahorrado al inicio del plan." data-tip-en="Money already saved at the start of the plan." data-tip="Dinero ya ahorrado al inicio del plan.">?</span></label>
+          <label><span data-es="Saldo inicial (€)" data-en="Initial balance (€)">Saldo inicial (€)</span> <span class="tooltip" data-tip="Dinero ya ahorrado al inicio del plan.">?</span></label>
           <input type="number" id="saldoInicial" value="5000" min="0" step="100" oninput="calcular()">
         </div>
         <div class="form-group">
-          <label><span data-es="Meta de ahorro (€)" data-en="Savings goal (€)">Meta de ahorro (€)</span> <span class="tooltip" data-tip-es="Cantidad total que deseas alcanzar (incluye saldo inicial)." data-tip-en="Total amount you want to reach (includes initial balance)." data-tip="Cantidad total que deseas alcanzar (incluye saldo inicial).">?</span></label>
+          <label><span data-es="Meta de ahorro (€)" data-en="Savings goal (€)">Meta de ahorro (€)</span> <span class="tooltip" data-tip="Cantidad total que deseas alcanzar (incluye saldo inicial).">?</span></label>
           <input type="number" id="meta" value="20000" min="1" step="500" oninput="calcular()">
           <div class="err-msg" id="err-meta">La meta debe ser mayor que el saldo inicial.</div>
         </div>
       </div>
       <div class="row2">
         <div class="form-group">
-          <label><span data-es="Fecha inicial" data-en="Start date">Fecha inicial</span> <span class="tooltip" data-tip-es="Mes y año de inicio del plan. Formato MM/AAAA" data-tip-en="Month and year the plan starts. Format MM/YYYY" data-tip="Mes y año de inicio del plan. Formato MM/AAAA">?</span></label>
+          <label><span data-es="Fecha inicial" data-en="Start date">Fecha inicial</span> <span class="tooltip" data-tip="Mes y año de inicio del plan. Formato MM/AAAA">?</span></label>
           <input type="text" id="fechaInicio" placeholder="MM/AAAA" oninput="calcular()">
           <div class="err-msg" id="err-fi">Formato: MM/AAAA (ej. 06/2026)</div>
         </div>
         <div class="form-group">
-          <label><span data-es="Fecha objetivo" data-en="Target date">Fecha objetivo</span> <span class="tooltip" data-tip-es="Mes y año en que quieres haber alcanzado la meta. Formato MM/AAAA" data-tip-en="Month and year by which you want to reach the goal. Format MM/YYYY" data-tip="Mes y año en que quieres haber alcanzado la meta. Formato MM/AAAA">?</span></label>
+          <label><span data-es="Fecha objetivo" data-en="Target date">Fecha objetivo</span> <span class="tooltip" data-tip="Mes y año en que quieres haber alcanzado la meta. Formato MM/AAAA">?</span></label>
           <input type="text" id="fechaFin" placeholder="MM/AAAA" oninput="calcular()">
           <div class="err-msg" id="err-ff">Formato: MM/AAAA (ej. 12/2028)</div>
         </div>
@@ -533,19 +533,19 @@ function _s(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_SG[l]&&
 
     <!-- Ingresos -->
     <div class="card">
-      <div class="card-title"><span class="icon">💰</span><span data-es="Ingresos" data-en="Income">Ingresos</span></div>
+      <div class="card-title"><span class="icon">💰</span>Ingresos</div>
       <div class="row2">
         <div class="form-group">
-          <label><span data-es="Ingresos netos mensuales (€)" data-en="Monthly net income (€)">Ingresos netos mensuales (€)</span> <span class="tooltip" data-tip-es="Salario neto mensual que ingresa en tu cuenta." data-tip-en="Monthly net salary deposited in your account." data-tip="Salario neto mensual que ingresa en tu cuenta.">?</span></label>
+          <label><span data-es="Ingresos netos mensuales (€)" data-en="Monthly net income (€)">Ingresos netos mensuales (€)</span> <span class="tooltip" data-tip="Salario neto mensual que ingresa en tu cuenta.">?</span></label>
           <input type="number" id="ingresosNetos" value="1450" min="0" step="50" oninput="calcular()">
         </div>
         <div class="form-group">
-          <label><span data-es="Nº pagas al año" data-en="No. of payments/year">Nº pagas al año</span> <span class="tooltip" data-tip-es="12 = pagas ordinarias. 14 = incluye pagas extra en julio y diciembre." data-tip-en="12 = standard payments. 14 = includes extra payments in July and December." data-tip="12 = pagas ordinarias. 14 = incluye pagas extra en julio y diciembre.">?</span></label>
+          <label><span data-es="Nº pagas al año" data-en="No. of payments/year">Nº pagas al año</span> <span class="tooltip" data-tip="12 = pagas ordinarias. 14 = incluye pagas extra en julio y diciembre.">?</span></label>
           <input type="number" id="nPagas" value="15" min="12" max="16" step="1" oninput="calcular()">
         </div>
       </div>
       <div class="form-group">
-        <label><span data-es="Ingresos extra netos anuales (€)" data-en="Annual net extra income (€)">Ingresos extra netos anuales (€)</span> <span class="tooltip" data-tip-es="Trabajos esporádicos, alquileres, freelance, dividendos, bonos… Total anual." data-tip-en="Occasional work, rentals, freelance, dividends, bonuses… Annual total." data-tip="Trabajos esporádicos, alquileres, freelance, dividendos, bonos… Total anual.">?</span></label>
+        <label><span data-es="Ingresos extra netos anuales (€)" data-en="Annual net extra income (€)">Ingresos extra netos anuales (€)</span> <span class="tooltip" data-tip="Trabajos esporádicos, alquileres, freelance, dividendos, bonos… Total anual.">?</span></label>
         <input type="number" id="ingresosExtra" value="0" min="0" step="100" oninput="calcular()">
       </div>
       <div class="section-note">
@@ -560,20 +560,20 @@ function _s(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_SG[l]&&
 
     <!-- Gastos fijos -->
     <div class="card">
-      <div class="card-title"><span class="icon">💸</span><span data-es="Gastos mensuales fijos" data-en="Fixed monthly expenses">Gastos mensuales fijos</span></div>
+      <div class="card-title"><span class="icon">💸</span>Gastos mensuales fijos</div>
       <div class="expense-list" id="expenseList"></div>
       <button class="btn-add-expense" onclick="addExpense()"><span data-es="＋ Añadir partida de gasto" data-en="＋ Add expense item">＋ Añadir partida de gasto</span></button>
     </div>
 
     <!-- Gastos variables + botones -->
     <div class="card">
-      <div class="card-title"><span class="icon">🔧</span><span data-es="Gastos variables y contingencias" data-en="Variable expenses and contingencies">Gastos variables y contingencias</span></div>
+      <div class="card-title"><span class="icon">🔧</span>Gastos variables y contingencias</div>
       <div class="form-group">
-        <label><span data-es="Gastos extraordinarios mensuales (€)" data-en="Monthly extraordinary expenses (€)">Gastos extraordinarios mensuales (€)</span> <span class="tooltip" data-tip-es="Estimación mensual de reparaciones, regalos, viajes, médico, etc." data-tip-en="Monthly estimate for repairs, gifts, travel, medical, etc." data-tip="Estimación mensual de reparaciones, regalos, viajes, médico, etc.">?</span></label>
+        <label><span data-es="Gastos extraordinarios mensuales (€)" data-en="Monthly extraordinary expenses (€)">Gastos extraordinarios mensuales (€)</span> <span class="tooltip" data-tip="Estimación mensual de reparaciones, regalos, viajes, médico, etc.">?</span></label>
         <input type="number" id="gastosExtra" value="50" min="0" step="10" oninput="calcular()">
       </div>
       <div class="form-group">
-        <label><span data-es="% de Imprevistos" data-en="% Contingencies">% de Imprevistos</span> <span class="tooltip" data-tip-es="Colchón sobre el total de gastos para cubrir imprevistos. Recomendado: 5–15%." data-tip-en="Buffer on total expenses to cover unexpected costs. Recommended: 5–15%." data-tip="Colchón sobre el total de gastos para cubrir imprevistos. Recomendado: 5–15%.">?</span></label>
+        <label><span data-es="% de Imprevistos" data-en="% Contingencies">% de Imprevistos</span> <span class="tooltip" data-tip="Colchón sobre el total de gastos para cubrir imprevistos. Recomendado: 5–15%.">?</span></label>
         <input type="number" id="pctImprevisto" value="5" min="0" max="50" step="1" oninput="calcular()">
         <div class="err-msg" id="err-pct">Valor entre 0 y 50.</div>
       </div>
@@ -591,7 +591,7 @@ function _s(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_SG[l]&&
 
   <!-- ═══ FILA 3: Resumen resultados (ancho completo) ═══ -->
   <div class="card" id="cardResumen">
-    <div class="card-title"><span class="icon">📊</span><span data-es="Resumen y resultados" data-en="Summary and results">Resumen y resultados</span></div>
+    <div class="card-title"><span class="icon">📊</span>Resumen y resultados</div>
     <div id="resumenContent">
       <div class="empty-state">
         <div class="big-icon">🎯</div>
@@ -602,7 +602,7 @@ function _s(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_SG[l]&&
 
   <!-- ═══ FILA 4: Gráfico ═══ -->
   <div class="card" id="cardGrafico" style="display:none;">
-    <div class="card-title"><span class="icon">📈</span><span data-es="Evolución económica mensual" data-en="Monthly financial evolution">Evolución económica mensual</span></div>
+    <div class="card-title"><span class="icon">📈</span>Evolución económica mensual</div>
     <div class="chart-wrap">
       <canvas id="grafico" height="220"></canvas>
     </div>
@@ -610,7 +610,7 @@ function _s(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_SG[l]&&
 
   <!-- ═══ FILA 5: Tabla detalle ═══ -->
   <div class="card" id="cardTabla" style="display:none;">
-    <div class="card-title"><span class="icon">📅</span><span data-es="Detalle mensual de evolución" data-en="Monthly evolution detail">Detalle mensual de evolución</span></div>
+    <div class="card-title"><span class="icon">📅</span>Detalle mensual de evolución</div>
     <div class="tbl-wrap">
       <table id="tablaEvolucion">
         <thead>
@@ -682,20 +682,9 @@ function addExpense(categoria = "", valor = 0) {
   const div = document.createElement('div');
   div.className = 'expense-item';
   div.id = `exp_${id}`;
-  var _lAdd = localStorage.getItem('pwa_lang')||'es';
-  var _catEnMap = (typeof _CAT_EN !== 'undefined') ? _CAT_EN : {};
-  // Reverse lookup: EN text -> ES key
-  var _catEnRev = {};
-  Object.keys(_catEnMap).forEach(function(k){ _catEnRev[_catEnMap[k]] = k; });
-  // Normalise the categoria: if it's an EN name, convert to ES key
-  var categoriaES = (typeof _catEnRev[categoria] !== 'undefined') ? _catEnRev[categoria] : categoria;
-  var customLabel = _lAdd==='en' ? '✏️ Custom...' : '✏️ Personalizado...';
   const selHTML = `<select id="cat_${id}" onchange="handleCatChange(${id}); calcular()">
-    ${CATEGORIAS.map(c => {
-      var label = (_lAdd==='en' && _catEnMap[c]) ? _catEnMap[c] : c;
-      return `<option value="${c}"${c===categoriaES?' selected':''}>${label}</option>`;
-    }).join('')}
-    <option value="__custom__">${customLabel}</option>
+    ${CATEGORIAS.map(c => `<option value="${c}"${c===categoria?' selected':''}>${c}</option>`).join('')}
+    <option value="__custom__">✏️ Personalizado...</option>
   </select>`;
   div.innerHTML = `
     ${selHTML}
@@ -709,7 +698,7 @@ function addExpense(categoria = "", valor = 0) {
 function handleCatChange(id) {
   const sel = document.getElementById(`cat_${id}`);
   const custom = document.getElementById(`custom_${id}`);
-  custom.style.display = (sel.value === '__custom__' || sel.value === 'Otros (especificar)' || sel.value === 'Other (specify)') ? 'block' : 'none';
+  custom.style.display = (sel.value === '__custom__' || sel.value === 'Otros (especificar)') ? 'block' : 'none';
 }
 
 function delExpense(id) {
@@ -796,9 +785,7 @@ function calcular() {
     const custEl = document.getElementById(`custom_${idStr}`);
     if (!catEl || !valEl) return;
     const v = parseFloat(valEl.value)||0;
-    var _lCal = localStorage.getItem('pwa_lang')||'es';
-    var _customLabelC = _lCal==='en' ? 'Custom' : 'Personalizado';
-    const nombre = catEl.value === '__custom__' ? (custEl ? custEl.value||_customLabelC : _customLabelC) : ((_lCal==='en' && (typeof _CAT_EN !== 'undefined') && _CAT_EN[catEl.value]) ? _CAT_EN[catEl.value] : catEl.value);
+    const nombre = catEl.value === '__custom__' ? (custEl ? custEl.value||'Personalizado' : 'Personalizado') : catEl.value;
     gastosFijosTotal += v;
     partidas.push({ nombre, valor: v });
   });
@@ -1081,18 +1068,18 @@ function resetear() {
   document.getElementById('fechaFin').value = `${String(fin.getMonth()+1).padStart(2,'0')}/${fin.getFullYear()}`;
   document.getElementById('expenseList').innerHTML = '';
   expenseCounter = 0;
-  addExpense("Alimentación/Supermercado", 400);
-  addExpense("Alquiler vivienda", 700);
-  addExpense("Electricidad", 80);
-  addExpense("Internet", 40);
-  addExpense("Teléfono móvil", 30);
-  addExpense("Gasolina/Carburante", 120);
-  addExpense("Ocio y entretenimiento", 150);
+  addExpense("Alimentación/Supermercado",400);
+  addExpense("Alquiler vivienda",700);
+  addExpense("Electricidad",80);
+  addExpense("Internet",40);
+  addExpense("Teléfono móvil",30);
+  addExpense("Gasolina/Carburante",120);
+  addExpense("Ocio y entretenimiento",150);
   document.getElementById('cardGrafico').style.display='none';
   document.getElementById('cardTabla').style.display='none';
   document.getElementById('resumenContent').innerHTML=`
     <div class="empty-state"><div class="big-icon">🎯</div>
-    <div><span data-es="Completa los datos y pulsa <strong>Calcular</strong><br>para ver tu plan de ahorro." data-en="Fill in the data and press <strong>Calculate</strong><br>to see your savings plan.">Completa los datos y pulsa <strong>Calcular</strong><br>para ver tu plan de ahorro.</span></div></div>`;
+    <div>Completa los datos y pulsa <strong>Calcular</strong><br>para ver tu plan de ahorro.</div></div>`;
   calcular();
 }
 
@@ -1122,31 +1109,28 @@ function exportarExcel() {
     const custEl = document.getElementById(`custom_${idStr}`);
     if (!catEl || !valEl) return;
     const v = parseFloat(valEl.value)||0;
-    var _lEx = localStorage.getItem('pwa_lang')||'es';
-    var _customLabel = _lEx==='en' ? 'Custom' : 'Personalizado';
-    const nombre = catEl.value==='__custom__' ? (custEl?custEl.value||_customLabel:_customLabel) : ((_lEx==='en' && (typeof _CAT_EN !== 'undefined') && _CAT_EN[catEl.value]) ? _CAT_EN[catEl.value] : catEl.value);
+    const nombre = catEl.value==='__custom__' ? (custEl?custEl.value||'Personalizado':'Personalizado') : catEl.value;
     gastosFijosTotal += v;
     partidas.push({nombre, valor:v});
   });
 
   const sep = ';';
-  var isEN = (localStorage.getItem('pwa_lang')||'es')==='en';
   let csv = '\uFEFF';
-  csv += isEN ? `SAVINGS GOAL CALCULATOR${sep}TSA (c) AI\n\n` : `CALCULADORA DE AHORRO PARA CONSEGUIR UNA META${sep}TSA (c) IA\n\n`;
-  csv += isEN ? `PLAN DATA\n` : `DATOS DEL PLAN\n`;
-  csv += isEN ? `Starting balance (€)${sep}${saldoInicial}\n` : `Saldo inicial (€)${sep}${saldoInicial}\n`;
-  csv += isEN ? `Savings goal (€)${sep}${meta}\n` : `Meta de ahorro (€)${sep}${meta}\n`;
-  csv += isEN ? `Start date${sep}${fi}\n` : `Fecha inicial${sep}${fi}\n`;
-  csv += isEN ? `Target date${sep}${ff}\n` : `Fecha objetivo${sep}${ff}\n`;
-  csv += isEN ? `Monthly net income (€)${sep}${ingNetos}\n` : `Ingresos netos mensuales (€)${sep}${ingNetos}\n`;
-  csv += isEN ? `No. payments/year${sep}${nPagas}\n` : `Nº pagas al año${sep}${nPagas}\n`;
-  csv += isEN ? `Annual extra income (€)${sep}${ingExtra}\n` : `Ingresos extra anuales (€)${sep}${ingExtra}\n`;
-  csv += isEN ? `Monthly extra expenses (€)${sep}${gastosExtra}\n` : `Gastos extra mensuales (€)${sep}${gastosExtra}\n`;
-  csv += isEN ? `% Contingencies${sep}${pctImp}%\n\n` : `% Imprevistos${sep}${pctImp}%\n\n`;
-  csv += isEN ? `FIXED MONTHLY EXPENSES\nCategory${sep}Amount (€)\n` : `GASTOS FIJOS MENSUALES\nCategoría${sep}Importe (€)\n`;
+  csv += `CALCULADORA DE AHORRO PARA CONSEGUIR UNA META${sep}TSA (c) IA\n\n`;
+  csv += `DATOS DEL PLAN\n`;
+  csv += `Saldo inicial (€)${sep}${saldoInicial}\n`;
+  csv += `Meta de ahorro (€)${sep}${meta}\n`;
+  csv += `Fecha inicial${sep}${fi}\n`;
+  csv += `Fecha objetivo${sep}${ff}\n`;
+  csv += `Ingresos netos mensuales (€)${sep}${ingNetos}\n`;
+  csv += `Nº pagas al año${sep}${nPagas}\n`;
+  csv += `Ingresos extra anuales (€)${sep}${ingExtra}\n`;
+  csv += `Gastos extra mensuales (€)${sep}${gastosExtra}\n`;
+  csv += `% Imprevistos${sep}${pctImp}%\n\n`;
+  csv += `GASTOS FIJOS MENSUALES\nCategoría${sep}Importe (€)\n`;
   partidas.forEach(p => { csv += `${p.nombre}${sep}${p.valor}\n`; });
-  csv += isEN ? `TOTAL FIXED EXPENSES${sep}${gastosFijosTotal}\n\n` : `TOTAL GASTOS FIJOS${sep}${gastosFijosTotal}\n\n`;
-  csv += isEN ? `MONTHLY EVOLUTION\nMonth${sep}Income (€)${sep}Total expenses (€)${sep}Monthly savings (€)${sep}Accumulated balance (€)${sep}% Goal\n` : `EVOLUCIÓN MENSUAL\nMes${sep}Ingresos (€)${sep}Gastos totales (€)${sep}Ahorro mensual (€)${sep}Saldo acumulado (€)${sep}% Meta\n`;
+  csv += `TOTAL GASTOS FIJOS${sep}${gastosFijosTotal}\n\n`;
+  csv += `EVOLUCIÓN MENSUAL\nMes${sep}Ingresos (€)${sep}Gastos totales (€)${sep}Ahorro mensual (€)${sep}Saldo acumulado (€)${sep}% Meta\n`;
 
   rows.forEach(tr => {
     const tds = tr.querySelectorAll('td');
@@ -1176,19 +1160,16 @@ window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer
     document.querySelectorAll('[data-es]').forEach(function(el){
       var v=el.getAttribute('data-'+l); if(v===null)return; el.innerHTML=v;
     });
-    document.querySelectorAll('[data-tip-es]').forEach(function(el){
-      var tip=el.getAttribute('data-tip-'+l); if(tip) el.setAttribute('data-tip',tip);
-    });
     document.getElementById('flag-es').classList.toggle('active',l==='es');
     document.getElementById('flag-en').classList.toggle('active',l==='en');
   }
-  window.setLang=function(l){_L=l;localStorage.setItem('pwa_lang',l);applyLang(l);if(typeof calcular==='function')calcular();};
+  window.setLang=function(l){_L=l;localStorage.setItem('pwa_lang',l);applyLang(l);};
   document.addEventListener('DOMContentLoaded',function(){ applyLang(_L); });
 })();
 </script>
 
 <script>
-var _CAT_EN = {"Alquiler vivienda": "Rent/Housing", "Hipoteca": "Mortgage", "Comunidad": "Community fees", "Agua": "Water", "Gas": "Gas", "Electricidad": "Electricity", "Internet": "Internet", "Teléfono móvil": "Mobile phone", "Televisión/Streaming": "TV/Streaming", "Seguro hogar": "Home insurance", "Seguro de vida": "Life insurance", "Seguro de salud": "Health insurance", "Pago crédito/renting coche": "Car loan/leasing", "Gasolina/Carburante": "Fuel/Petrol", "Seguro coche": "Car insurance", "Impuestos": "Taxes", "Tabaco": "Tobacco", "Moto (seguro/gasolina)": "Motorbike (insurance/fuel)", "Mantenimiento moto": "Motorbike maintenance", "Tabaco": "Tobacco", "Alcohol": "Alcohol", "Transporte público": "Public transport", "Educación/Formación": "Education/Training", "Guardería/Colegios": "Childcare/School", "Mascota": "Pet", "Suscripciones (Spotify/Netflix/etc.)": "Subscriptions (Spotify/Netflix/etc.)", "Mantenimiento coche": "Car maintenance", "Tarjeta de crédito": "Credit card", "Préstamo personal": "Personal loan", "Alimentación/Supermercado": "Groceries/Supermarket", "Restaurantes/Comida fuera": "Restaurants/Eating out", "Ropa y calzado": "Clothing and footwear", "Higiene/Farmacia": "Hygiene/Pharmacy", "Gimnasio/Deporte": "Gym/Sport", "Ocio y entretenimiento": "Leisure and entertainment", "Viajes/Vacaciones": "Travel/Holidays", "Ahorro programado": "Planned savings", "Otros (especificar)": "Other (specify)"};
+var _CAT_EN = {"Alquiler vivienda": "Rent/Housing", "Hipoteca": "Mortgage", "Comunidad": "Community fees", "Agua": "Water", "Gas": "Gas", "Electricidad": "Electricity", "Internet": "Internet", "Teléfono móvil": "Mobile phone", "Televisión/Streaming": "TV/Streaming", "Seguro hogar": "Home insurance", "Seguro de vida": "Life insurance", "Seguro de salud": "Health insurance", "Pago crédito/renting coche": "Car loan/leasing", "Gasolina/Carburante": "Fuel/Petrol", "Mantenimiento coche": "Car maintenance", "Tarjeta de crédito": "Credit card", "Préstamo personal": "Personal loan", "Alimentación/Supermercado": "Groceries/Supermarket", "Restaurantes/Comida fuera": "Restaurants/Eating out", "Ropa y calzado": "Clothing and footwear", "Higiene/Farmacia": "Hygiene/Pharmacy", "Gimnasio/Deporte": "Gym/Sport", "Ocio y entretenimiento": "Leisure and entertainment", "Viajes/Vacaciones": "Travel/Holidays", "Ahorro programado": "Planned savings", "Otros (especificar)": "Other (specify)"};
 // Override addExpense to show translated category names
 var _origAddExpense = null;
 document.addEventListener('DOMContentLoaded', function() {
@@ -1198,9 +1179,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('select[id^="cat_"]').forEach(function(sel) {
       Array.from(sel.options).forEach(function(opt) {
         var esVal = opt.value;
-        if (esVal === '__custom__') {
-          opt.textContent = l==='en' ? '✏️ Custom...' : '✏️ Personalizado...';
-        } else if(l === 'en' && _CAT_EN[esVal]) {
+        if(l === 'en' && _CAT_EN[esVal]) {
           opt.textContent = _CAT_EN[esVal];
         } else if(l === 'es' && _CAT_EN[esVal]) {
           opt.textContent = esVal;
@@ -1208,8 +1187,6 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
   }
-  // Run translation on load
-  translateCategorySelects();
   // Patch setLang to also update categories
   var _origSetLang = window.setLang;
   window.setLang = function(l) {
