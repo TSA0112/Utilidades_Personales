@@ -214,33 +214,33 @@ function tr(key) {
   <div class="card-title"><span data-es="Datos personales" data-en="Personal data">Datos personales</span></div>
   <div class="g3">
     <div class="fld">
-      <label>Género <span class="tip">?<span data-es="Afecta el peso ideal, % grasa saludable, umbrales de riesgo y figura corporal." data-en="Affects ideal weight, healthy fat %, risk thresholds and body figure.">Afecta el peso ideal, % grasa saludable, umbrales de riesgo y figura corporal.</span></span></label>
+      <label><span data-es="Género" data-en="Gender">Género</span> <span class="tip">?<span data-es="Afecta el peso ideal, % grasa saludable, umbrales de riesgo y figura corporal." data-en="Affects ideal weight, healthy fat %, risk thresholds and body figure.">Afecta el peso ideal, % grasa saludable, umbrales de riesgo y figura corporal.</span></span></label>
       <select id="xgenero">
         <option value="hombre"><span data-es="Mujer" data-en="Female">Mujer</span></option>
         <option value="mujer"><span data-es="Hombre" data-en="Male">Hombre</span></option>
       </select>
     </div>
     <div class="fld">
-      <label>Edad (años) <span class="tip">?<span data-es="Ajusta el rango saludable de IMC y el % de grasa corporal esperado." data-en="Adjusts the healthy BMI range and expected body fat %.">Ajusta el rango saludable de IMC y el % de grasa corporal esperado.</span></span></label>
+      <label><span data-es="Edad (años)" data-en="Age (years)">Edad (años)</span> <span class="tip">?<span data-es="Ajusta el rango saludable de IMC y el % de grasa corporal esperado." data-en="Adjusts the healthy BMI range and expected body fat %.">Ajusta el rango saludable de IMC y el % de grasa corporal esperado.</span></span></label>
       <input type="number" id="xedad" value="19" min="18" max="100">
       <span class="emsg" id="eedad"><span data-es="Edad válida: 18-100" data-en="Valid age: 18-100">Edad válida: 18-100</span></span>
     </div>
     <div class="fld">
-      <label>Altura (cm) <span class="tip">?<span data-es="Introduce tu altura en centímetros. Ejemplo: 173 cm." data-en="Enter your height in centimetres. Example: 173 cm.">Introduce tu altura en centímetros. Ejemplo: 173 cm.</span></span></label>
+      <label><span data-es="Altura (cm)" data-en="Height (cm)">Altura (cm)</span> <span class="tip">?<span data-es="Introduce tu altura en centímetros. Ejemplo: 173 cm." data-en="Enter your height in centimetres. Example: 173 cm.">Introduce tu altura en centímetros. Ejemplo: 173 cm.</span></span></label>
       <input type="number" id="xaltura" value="162" min="100" max="250">
       <span class="emsg" id="ealtura"><span data-es="Altura válida: 100-250 cm" data-en="Valid height: 100-250 cm">Altura válida: 100-250 cm</span></span>
     </div>
     <div class="fld">
-      <label>Peso (kg) <span class="tip">?<span data-es="Introduce tu peso en kilogramos. Ejemplo: 80 kg." data-en="Enter your weight in kilograms. Example: 80 kg.">Introduce tu peso en kilogramos. Ejemplo: 80 kg.</span></span></label>
+      <label><span data-es="Peso (kg)" data-en="Weight (kg)">Peso (kg)</span> <span class="tip">?<span data-es="Introduce tu peso en kilogramos. Ejemplo: 80 kg." data-en="Enter your weight in kilograms. Example: 80 kg.">Introduce tu peso en kilogramos. Ejemplo: 80 kg.</span></span></label>
       <input type="number" id="xpeso" value="43" min="30" max="300" step="0.1">
       <span class="emsg" id="epeso"><span data-es="Peso válido: 30-300 kg" data-en="Valid weight: 30-300 kg">Peso válido: 30-300 kg</span></span>
     </div>
     <div class="fld">
-      <label>Cintura (cm) <span class="tip">?<span data-es="Opcional. Mide a la altura del ombligo." data-en="Optional. Measure at navel height.">Opcional. Mide a la altura del ombligo.</span></span></label>
+      <label><span data-es="Cintura (cm)" data-en="Waist (cm)">Cintura (cm)</span> <span class="tip">?<span data-es="Opcional. Mide a la altura del ombligo." data-en="Optional. Measure at navel height.">Opcional. Mide a la altura del ombligo.</span></span></label>
       <input type="number" id="xcintura" placeholder="Opcional" data-ph-es="Opcional" data-ph-en="Optional" min="40" max="200">
     </div>
     <div class="fld">
-      <label>Cadera (cm) <span class="tip">?<span data-es="Opcional. Para calcular el Índice Cintura-Cadera (ICC)." data-en="Optional. To calculate the Waist-Hip Ratio (WHR).">Opcional. Para calcular el Índice Cintura-Cadera (ICC).</span></span></label>
+      <label><span data-es="Cadera (cm)" data-en="Hip (cm)">Cadera (cm)</span> <span class="tip">?<span data-es="Opcional. Para calcular el Índice Cintura-Cadera (ICC)." data-en="Optional. To calculate the Waist-Hip Ratio (WHR).">Opcional. Para calcular el Índice Cintura-Cadera (ICC).</span></span></label>
       <input type="number" id="xcadera" placeholder="Opcional" data-ph-es="Opcional" data-ph-en="Optional" min="40" max="200">
     </div>
   </div>
@@ -330,7 +330,7 @@ function tr(key) {
 
 <!-- COMPARATIVA -->
 <div class="card">
-  <div class="card-title">&#128203; Comparativa: estado actual vs. ideal</div>
+  <div class="card-title"><span data-es="📋 Comparativa: estado actual vs. ideal" data-en="📋 Comparison: current vs. ideal">📋 Comparativa: estado actual vs. ideal</span></div>
   <div class="g2" style="margin-bottom:12px;">
     <div class="ic"><div class="v" id="cPA">—</div><div class="l" data-es="Peso actual (kg)" data-en="Current weight (kg)">Peso actual (kg)</div></div>
     <div class="ic hl"><div class="v" id="cPI">—</div><div class="l" data-es="Peso ideal Devine (kg)" data-en="Ideal weight Devine (kg)">Peso ideal Devine (kg)</div></div>
@@ -342,10 +342,7 @@ function tr(key) {
     <div class="ic hl"><div class="v" data-es="Saludable" data-en="Healthy">Saludable</div><div class="l" data-es="Clasificación objetivo" data-en="Target classification">Clasificación objetivo</div></div>
   </div>
   <div class="note">
-    <strong>Nota:</strong> El IMC es un indicador orientativo de uso poblacional. Las fórmulas de peso ideal
-    (Devine, Lorentz, Hamwi) son estimaciones basadas en talla y género. El % de grasa estimado por
-    Deurenberg tiene un margen de ±3-4%. Las figuras son representaciones esquemáticas ilustrativas.
-    Consulta siempre con un profesional de salud.
+    <span data-es="<strong>Nota:</strong> El IMC es un indicador orientativo de uso poblacional. Las fórmulas de peso ideal (Devine, Lorentz, Hamwi) son estimaciones basadas en talla y género. El % de grasa estimado por Deurenberg tiene un margen de ±3-4%. Las figuras son representaciones esquemáticas ilustrativas. Consulta siempre con un profesional de salud." data-en="<strong>Note:</strong> BMI is a population-level orientative indicator. The ideal weight formulas (Devine, Lorentz, Hamwi) are estimates based on height and gender. Body fat % estimated by Deurenberg has a margin of ±3-4%. Figures are schematic illustrations. Always consult a health professional."><strong>Nota:</strong> El IMC es un indicador orientativo de uso poblacional. Las fórmulas de peso ideal (Devine, Lorentz, Hamwi) son estimaciones basadas en talla y género. El % de grasa estimado por Deurenberg tiene un margen de ±3-4%. Las figuras son representaciones esquemáticas ilustrativas. Consulta siempre con un profesional de salud.</span>
   </div>
 </div>
 

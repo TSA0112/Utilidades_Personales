@@ -68,74 +68,108 @@ tbody tr:hover { background: #f9fafb; }
 .row-amort td { color: #856404 !important; }
 .nueva-cuota-cell { background: #d4edda !important; color: #155724 !important; font-weight: 700; border-radius: 4px; }
 .msg-info { text-align: center; color: var(--muted); padding: 30px; font-size: 0.95rem; }
-
-/* ── LANGUAGE SWITCHER ── */
-.lang-switcher { position: fixed; top: 12px; right: 16px; display: flex; gap: 6px; z-index: 9999; }
-.lang-btn { background: none; border: 2px solid transparent; border-radius: 6px; padding: 2px 4px; cursor: pointer; font-size: 22px; line-height: 1; transition: border-color 0.2s, transform 0.15s; }
-.lang-btn:hover { transform: scale(1.15); }
-.lang-btn.active { border-color: #2a7bd3; background: #e8f0fe; }
-
 @media (max-width: 600px) { body { padding: 10px; } .container { padding: 16px; } .btn { padding: 10px 14px; font-size: 13px; } table { font-size: 0.75rem; } }
 </style>
 </head>
 <body>
-<div class="lang-switcher">
-  <button class="lang-btn active" id="btn-es" onclick="setLang('es')" title="Español">🇪🇸</button>
-  <button class="lang-btn"        id="btn-en" onclick="setLang('en')" title="English">🇬🇧</button>
-</div>
+
+<script>
+var _AT = {
+  es: {
+    'cuotas_menos': ' cuotas menos',
+    'sin_cambio': 'Sin cambio',
+    'cuotas': ' cuotas',
+    'ahorro': '💰 Ahorro: ',
+    'pulsa': 'Pulsa Calcular para ver la tabla',
+    'formula_donde': '<span data-es="Donde C = Capital, i = Interés mensual, n = Número de cuotas" data-en="Where C = Capital, i = Monthly interest, n = Number of payments">Donde C = Capital, i = Interés mensual, n = Número de cuotas</span>'
+  },
+  en: {
+    'cuotas_menos': ' fewer payments',
+    'sin_cambio': 'No change',
+    'cuotas': ' payments',
+    'ahorro': '💰 Savings: ',
+    'pulsa': 'Press Calculate to see the table',
+    'formula_donde': 'Where C = Capital, i = Monthly interest, n = Number of payments'
+  }
+};
+function _a(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_AT[l]&&_AT[l][key])?_AT[l][key]:_AT['es'][key]; }
+</script>
+
+  <style>
+    .lang-switcher-float { position:fixed; top:10px; right:12px; z-index:9999; display:flex; gap:5px; }
+    .lang-btn-f { background:rgba(255,255,255,0.88); border:2px solid transparent; border-radius:6px;
+      cursor:pointer; padding:2px 3px; opacity:0.72; transition:opacity .2s,border-color .2s; line-height:1;
+      box-shadow:0 1px 5px rgba(0,0,0,0.18); }
+    .lang-btn-f:hover { opacity:1; }
+    .lang-btn-f.active { border-color:#2a7bd3; opacity:1; }
+  </style>
+  <div class="lang-switcher-float">
+    <button class="lang-btn-f" id="flag-es" onclick="setLang('es')" title="Español">
+      <svg width="30" height="20" viewBox="0 0 30 20"><rect width="30" height="20" fill="#c60b1e"/><rect y="5" width="30" height="10" fill="#f1bf00"/></svg>
+    </button>
+    <button class="lang-btn-f" id="flag-en" onclick="setLang('en')" title="English">
+      <svg width="30" height="20" viewBox="0 0 30 20"><rect width="30" height="20" fill="#012169"/>
+        <path d="M0,0 L30,20 M30,0 L0,20" stroke="white" stroke-width="3.5"/>
+        <path d="M0,0 L30,20 M30,0 L0,20" stroke="#C8102E" stroke-width="2.2"/>
+        <path d="M15,0 V20 M0,10 H30" stroke="white" stroke-width="5.5"/>
+        <path d="M15,0 V20 M0,10 H30" stroke="#C8102E" stroke-width="3.2"/>
+      </svg>
+    </button>
+  </div>
+
 <div class="container">
-  <h1>🏠 <span data-es="Calculadora de Hipoteca" data-en="Mortgage Calculator">Calculadora de Hipoteca</span></h1>
+  <h1><span data-es="🏠 Calculadora de Hipoteca" data-en="🏠 Mortgage Calculator">🏠 Calculadora de Hipoteca</span></h1>
   <p class="subtitle"><span data-es="Calcula tu cuota hipotecaria y simula amortizaciones parciales" data-en="Calculate your mortgage payment and simulate partial repayments">Calcula tu cuota hipotecaria y simula amortizaciones parciales</span></p>
 
   <div class="inputs-section">
-    <h2>📋 <span data-es="Datos de la Hipoteca" data-en="Mortgage Data">Datos de la Hipoteca</span></h2>
+    <h2><span data-es="📋 Datos de la Hipoteca" data-en="📋 Mortgage Data">📋 Datos de la Hipoteca</span></h2>
     <div class="inputs-grid">
       <div class="field">
-        <label><span data-es="Capital Inicial (€)" data-en="Initial Capital (€)">Capital Inicial (€)</span> <span class="tip" data-tip-es="Importe total del préstamo hipotecario" data-tip-en="Total amount of the mortgage loan" title="Importe total del préstamo hipotecario">?</span></label>
+        <label><span data-es="Capital Inicial (€)" data-en="Initial Capital (€)">Capital Inicial (€)</span> <span class="tip" title="Importe total del préstamo hipotecario">?</span></label>
         <input type="number" id="capital" value="185000" min="1000" step="1000">
       </div>
       <div class="field">
-        <label><span data-es="Plazo (años)" data-en="Term (years)">Plazo (años)</span> <span class="tip" data-tip-es="Duración del préstamo en años. Acepta decimales, el número de cuotas se redondeará al entero más cercano" data-tip-en="Loan duration in years. Accepts decimals; the number of payments will be rounded to the nearest integer" title="Duración del préstamo en años. Acepta decimales, el número de cuotas se redondeará al entero más cercano">?</span></label>
+        <label><span data-es="Plazo (años)" data-en="Term (years)">Plazo (años)</span> <span class="tip" title="Duración del préstamo en años">?</span></label>
         <input type="number" id="plazo" value="18" min="1" max="50" step="0.5">
       </div>
       <div class="field">
-        <label><span data-es="Tipo Interés Anual (%)" data-en="Annual Interest Rate (%)">Tipo Interés Anual (%)</span> <span class="tip" data-tip-es="Tipo de interés anual nominal (TIN)" data-tip-en="Nominal annual interest rate (NIR)" title="Tipo de interés anual nominal (TIN)">?</span></label>
+        <label><span data-es="Tipo Interés Anual (%)" data-en="Annual Interest Rate (%)">Tipo Interés Anual (%)</span> <span class="tip" title="Tipo de interés anual nominal (TIN)">?</span></label>
         <input type="number" id="interes" value="2.00" min="0" max="20" step="0.01">
       </div>
       <div class="field">
-        <label><span data-es="Fecha de Inicio" data-en="Start Date">Fecha de Inicio</span> <span class="tip" data-tip-es="Mes y año de la primera cuota" data-tip-en="Month and year of the first payment" title="Mes y año de la primera cuota">?</span></label>
+        <label><span data-es="Fecha de Inicio" data-en="Start Date">Fecha de Inicio</span> <span class="tip" title="Mes y año de la primera cuota">?</span></label>
         <input type="month" id="fechaInicio" value="2026-02">
       </div>
     </div>
   </div>
 
   <div class="amort-section">
-    <h2>💰 <span data-es="Amortización Parcial del Capital" data-en="Partial Capital Repayment">Amortización Parcial del Capital</span></h2>
+    <h2><span data-es="💰 Amortización Parcial del Capital" data-en="💰 Partial Capital Repayment">💰 Amortización Parcial del Capital</span></h2>
     <div class="amort-grid">
       <div class="field">
-        <label><span data-es="Cantidad a Amortizar (€)" data-en="Repayment Amount (€)">Cantidad a Amortizar (€)</span> <span class="tip" data-tip-es="Importe del pago extraordinario de capital" data-tip-en="Amount of the extraordinary capital payment" title="Importe del pago extraordinario de capital">?</span></label>
+        <label><span data-es="Cantidad a Amortizar (€)" data-en="Amount to Repay (€)">Cantidad a Amortizar (€)</span> <span class="tip" title="Importe del pago extraordinario de capital">?</span></label>
         <input type="number" id="amortizacion" value="10000" min="0" step="1000">
       </div>
       <div class="field">
-        <label><span data-es="Año de Amortización" data-en="Repayment Year">Año de Amortización</span> <span class="tip" data-tip-es="Año del préstamo en que se realiza la amortización (1 = primer año)" data-tip-en="Year of the loan in which the repayment is made (1 = first year)" title="Año del préstamo en que se realiza la amortización (1 = primer año)">?</span></label>
+        <label><span data-es="Año de Amortización" data-en="Repayment Year">Año de Amortización</span> <span class="tip" title="Año del préstamo en que se realiza la amortización">?</span></label>
         <input type="number" id="anioAmort" value="1" min="1" step="1">
       </div>
       <div class="field">
-        <label><span data-es="Mes de Amortización" data-en="Repayment Month">Mes de Amortización</span> <span class="tip" data-tip-es="Mes del año seleccionado en que se realiza la amortización (1-12)" data-tip-en="Month of the selected year in which the repayment is made (1-12)" title="Mes del año seleccionado en que se realiza la amortización (1-12)">?</span></label>
+        <label><span data-es="Mes de Amortización" data-en="Repayment Month">Mes de Amortización</span> <span class="tip" title="Mes del año seleccionado (1-12)">?</span></label>
         <input type="number" id="mesAmort" value="9" min="1" max="12" step="1">
       </div>
     </div>
   </div>
 
   <div class="button-group">
-    <button class="btn btn-calc" onclick="calcular()">🧮 <span data-es="Calcular" data-en="Calculate">Calcular</span></button>
-    <button class="btn btn-reset" onclick="resetear()">🔄 <span data-es="Resetear" data-en="Reset">Resetear</span></button>
-    <button class="btn btn-excel" onclick="exportarExcel()">📊 <span data-es="Exportar Excel" data-en="Export Excel">Exportar Excel</span></button>
-    <button class="btn btn-html" onclick="exportarHTML()">💾 <span data-es="Exportar HTML" data-en="Export HTML">Exportar HTML</span></button>
+    <button class="btn btn-calc" onclick="calcular()"><span data-es="🧮 Calcular" data-en="🧮 Calculate">🧮 Calcular</span></button>
+    <button class="btn btn-reset" onclick="resetear()"><span data-es="🔄 Resetear" data-en="🔄 Reset">🔄 Resetear</span></button>
+    <button class="btn btn-excel" onclick="exportarExcel()"><span data-es="📊 Exportar Excel" data-en="📊 Export Excel">📊 Exportar Excel</span></button>
+    <button class="btn btn-html" onclick="exportarHTML()"><span data-es="💾 Exportar HTML" data-en="💾 Export HTML">💾 Exportar HTML</span></button>
   </div>
 
   <div class="resumen-box">
-    <h3>📊 <span data-es="Resumen de la Hipoteca (sin amortización)" data-en="Mortgage Summary (without repayment)">Resumen de la Hipoteca (sin amortización)</span></h3>
+    <h3><span data-es="📊 Resumen de la Hipoteca (sin amortización)" data-en="📊 Mortgage Summary (without repayment)">📊 Resumen de la Hipoteca (sin amortización)</span></h3>
     <div class="resumen-grid">
       <div class="resumen-item"><div class="r-label"><span data-es="Cuota Mensual" data-en="Monthly Payment">Cuota Mensual</span></div><div class="r-value" id="r-cuota">—</div></div>
       <div class="resumen-item"><div class="r-label"><span data-es="Nº Cuotas" data-en="No. Payments">Nº Cuotas</span></div><div class="r-value" id="r-ncuotas">—</div></div>
@@ -151,7 +185,7 @@ tbody tr:hover { background: #f9fafb; }
 
   <div class="escenarios-grid">
     <div class="escenario-card esc1">
-      <div class="esc-title">🔥 <span data-es="Escenario 1: Reducción de Cuota" data-en="Scenario 1: Payment Reduction">Escenario 1: Reducción de Cuota</span></div>
+      <div class="esc-title"><span data-es="🔥 Escenario 1: Reducción de Cuota" data-en="🔥 Scenario 1: Payment Reduction">🔥 Escenario 1: Reducción de Cuota</span></div>
       <div class="esc-resumen">
         <h4><span data-es="Resumen del Escenario" data-en="Scenario Summary">Resumen del Escenario</span></h4>
         <div class="esc-row"><span class="el"><span data-es="Nueva Cuota Mensual:" data-en="New Monthly Payment:">Nueva Cuota Mensual:</span></span><span class="ev ev-green" id="e1-nuevaCuota">—</span></div>
@@ -160,11 +194,11 @@ tbody tr:hover { background: #f9fafb; }
         <div class="esc-row"><span class="el"><span data-es="Total Intereses:" data-en="Total Interest:">Total Intereses:</span></span><span class="ev" id="e1-intereses">—</span></div>
         <div class="esc-row"><span class="el"><span data-es="Nº Cuotas:" data-en="No. Payments:">Nº Cuotas:</span></span><span class="ev" id="e1-ncuotas">—</span></div>
         <div class="esc-row"><span class="el"><span data-es="Fecha Final:" data-en="End Date:">Fecha Final:</span></span><span class="ev" id="e1-fecha">—</span></div>
-        <div class="ahorro-banner" id="e1-ahorro">💰 Ahorro: —</div>
+        <div class="ahorro-banner" id="e1-ahorro">—</div>
       </div>
     </div>
     <div class="escenario-card esc2">
-      <div class="esc-title">⏱ <span data-es="Escenario 2: Reducción de Plazo" data-en="Scenario 2: Term Reduction">Escenario 2: Reducción de Plazo</span></div>
+      <div class="esc-title"><span data-es="⏱ Escenario 2: Reducción de Plazo" data-en="⏱ Scenario 2: Term Reduction">⏱ Escenario 2: Reducción de Plazo</span></div>
       <div class="esc-resumen">
         <h4><span data-es="Resumen del Escenario" data-en="Scenario Summary">Resumen del Escenario</span></h4>
         <div class="esc-row"><span class="el"><span data-es="Cuota Mensual:" data-en="Monthly Payment:">Cuota Mensual:</span></span><span class="ev" id="e2-cuota">—</span></div>
@@ -173,27 +207,27 @@ tbody tr:hover { background: #f9fafb; }
         <div class="esc-row"><span class="el"><span data-es="Nuevo Plazo:" data-en="New Term:">Nuevo Plazo:</span></span><span class="ev" id="e2-ncuotas">—</span></div>
         <div class="esc-row"><span class="el"><span data-es="Reducción de Plazo:" data-en="Term Reduction:">Reducción de Plazo:</span></span><span class="ev ev-green" id="e2-reduccion">—</span></div>
         <div class="esc-row"><span class="el"><span data-es="Fecha Final:" data-en="End Date:">Fecha Final:</span></span><span class="ev" id="e2-fecha">—</span></div>
-        <div class="ahorro-banner" id="e2-ahorro">💰 Ahorro: —</div>
+        <div class="ahorro-banner" id="e2-ahorro">—</div>
       </div>
     </div>
   </div>
 
   <div class="tables-grid">
     <div class="table-card">
-      <div class="table-header">📊 <span data-es="Tabla de Amortización - Reducción de Cuota" data-en="Amortization Table - Payment Reduction">Tabla de Amortización - Reducción de Cuota</span></div>
+      <div class="table-header"><span data-es="📊 Tabla de Amortización - Reducción de Cuota" data-en="📊 Amortization Table - Payment Reduction">📊 Tabla de Amortización - Reducción de Cuota</span></div>
       <div class="table-scroll">
         <table>
-          <thead><tr><th>Nº</th><th><span data-es="Fecha" data-en="Date">Fecha</span></th><th><span data-es="Cuota (€)" data-en="Payment (€)">Cuota (€)</span></th><th><span data-es="Capital (€)" data-en="Capital (€)">Capital (€)</span></th><th><span data-es="Interés (€)" data-en="Interest (€)">Interés (€)</span></th><th><span data-es="Pendiente (€)" data-en="Remaining (€)">Pendiente (€)</span></th></tr></thead>
-          <tbody id="tbody1"><tr><td colspan="6" class="msg-info"><span data-es="Pulsa Calcular para ver la tabla" data-en="Press Calculate to view the table">Pulsa Calcular para ver la tabla</span></td></tr></tbody>
+          <thead><tr><th><span data-es="Nº" data-en="No.">Nº</span></th><th><span data-es="Fecha" data-en="Date">Fecha</span></th><th><span data-es="Cuota (€)" data-en="Payment (€)">Cuota (€)</span></th><th><span data-es="Capital (€)" data-en="Capital (€)">Capital (€)</span></th><th><span data-es="Interés (€)" data-en="Interest (€)">Interés (€)</span></th><th><span data-es="Pendiente (€)" data-en="Remaining (€)">Pendiente (€)</span></th></tr></thead>
+          <tbody id="tbody1"><tr><td colspan="6" class="msg-info"><span data-es="Pulsa Calcular para ver la tabla" data-en="Press Calculate to see the table"><span data-es="Pulsa Calcular para ver la tabla" data-en="Press Calculate to see the table">Pulsa Calcular para ver la tabla</span></span></td></tr></tbody>
         </table>
       </div>
     </div>
     <div class="table-card">
-      <div class="table-header">📊 <span data-es="Tabla de Amortización - Reducción de Plazo" data-en="Amortization Table - Term Reduction">Tabla de Amortización - Reducción de Plazo</span></div>
+      <div class="table-header"><span data-es="📊 Tabla de Amortización - Reducción de Plazo" data-en="📊 Amortization Table - Term Reduction">📊 Tabla de Amortización - Reducción de Plazo</span></div>
       <div class="table-scroll">
         <table>
-          <thead><tr><th>Nº</th><th><span data-es="Fecha" data-en="Date">Fecha</span></th><th><span data-es="Cuota (€)" data-en="Payment (€)">Cuota (€)</span></th><th><span data-es="Capital (€)" data-en="Capital (€)">Capital (€)</span></th><th><span data-es="Interés (€)" data-en="Interest (€)">Interés (€)</span></th><th><span data-es="Pendiente (€)" data-en="Remaining (€)">Pendiente (€)</span></th></tr></thead>
-          <tbody id="tbody2"><tr><td colspan="6" class="msg-info"><span data-es="Pulsa Calcular para ver la tabla" data-en="Press Calculate to view the table">Pulsa Calcular para ver la tabla</span></td></tr></tbody>
+          <thead><tr><th><span data-es="Nº" data-en="No.">Nº</span></th><th><span data-es="Fecha" data-en="Date">Fecha</span></th><th><span data-es="Cuota (€)" data-en="Payment (€)">Cuota (€)</span></th><th><span data-es="Capital (€)" data-en="Capital (€)">Capital (€)</span></th><th><span data-es="Interés (€)" data-en="Interest (€)">Interés (€)</span></th><th><span data-es="Pendiente (€)" data-en="Remaining (€)">Pendiente (€)</span></th></tr></thead>
+          <tbody id="tbody2"><tr><td colspan="6" class="msg-info"><span data-es="Pulsa Calcular para ver la tabla" data-en="Press Calculate to see the table"><span data-es="Pulsa Calcular para ver la tabla" data-en="Press Calculate to see the table">Pulsa Calcular para ver la tabla</span></span></td></tr></tbody>
         </table>
       </div>
     </div>
@@ -203,7 +237,7 @@ tbody tr:hover { background: #f9fafb; }
 <script>
 // ─── UTILIDADES ───────────────────────────────────────────────────────────────
 const fmt = n => new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',minimumFractionDigits:2}).format(n);
-const fmtFecha = d => { const l = localStorage.getItem('pwa_lang')||'es'; return d.toLocaleDateString(l==='en'?'en-GB':'es-ES',{year:'numeric',month:'long'}); };
+const fmtFecha = d => d.toLocaleDateString(localStorage.getItem('pwa_lang')==='en'?'en-GB':'es-ES',{year:'numeric',month:'long'});
 function addMes(fecha, n) { return new Date(fecha.getFullYear(), fecha.getMonth() + n, 1); }
 function cuotaMensual(C, i, n) {
   if (i === 0) return C / n;
@@ -354,7 +388,7 @@ function calcular() {
   const interesesOrig = totalOrig - capital;
   const fechaFinalOrig = addMes(fechaInicio, nTotal - 1);
   document.getElementById('r-cuota').textContent    = fmt(cuota);
-  document.getElementById('r-ncuotas').textContent  = nTotal + ' cuotas';
+  document.getElementById('r-ncuotas').textContent  = nTotal + _a('cuotas');
   document.getElementById('r-total').textContent    = fmt(totalOrig);
   document.getElementById('r-intereses').textContent = fmt(interesesOrig);
   document.getElementById('r-fecha').textContent    = fmtFecha(fechaFinalOrig);
@@ -380,9 +414,9 @@ function calcular() {
   document.getElementById('e1-reduccion').textContent  = fmt(reduccionCuota);
   document.getElementById('e1-total').textContent      = fmt(totalEsc1);
   document.getElementById('e1-intereses').textContent  = fmt(interesesEsc1);
-  document.getElementById('e1-ncuotas').textContent    = nCuotasEsc1 + ' cuotas';
+  document.getElementById('e1-ncuotas').textContent    = nCuotasEsc1 + _a('cuotas');
   document.getElementById('e1-fecha').textContent      = fmtFecha(fechaFinalEsc1);
-  document.getElementById('e1-ahorro').textContent     = '💰 Ahorro: ' + fmt(ahorroEsc1);
+  document.getElementById('e1-ahorro').textContent     = _a('ahorro') + fmt(ahorroEsc1);
 
   // ── ESCENARIO 2: Reducción de Plazo ──
   let res2 = amort <= 0
@@ -402,10 +436,10 @@ function calcular() {
   document.getElementById('e2-cuota').textContent     = fmt(cuota);
   document.getElementById('e2-total').textContent     = fmt(totalEsc2);
   document.getElementById('e2-intereses').textContent = fmt(interesesEsc2);
-  document.getElementById('e2-ncuotas').textContent   = nCuotasRealesEsc2 + ' cuotas';
-  document.getElementById('e2-reduccion').textContent = reduccionPlazo > 0 ? reduccionPlazo + ' cuotas menos' : 'Sin cambio';
+  document.getElementById('e2-ncuotas').textContent   = nCuotasRealesEsc2 + _a('cuotas');
+  document.getElementById('e2-reduccion').textContent = reduccionPlazo > 0 ? reduccionPlazo + _a('cuotas_menos') : _a('sin_cambio');
   document.getElementById('e2-fecha').textContent     = fmtFecha(fechaFinalEsc2);
-  document.getElementById('e2-ahorro').textContent    = '💰 Ahorro: ' + fmt(ahorroEsc2);
+  document.getElementById('e2-ahorro').textContent    = _a('ahorro') + fmt(ahorroEsc2);
 
   // ── Renderizar tablas ──
   renderTabla('tbody1', res1.filas, fechaInicio);
@@ -471,91 +505,21 @@ function exportarHTML() {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
-
-// ═══════════════════════════════════════════════════════
-// BILINGUAL SYSTEM
-// ═══════════════════════════════════════════════════════
-function setLang(lang) {
-  localStorage.setItem('pwa_lang', lang);
-  document.getElementById('btn-es').classList.toggle('active', lang === 'es');
-  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
-
-  // Translate all data-es / data-en spans
-  document.querySelectorAll('[data-es]').forEach(el => {
-    el.textContent = lang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-es');
-  });
-
-  // Translate tooltips
-  document.querySelectorAll('[data-tip-es]').forEach(el => {
-    el.title = lang === 'en' ? el.getAttribute('data-tip-en') : el.getAttribute('data-tip-es');
-  });
-
-  // Translate dynamic "cuotas / payments" labels in results
-  translateDynamicLabels(lang);
-}
-
-function translateDynamicLabels(lang) {
-  // r-ncuotas: "X cuotas" → "X payments"
-  const rn = document.getElementById('r-ncuotas');
-  if (rn && rn.textContent !== '—') {
-    rn.textContent = rn.textContent.replace(' cuotas', lang==='en' ? ' payments' : ' cuotas')
-                                   .replace(' payments', lang==='en' ? ' payments' : ' cuotas');
-  }
-  // e1-ncuotas
-  const e1n = document.getElementById('e1-ncuotas');
-  if (e1n && e1n.textContent !== '—') {
-    e1n.textContent = e1n.textContent.replace(' cuotas', lang==='en' ? ' payments' : ' cuotas')
-                                     .replace(' payments', lang==='en' ? ' payments' : ' cuotas');
-  }
-  // e2-ncuotas
-  const e2n = document.getElementById('e2-ncuotas');
-  if (e2n && e2n.textContent !== '—') {
-    e2n.textContent = e2n.textContent.replace(' cuotas', lang==='en' ? ' payments' : ' cuotas')
-                                     .replace(' payments', lang==='en' ? ' payments' : ' cuotas');
-  }
-  // e2-reduccion: "X cuotas menos / X fewer payments"
-  const e2r = document.getElementById('e2-reduccion');
-  if (e2r && e2r.textContent !== '—') {
-    const num = parseInt(e2r.textContent);
-    if (!isNaN(num)) {
-      e2r.textContent = lang==='en' ? num + ' fewer payments' : num + ' cuotas menos';
-    }
-  }
-  // Ahorro banners
-  ['e1-ahorro','e2-ahorro'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el && el.textContent !== '—') {
-      el.textContent = el.textContent
-        .replace('💰 Ahorro: ', lang==='en' ? '💰 Savings: ' : '💰 Ahorro: ')
-        .replace('💰 Savings: ', lang==='en' ? '💰 Savings: ' : '💰 Ahorro: ');
-    }
-  });
-  // Table "Pulsa Calcular" msg - already handled via data-es/data-en on load
-}
-
-function applyStoredLang() {
-  const lang = localStorage.getItem('pwa_lang') || 'es';
-  setLang(lang);
-}
-
-// ─── Override calcular to also apply language after render ───
-const _calcularOrig = calcular;
-calcular = function() {
-  _calcularOrig();
-  const lang = localStorage.getItem('pwa_lang') || 'es';
-  if (lang === 'en') translateDynamicLabels(lang);
-};
-
-// ─── Override resetear to also apply language after render ───
-const _resetearOrig = resetear;
-resetear = function() {
-  _resetearOrig();
-  const lang = localStorage.getItem('pwa_lang') || 'es';
-  if (lang === 'en') translateDynamicLabels(lang);
-};
-
 calcular();
-applyStoredLang();
+</script>
+<script>
+(function(){
+  var _L=localStorage.getItem('pwa_lang')||'es';
+  function applyLang(l){
+    document.querySelectorAll('[data-es]').forEach(function(el){
+      var v=el.getAttribute('data-'+l); if(v===null)return; el.innerHTML=v;
+    });
+    document.getElementById('flag-es').classList.toggle('active',l==='es');
+    document.getElementById('flag-en').classList.toggle('active',l==='en');
+  }
+  window.setLang=function(l){_L=l;localStorage.setItem('pwa_lang',l);applyLang(l);};
+  document.addEventListener('DOMContentLoaded',function(){ applyLang(_L); });
+})();
 </script>
 </body>
 </html>

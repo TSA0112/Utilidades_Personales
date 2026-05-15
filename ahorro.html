@@ -411,7 +411,7 @@ var _SG = {
     'leg_ingresos': 'Ingresos',
     'leg_gastos': 'Gastos',
     'leg_meta': 'Meta',
-    'no_alcanza': _s('no_alcanza'),
+    'no_alcanza': '⚠️ No alcanzarás la meta en el plazo calculado',
     'borrar': '¿Deseas borrar todos los datos y empezar de nuevo?',
     'calcula': 'Primero calcula el plan de ahorro.'
   },
@@ -505,7 +505,7 @@ function _s(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_SG[l]&&
 
     <!-- Datos generales -->
     <div class="card">
-      <div class="card-title"><span class="icon">📋</span>Datos generales</div>
+      <div class="card-title"><span class="icon">📋</span><span data-es="Datos generales" data-en="General data">Datos generales</span></div>
       <div class="row2">
         <div class="form-group">
           <label><span data-es="Saldo inicial (€)" data-en="Initial balance (€)">Saldo inicial (€)</span> <span class="tooltip" data-tip="Dinero ya ahorrado al inicio del plan.">?</span></label>
@@ -533,7 +533,7 @@ function _s(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_SG[l]&&
 
     <!-- Ingresos -->
     <div class="card">
-      <div class="card-title"><span class="icon">💰</span>Ingresos</div>
+      <div class="card-title"><span class="icon">💰</span><span data-es="Ingresos" data-en="Income">Ingresos</span></div>
       <div class="row2">
         <div class="form-group">
           <label><span data-es="Ingresos netos mensuales (€)" data-en="Monthly net income (€)">Ingresos netos mensuales (€)</span> <span class="tooltip" data-tip="Salario neto mensual que ingresa en tu cuenta.">?</span></label>
@@ -560,14 +560,14 @@ function _s(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_SG[l]&&
 
     <!-- Gastos fijos -->
     <div class="card">
-      <div class="card-title"><span class="icon">💸</span>Gastos mensuales fijos</div>
+      <div class="card-title"><span class="icon">💸</span><span data-es="Gastos mensuales fijos" data-en="Fixed monthly expenses">Gastos mensuales fijos</span></div>
       <div class="expense-list" id="expenseList"></div>
       <button class="btn-add-expense" onclick="addExpense()"><span data-es="＋ Añadir partida de gasto" data-en="＋ Add expense item">＋ Añadir partida de gasto</span></button>
     </div>
 
     <!-- Gastos variables + botones -->
     <div class="card">
-      <div class="card-title"><span class="icon">🔧</span>Gastos variables y contingencias</div>
+      <div class="card-title"><span class="icon">🔧</span><span data-es="Gastos variables y contingencias" data-en="Variable expenses and contingencies">Gastos variables y contingencias</span></div>
       <div class="form-group">
         <label><span data-es="Gastos extraordinarios mensuales (€)" data-en="Monthly extraordinary expenses (€)">Gastos extraordinarios mensuales (€)</span> <span class="tooltip" data-tip="Estimación mensual de reparaciones, regalos, viajes, médico, etc.">?</span></label>
         <input type="number" id="gastosExtra" value="50" min="0" step="10" oninput="calcular()">
@@ -591,7 +591,7 @@ function _s(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_SG[l]&&
 
   <!-- ═══ FILA 3: Resumen resultados (ancho completo) ═══ -->
   <div class="card" id="cardResumen">
-    <div class="card-title"><span class="icon">📊</span>Resumen y resultados</div>
+    <div class="card-title"><span class="icon">📊</span><span data-es="Resumen y resultados" data-en="Summary and results">Resumen y resultados</span></div>
     <div id="resumenContent">
       <div class="empty-state">
         <div class="big-icon">🎯</div>
@@ -602,7 +602,7 @@ function _s(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_SG[l]&&
 
   <!-- ═══ FILA 4: Gráfico ═══ -->
   <div class="card" id="cardGrafico" style="display:none;">
-    <div class="card-title"><span class="icon">📈</span>Evolución económica mensual</div>
+    <div class="card-title"><span class="icon">📈</span><span data-es="Evolución económica mensual" data-en="Monthly financial evolution">Evolución económica mensual</span></div>
     <div class="chart-wrap">
       <canvas id="grafico" height="220"></canvas>
     </div>
@@ -610,12 +610,12 @@ function _s(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_SG[l]&&
 
   <!-- ═══ FILA 5: Tabla detalle ═══ -->
   <div class="card" id="cardTabla" style="display:none;">
-    <div class="card-title"><span class="icon">📅</span>Detalle mensual de evolución</div>
+    <div class="card-title"><span class="icon">📅</span><span data-es="Detalle mensual de evolución" data-en="Monthly evolution detail">Detalle mensual de evolución</span></div>
     <div class="tbl-wrap">
       <table id="tablaEvolucion">
         <thead>
           <tr>
-            <th style="text-align:left">Mes</th>
+            <th style="text-align:left"><span data-es="Mes" data-en="Month">Mes</span></th>
             <th><span data-es="Ingresos" data-en="Income">Ingresos</span></th>
             <th><span data-es="Gastos totales" data-en="Total expenses">Gastos totales</span></th>
             <th><span data-es="Ahorro mensual" data-en="Monthly savings">Ahorro mensual</span></th>
@@ -785,7 +785,10 @@ function calcular() {
     const custEl = document.getElementById(`custom_${idStr}`);
     if (!catEl || !valEl) return;
     const v = parseFloat(valEl.value)||0;
-    const nombre = catEl.value === '__custom__' ? (custEl ? custEl.value||'Personalizado' : 'Personalizado') : catEl.value;
+    const _ln = localStorage.getItem('pwa_lang')||'es';
+    const nombre = catEl.value === '__custom__'
+      ? (custEl ? custEl.value||(_ln==='en'?'Custom':'Personalizado') : (_ln==='en'?'Custom':'Personalizado'))
+      : (_ln==='en' && typeof _CAT_EN !== 'undefined' && _CAT_EN[catEl.value] ? _CAT_EN[catEl.value] : catEl.value);
     gastosFijosTotal += v;
     partidas.push({ nombre, valor: v });
   });
@@ -862,23 +865,24 @@ function calcular() {
       </div>
       <div class="kpi-box neutral">
         <div class="kpi-label">${_s('plazo')}</div>
-        <div class="kpi-value">${totalMeses} meses</div>
+        <div class="kpi-value">${totalMeses}${_s('meses')}</div>
         <div class="kpi-sub">${fmtFecha(fi)} → ${fmtFecha(ff)}</div>
       </div>
     </div>
     ${ahorroAdicional > 0 ? `
     <div style="background:var(--danger-bg);border:1.5px solid #fecaca;border-radius:8px;padding:10px 14px;font-size:0.83rem;color:var(--danger);margin-top:8px;">
-      <strong>💡 Para alcanzar la meta en plazo necesitas reducir gastos ${fmtEur(ahorroAdicional)}/mes</strong>,
-      o incrementar ingresos en ${fmtEur(ahorroAdicional)}/mes,
-      o ampliar el plazo ${calcularMesesExtra(saldoInicial, meta, ahorroDisponible, totalMeses)} meses más.
+      ${localStorage.getItem('pwa_lang')==='en'
+        ? `<strong>💡 To reach the goal on time you need to reduce expenses by ${fmtEur(ahorroAdicional)}/month</strong>, or increase income by ${fmtEur(ahorroAdicional)}/month, or extend the plan by ${calcularMesesExtra(saldoInicial, meta, ahorroDisponible, totalMeses)} more months.`
+        : `<strong>💡 Para alcanzar la meta en plazo necesitas reducir gastos ${fmtEur(ahorroAdicional)}/mes</strong>, o incrementar ingresos en ${fmtEur(ahorroAdicional)}/mes, o ampliar el plazo ${calcularMesesExtra(saldoInicial, meta, ahorroDisponible, totalMeses)} meses más.`}
     </div>` : ''}
     ${ahorroAdicional === 0 && superavit > 0 ? `
     <div style="background:var(--success-bg);border:1.5px solid #bbf7d0;border-radius:8px;padding:10px 14px;font-size:0.83rem;color:var(--success);margin-top:8px;">
-      <strong>🎉 ¡Vas muy bien!</strong> Con tu ritmo actual alcanzarás la meta el <strong>${fechaRealTxt}</strong>.
-      Tendrás un excedente mensual de <strong>${fmtEur(superavit)}</strong> que podrías invertir o usar como colchón adicional.
+      ${localStorage.getItem('pwa_lang')==='en'
+        ? `<strong>🎉 You are doing great!</strong> At your current rate you will reach the goal on <strong>${fechaRealTxt}</strong>. You will have a monthly surplus of <strong>${fmtEur(superavit)}</strong> that you could invest or use as additional buffer.`
+        : `<strong>🎉 ¡Vas muy bien!</strong> Con tu ritmo actual alcanzarás la meta el <strong>${fechaRealTxt}</strong>. Tendrás un excedente mensual de <strong>${fmtEur(superavit)}</strong> que podrías invertir o usar como colchón adicional.`}
     </div>` : ''}
     <div style="margin-top:12px;font-size:0.81rem;color:var(--text-light)">
-      <strong>Desglose de gastos mensuales:</strong><br>
+      <strong>${localStorage.getItem('pwa_lang')==='en'?'Monthly expense breakdown:':'Desglose de gastos mensuales:'}</strong><br>
       ${partidas.map(p=>`<span style="display:inline-block;background:#f1f5f9;border-radius:4px;padding:2px 7px;margin:2px 2px 2px 0;font-size:0.75rem;">${p.nombre}: ${fmtEur(p.valor)}</span>`).join('')}
     </div>
   `;

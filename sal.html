@@ -339,7 +339,7 @@ var _PT = {
     'err_sal_actual': 'Introduce un valor ≥ 0.',
     'err_sal_obj': 'El nivel objetivo debe ser mayor que 0.',
     'corrige': 'Corrige los errores marcados en rojo.',
-    'intro': _p('intro')
+    'intro': 'Introduce los datos y pulsa <strong>Calcular</strong> o modifica cualquier campo.'
   },
   en: {
     'nivel_ok': 'The salt level is already at target. No salt needs to be added.',
@@ -406,13 +406,13 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
   <div class="card">
 
     <!-- INPUTS -->
-    <div class="section-title">📋 Datos de la piscina</div>
+    <div class="section-title">📋 <span data-es="Datos de la piscina" data-en="Pool data">Datos de la piscina</span></div>
     <div class="form-grid">
 
       <!-- Tamaño -->
       <div class="field-wrap">
         <label for="volumen">
-          Volumen de la piscina
+          <span data-es="Volumen de la piscina" data-en="Pool volume">Volumen de la piscina</span>
           <span class="tooltip-icon" data-tip="Capacidad total de agua de la piscina en metros cúbicos. 1 m³ = 1.000 litros.">?</span>
         </label>
         <div class="input-unit-wrap">
@@ -425,7 +425,7 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
       <!-- Temperatura -->
       <div class="field-wrap">
         <label for="temperatura">
-          Temperatura del agua
+          <span data-es="Temperatura del agua" data-en="Water temperature">Temperatura del agua</span>
           <span class="tooltip-icon" data-tip="Temperatura actual del agua. A mayor temperatura, el clorador necesita menos sal. Rango recomendado: 10–40 °C.">?</span>
         </label>
         <div class="input-unit-wrap">
@@ -438,7 +438,7 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
       <!-- Nivel actual de sal -->
       <div class="field-wrap">
         <label for="salActual">
-          Nivel de sal actual
+          <span data-es="Nivel de sal actual" data-en="Current salt level">Nivel de sal actual</span>
           <span class="tooltip-icon" data-tip="Concentración de sal actual en el agua, en g/L (gramos por litro). Mídela con un salinómetro o tiras reactivas.">?</span>
         </label>
         <div class="input-unit-wrap">
@@ -451,7 +451,7 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
       <!-- Nivel objetivo de sal -->
       <div class="field-wrap">
         <label for="salObjetivo">
-          Nivel de sal objetivo
+          <span data-es="Nivel de sal objetivo" data-en="Target salt level">Nivel de sal objetivo</span>
           <span class="tooltip-icon" data-tip="Concentración de sal deseada en g/L. La mayoría de cloradores salinos funcionan bien entre 4–6 g/L. Consulta el manual de tu equipo.">?</span>
         </label>
         <div class="input-unit-wrap">
@@ -467,11 +467,11 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
     <div class="btn-row">
       <button class="btn btn-calc" onclick="calcular()"><span data-es="▶ Calcular" data-en="▶ Calculate">▶ Calcular</span></button>
       <button class="btn btn-reset" onclick="resetear()"><span data-es="↺ Resetear" data-en="↺ Reset">↺ Resetear</span></button>
-      <button class="btn btn-export" id="btn-export" onclick="exportarExcel()" disabled>📥 Exportar a Excel</button>
+      <button class="btn btn-export" id="btn-export" onclick="exportarExcel()" disabled><span data-es="📥 Exportar a Excel" data-en="📥 Export to Excel">📥 Exportar a Excel</span></button>
     </div>
 
     <!-- RESULTADOS -->
-    <div class="section-title">📊 Resultado</div>
+    <div class="section-title">📊 <span data-es="Resultado" data-en="Result">Resultado</span></div>
     <div class="results-panel" id="results-panel">
       <div id="placeholder-msg">Introduce los datos y pulsa <strong><span data-es="Calcular" data-en="Calculate">Calcular</span></strong> o modifica cualquier campo.</div>
       <div id="result-content" style="display:none">
@@ -479,7 +479,7 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
         <div id="alert-box"></div>
 
         <div class="result-main">
-          <span class="result-label"><span data-es="Sal a añadir" data-en="Salt to add"><span data-es="Sal a añadir" data-en="Salt to add">Sal a añadir</span></span>:</span>
+          <span class="result-label"><span data-es="Sal a añadir" data-en="Salt to add">Sal a añadir</span>:</span>
           <span class="result-value" id="res-kg">—</span>
           <span class="result-unit">kg</span>
         </div>
@@ -488,8 +488,8 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
         <hr class="divider">
 
         <div class="formula-box">
-          <div class="formula-title">🔢 Cómo se calcula</div>
-          <div class="formula-line">La sal necesaria se obtiene multiplicando el déficit de concentración por el volumen de agua:</div>
+          <div class="formula-title">🔢 <span data-es="Cómo se calcula" data-en="How it is calculated">Cómo se calcula</span></div>
+          <div class="formula-line"><span data-es="La sal necesaria se obtiene multiplicando el déficit de concentración por el volumen de agua:" data-en="The required salt is calculated by multiplying the concentration deficit by the water volume:">La sal necesaria se obtiene multiplicando el déficit de concentración por el volumen de agua:</span></div>
           <div class="formula-line" style="margin-top:8px">
             <code>Sal (kg) = (Sal objetivo − Sal actual) × Volumen (m³)</code>
           </div>
@@ -504,7 +504,7 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
 
   </div>
   <footer>
-    TSA &copy; · Calculadora de sal para clorador salino · Herramienta informativa — consulta siempre el manual de tu equipo
+    <span data-es="TSA © · Calculadora de sal para clorador salino · Herramienta informativa — consulta siempre el manual de tu equipo" data-en="TSA © · Salt calculator for salt chlorinator · Informative tool — always check your equipment manual">TSA © · Calculadora de sal para clorador salino · Herramienta informativa — consulta siempre el manual de tu equipo</span>
   </footer>
 </div>
 
