@@ -319,52 +319,6 @@
 </head>
 <body>
 
-<script>
-var _PT = {
-  es: {
-    'nivel_ok': 'El nivel de sal ya está en el objetivo. No es necesario añadir sal.',
-    'alert_ok': '✅ El agua ya tiene el nivel de sal correcto. No se necesita añadir sal.',
-    'nivel_alto': 'El nivel actual supera el objetivo. Considera realizar una dilución parcial (añadir agua limpia).',
-    'alert_warn': '⚠️ El nivel actual de sal supera el objetivo. No añadas sal — considera diluir el agua.',
-    'subir_de': 'Para subir de',
-    'en_agua': 'de agua.',
-    'annade': 'Añade',
-    'sal_esp': 'de sal específica para piscinas (NaCl ≥ 99% pureza). Distribúyela por todo el vaso con la bomba en marcha.',
-    'temp_fria': '⚠️ Con agua fría (< 15 °C) la electrólisis es menos eficiente. Puede que necesites ajustar el clorador.',
-    'temp_opt': '✅ Temperatura en rango óptimo para la electrólisis salina.',
-    'temp_cal': '☀️ Agua caliente: mayor evaporación y consumo de cloro. Vigila el nivel de sal con más frecuencia.',
-    'temp_hot': '🔥 Temperatura muy elevada. Revisa el nivel de sal regularmente y protege el equipo del calor.',
-    'err_vol': 'Introduce un volumen mayor que 0.',
-    'err_temp': 'Temperatura entre 1 y 60 °C.',
-    'err_sal_actual': 'Introduce un valor ≥ 0.',
-    'err_sal_obj': 'El nivel objetivo debe ser mayor que 0.',
-    'corrige': 'Corrige los errores marcados en rojo.',
-    'intro': 'Introduce los datos y pulsa <strong>Calcular</strong> o modifica cualquier campo.'
-  },
-  en: {
-    'nivel_ok': 'The salt level is already at target. No salt needs to be added.',
-    'alert_ok': '✅ The water already has the correct salt level. No salt needed.',
-    'nivel_alto': 'The current level exceeds the target. Consider partial dilution (add clean water).',
-    'alert_warn': '⚠️ The current salt level exceeds the target. Do not add salt — consider diluting the water.',
-    'subir_de': 'To raise from',
-    'en_agua': 'of water.',
-    'annade': 'Add',
-    'sal_esp': 'of pool-grade salt (NaCl ≥ 99% purity). Spread it evenly across the pool with the pump running.',
-    'temp_fria': '⚠️ With cold water (< 15 °C) electrolysis is less efficient. You may need to adjust the chlorinator.',
-    'temp_opt': '✅ Temperature in optimal range for salt electrolysis.',
-    'temp_cal': '☀️ Warm water: higher evaporation and chlorine consumption. Check salt level more frequently.',
-    'temp_hot': '🔥 Very high temperature. Check salt level regularly and protect equipment from heat.',
-    'err_vol': 'Enter a volume greater than 0.',
-    'err_temp': 'Temperature must be between 1 and 60 °C.',
-    'err_sal_actual': 'Enter a value ≥ 0.',
-    'err_sal_obj': 'Target level must be greater than 0.',
-    'corrige': 'Correct the errors highlighted in red.',
-    'intro': 'Enter data and press <strong>Calculate</strong> or modify any field.'
-  }
-};
-function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&_PT[l][key])?_PT[l][key]:_PT['es'][key]; }
-</script>
-
   <!-- ===== LANGUAGE SWITCHER ===== -->
   <style>
     .lang-switcher-float {
@@ -406,14 +360,14 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
   <div class="card">
 
     <!-- INPUTS -->
-    <div class="section-title">📋 <span data-es="Datos de la piscina" data-en="Pool data">Datos de la piscina</span></div>
+    <div class="section-title"><span data-es="📋 Datos de la piscina" data-en="📋 Pool Data">📋 Datos de la piscina</span></div>
     <div class="form-grid">
 
       <!-- Tamaño -->
       <div class="field-wrap">
         <label for="volumen">
           <span data-es="Volumen de la piscina" data-en="Pool volume">Volumen de la piscina</span>
-          <span class="tooltip-icon" data-tip="Capacidad total de agua de la piscina en metros cúbicos. 1 m³ = 1.000 litros.">?</span>
+          <span class="tooltip-icon" data-tip-es="Capacidad total de agua de la piscina en metros cúbicos. 1 m³ = 1.000 litros." data-tip-en="Total water capacity of the pool in cubic metres. 1 m³ = 1,000 litres." data-tip="Capacidad total de agua de la piscina en metros cúbicos. 1 m³ = 1.000 litros.">?</span>
         </label>
         <div class="input-unit-wrap">
           <input type="number" id="volumen" min="0.1" step="0.1" value="12" oninput="calcular()" placeholder="ej. 12">
@@ -426,7 +380,7 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
       <div class="field-wrap">
         <label for="temperatura">
           <span data-es="Temperatura del agua" data-en="Water temperature">Temperatura del agua</span>
-          <span class="tooltip-icon" data-tip="Temperatura actual del agua. A mayor temperatura, el clorador necesita menos sal. Rango recomendado: 10–40 °C.">?</span>
+          <span class="tooltip-icon" data-tip-es="Temperatura actual del agua. A mayor temperatura, el clorador necesita menos sal. Rango recomendado: 10–40 °C." data-tip-en="Current water temperature. Higher temperatures require less salt for the chlorinator. Recommended range: 10–40 °C." data-tip="Temperatura actual del agua. A mayor temperatura, el clorador necesita menos sal. Rango recomendado: 10–40 °C.">?</span>
         </label>
         <div class="input-unit-wrap">
           <input type="number" id="temperatura" min="1" max="50" step="0.5" value="20" oninput="calcular()" placeholder="ej. 20">
@@ -439,7 +393,7 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
       <div class="field-wrap">
         <label for="salActual">
           <span data-es="Nivel de sal actual" data-en="Current salt level">Nivel de sal actual</span>
-          <span class="tooltip-icon" data-tip="Concentración de sal actual en el agua, en g/L (gramos por litro). Mídela con un salinómetro o tiras reactivas.">?</span>
+          <span class="tooltip-icon" data-tip-es="Concentración de sal actual en el agua, en g/L (gramos por litro). Mídela con un salinómetro o tiras reactivas." data-tip-en="Current salt concentration in the water, in g/L (grams per litre). Measure it with a salinometer or test strips." data-tip="Concentración de sal actual en el agua, en g/L (gramos por litro). Mídela con un salinómetro o tiras reactivas.">?</span>
         </label>
         <div class="input-unit-wrap">
           <input type="number" id="salActual" min="0" step="0.1" value="3.8" oninput="calcular()" placeholder="ej. 3.8">
@@ -452,7 +406,7 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
       <div class="field-wrap">
         <label for="salObjetivo">
           <span data-es="Nivel de sal objetivo" data-en="Target salt level">Nivel de sal objetivo</span>
-          <span class="tooltip-icon" data-tip="Concentración de sal deseada en g/L. La mayoría de cloradores salinos funcionan bien entre 4–6 g/L. Consulta el manual de tu equipo.">?</span>
+          <span class="tooltip-icon" data-tip-es="Concentración de sal deseada en g/L. La mayoría de cloradores salinos funcionan bien entre 4–6 g/L. Consulta el manual de tu equipo." data-tip-en="Desired salt concentration in g/L. Most salt chlorinators work well between 4–6 g/L. Check your equipment manual." data-tip="Concentración de sal deseada en g/L. La mayoría de cloradores salinos funcionan bien entre 4–6 g/L. Consulta el manual de tu equipo.">?</span>
         </label>
         <div class="input-unit-wrap">
           <input type="number" id="salObjetivo" min="0" step="0.1" value="5" oninput="calcular()" placeholder="ej. 5">
@@ -471,9 +425,9 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
     </div>
 
     <!-- RESULTADOS -->
-    <div class="section-title">📊 <span data-es="Resultado" data-en="Result">Resultado</span></div>
+    <div class="section-title"><span data-es="📊 Resultado" data-en="📊 Result">📊 Resultado</span></div>
     <div class="results-panel" id="results-panel">
-      <div id="placeholder-msg">Introduce los datos y pulsa <strong><span data-es="Calcular" data-en="Calculate">Calcular</span></strong> o modifica cualquier campo.</div>
+      <div id="placeholder-msg"><span data-es="Introduce los datos y pulsa <strong>Calcular</strong> o modifica cualquier campo." data-en="Enter data and press <strong>Calculate</strong> or modify any field.">Introduce los datos y pulsa <strong>Calcular</strong> o modifica cualquier campo.</span></div>
       <div id="result-content" style="display:none">
 
         <div id="alert-box"></div>
@@ -488,13 +442,13 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
         <hr class="divider">
 
         <div class="formula-box">
-          <div class="formula-title">🔢 <span data-es="Cómo se calcula" data-en="How it is calculated">Cómo se calcula</span></div>
+          <div class="formula-title"><span data-es="🔢 Cómo se calcula" data-en="🔢 How it is calculated">🔢 Cómo se calcula</span></div>
           <div class="formula-line"><span data-es="La sal necesaria se obtiene multiplicando el déficit de concentración por el volumen de agua:" data-en="The required salt is calculated by multiplying the concentration deficit by the water volume:">La sal necesaria se obtiene multiplicando el déficit de concentración por el volumen de agua:</span></div>
           <div class="formula-line" style="margin-top:8px">
             <code>Sal (kg) = (Sal objetivo − Sal actual) × Volumen (m³)</code>
           </div>
           <div class="formula-line" style="margin-top:6px; color:#7f8c8d; font-size:0.78rem">
-            Nota: 1 m³ = 1.000 L · La diferencia de concentración en g/L multiplicada por el volumen en m³ da el resultado directamente en kg, ya que: g/L × m³ = g/L × 1.000 L × (1 kg / 1.000 g) = kg.
+<span data-es="Nota: 1 m³ = 1.000 L · La diferencia de concentración en g/L multiplicada por el volumen en m³ da el resultado directamente en kg, ya que: g/L × m³ = g/L × 1.000 L × (1 kg / 1.000 g) = kg." data-en="Note: 1 m³ = 1,000 L · The concentration difference in g/L multiplied by the volume in m³ gives the result directly in kg, since: g/L × m³ = g/L × 1,000 L × (1 kg / 1,000 g) = kg.">Nota: 1 m³ = 1.000 L · La diferencia de concentración en g/L multiplicada por el volumen en m³ da el resultado directamente en kg, ya que: g/L × m³ = g/L × 1.000 L × (1 kg / 1.000 g) = kg.</span>
           </div>
           <div class="formula-result" id="formula-sustitucion"></div>
           <div class="formula-line" style="margin-top:10px; color:#888; font-size:0.77rem" id="nota-temperatura"></div>
@@ -504,11 +458,14 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
 
   </div>
   <footer>
-    <span data-es="TSA © · Calculadora de sal para clorador salino · Herramienta informativa — consulta siempre el manual de tu equipo" data-en="TSA © · Salt calculator for salt chlorinator · Informative tool — always check your equipment manual">TSA © · Calculadora de sal para clorador salino · Herramienta informativa — consulta siempre el manual de tu equipo</span>
+    <span data-es="TSA © · Calculadora de sal para clorador salino · Herramienta informativa — consulta siempre el manual de tu equipo" data-en="TSA © · Salt calculator for salt chlorinator · Informational tool — always check your equipment manual">TSA &copy; · Calculadora de sal para clorador salino · Herramienta informativa — consulta siempre el manual de tu equipo</span>
   </footer>
 </div>
 
 <script>
+  // ---- Language reference ----
+  function _getLang(){ return localStorage.getItem('pwa_lang') || 'es'; }
+
   // ---- Utilidades ----
   function getVal(id) {
     return parseFloat(document.getElementById(id).value);
@@ -527,19 +484,27 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
   // ---- Validación ----
   function validar(v, t, sa, so) {
     let ok = true;
-    if (!v || v <= 0)        { setError('volumen',      'Introduce un volumen mayor que 0.'); ok = false; }
-    if (!t || t <= 0 || t > 60) { setError('temperatura', _p('err_temp')); ok = false; }
-    if (sa === '' || isNaN(sa) || sa < 0) { setError('salActual',  'Introduce un valor ≥ 0.'); ok = false; }
-    if (!so || so <= 0)      { setError('salObjetivo', 'El nivel objetivo debe ser mayor que 0.'); ok = false; }
+    if (!v || v <= 0)        { setError('volumen',      _getLang()==='en' ? 'Enter a volume greater than 0.' : 'Introduce un volumen mayor que 0.'); ok = false; }
+    if (!t || t <= 0 || t > 60) { setError('temperatura', _getLang()==='en' ? 'Temperature between 1 and 60 °C.' : 'Temperatura entre 1 y 60 °C.'); ok = false; }
+    if (sa === '' || isNaN(sa) || sa < 0) { setError('salActual',  _getLang()==='en' ? 'Enter a value ≥ 0.' : 'Introduce un valor ≥ 0.'); ok = false; }
+    if (!so || so <= 0)      { setError('salObjetivo', _getLang()==='en' ? 'Target level must be greater than 0.' : 'El nivel objetivo debe ser mayor que 0.'); ok = false; }
     return ok;
   }
 
   // ---- Nota de temperatura ----
   function notaTemperatura(t) {
-    if (t < 15) return _p('temp_fria');
-    if (t >= 15 && t < 25) return _p('temp_opt');
-    if (t >= 25 && t < 35) return _p('temp_cal');
-    return _p('temp_hot');
+    if (t < 15) return _getLang()==='en'
+      ? '⚠️ Cold water (< 15 °C): electrolysis is less efficient. You may need to adjust the chlorinator.'
+      : '⚠️ Con agua fría (< 15 °C) la electrólisis es menos eficiente. Puede que necesites ajustar el clorador.';
+    if (t >= 15 && t < 25) return _getLang()==='en'
+      ? '✅ Temperature in optimal range for salt electrolysis.'
+      : '✅ Temperatura en rango óptimo para la electrólisis salina.';
+    if (t >= 25 && t < 35) return _getLang()==='en'
+      ? '☀️ Warm water: higher evaporation and chlorine consumption. Check salt levels more frequently.'
+      : '☀️ Agua caliente: mayor evaporación y consumo de cloro. Vigila el nivel de sal con más frecuencia.';
+    return _getLang()==='en'
+      ? '🔥 Very high temperature. Check salt levels regularly and protect the equipment from heat.'
+      : '🔥 Temperatura muy elevada. Revisa el nivel de sal regularmente y protege el equipo del calor.';
   }
 
   // ---- Cálculo principal ----
@@ -559,7 +524,7 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
     if (!validar(v, t, sa, so)) {
       content.style.display = 'none';
       placeholder.style.display = 'block';
-      placeholder.innerHTML = '❌ '+_p('corrige'); placeholder.innerHTML += '<!--  Corrige los errores marcados en rojo.';
+      placeholder.innerHTML = _getLang()==='en' ? '❌ Please fix the errors marked in red.' : '❌ Corrige los errores marcados en rojo.';
       panel.classList.add('has-error');
       document.getElementById('btn-export').disabled = true;
       ultimoResultado = null;
@@ -580,25 +545,26 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
     const formulaSust = document.getElementById('formula-sustitucion');
     const notaTemp = document.getElementById('nota-temperatura');
 
-    formulaSust.innerHTML = `📌 Sustitución: <code>(${so} - ${sa}) × ${v} = <strong>${diferencia.toFixed(2)} × ${v} = ${kgSal >= 0 ? kgSal.toFixed(1) : '—'} kg</strong></code>`;
+    var sustLabel = _getLang()==='en' ? '📌 Substitution:' : '📌 Sustitución:';
+    formulaSust.innerHTML = `${sustLabel} <code>(${so} - ${sa}) × ${v} = <strong>${diferencia.toFixed(2)} × ${v} = ${kgSal >= 0 ? kgSal.toFixed(1) : '—'} kg</strong></code>`;
     notaTemp.textContent = notaTemperatura(t);
 
     if (diferencia <= 0) {
       resKg.textContent = '0.0';
       resKg.className = 'result-value result-zero';
       if (diferencia === 0) {
-        resNote.textContent = _p('nivel_ok');
-        alertBox.innerHTML = '<div class="alert-msg alert-ok">'+_p('alert_ok')+'</div>';
+        resNote.textContent = _getLang()==='en' ? 'The salt level is already at the target. No salt needed.' : 'El nivel de sal ya está en el objetivo. No es necesario añadir sal.';
+        alertBox.innerHTML = _getLang()==='en' ? '<div class="alert-msg alert-ok">✅ The water already has the correct salt level. No salt needed.</div>' : '<div class="alert-msg alert-ok">✅ El agua ya tiene el nivel de sal correcto. No se necesita añadir sal.</div>';
       } else {
-        resNote.textContent = _p('nivel_alto');
-        alertBox.innerHTML = '<div class="alert-msg alert-warn">'+_p('alert_warn')+'</div>';
+        resNote.textContent = _getLang()==='en' ? 'The current level exceeds the target. Consider a partial dilution (adding clean water).' : 'El nivel actual supera el objetivo. Considera realizar una dilución parcial (añadir agua limpia).';
+        alertBox.innerHTML = _getLang()==='en' ? '<div class="alert-msg alert-warn">⚠️ Current salt level exceeds the target. Do not add salt — consider diluting the water.</div>' : '<div class="alert-msg alert-warn">⚠️ El nivel actual de sal supera el objetivo. No añadas sal — considera diluir el agua.</div>';
       }
       ultimoResultado = { v, t, sa, so, kgSal: 0 };
     } else {
       resKg.textContent = kgSal.toFixed(1);
       resKg.className = 'result-value';
-      resNote.textContent = _p('subir_de')+` ${sa} g/L `+(localStorage.getItem('pwa_lang')==='en'?'to':'a')+` ${so} g/L `+(localStorage.getItem('pwa_lang')==='en'?'in':'en')+` ${v} m³ `+_p('en_agua');
-      alertBox.innerHTML = `<div class="alert-msg alert-info">ℹ️ ${_p('annade')} <strong>${kgSal.toFixed(1)} kg</strong> ${_p('sal_esp')}</div>`;
+      resNote.textContent = _getLang()==='en' ? `To raise from ${sa} g/L to ${so} g/L in ${v} m³ of water.` : `Para subir de ${sa} g/L a ${so} g/L en ${v} m³ de agua.`;
+      alertBox.innerHTML = _getLang()==='en' ? `<div class="alert-msg alert-info">ℹ️ Add <strong>${kgSal.toFixed(1)} kg</strong> of pool-specific salt (NaCl ≥ 99% purity). Distribute it throughout the pool with the pump running.</div>` : `<div class="alert-msg alert-info">ℹ️ Añade <strong>${kgSal.toFixed(1)} kg</strong> de sal específica para piscinas (NaCl ≥ 99% pureza). Distribúyela por todo el vaso con la bomba en marcha.</div>`;
       ultimoResultado = { v, t, sa, so, kgSal: kgSal.toFixed(1) };
     }
 
@@ -614,7 +580,7 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
     clearErrors();
     document.getElementById('result-content').style.display = 'none';
     document.getElementById('placeholder-msg').style.display = 'block';
-    document.getElementById('placeholder-msg').innerHTML = '<span data-es="Introduce los datos y pulsa <strong>Calcular</strong> o modifica cualquier campo." data-en="Enter data and press <strong>Calculate</strong> or modify any field.">Introduce los datos y pulsa <strong>Calcular</strong> o modifica cualquier campo.</span>';
+    document.getElementById('placeholder-msg').innerHTML = _getLang()==='en' ? 'Enter data and press <strong>Calculate</strong> or modify any field.' : 'Introduce los datos y pulsa <strong>Calcular</strong> o modifica cualquier campo.';
     document.getElementById('results-panel').classList.remove('has-error');
     document.getElementById('btn-export').disabled = true;
     ultimoResultado = null;
@@ -628,20 +594,21 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
     const diferencia = (so - sa).toFixed(2);
     const fecha = new Date().toLocaleDateString('es-ES');
 
+    var isEN = _getLang()==='en';
     const filas = [
-      ['Campo', 'Valor', 'Unidad'],
-      ['Fecha de cálculo', fecha, ''],
-      ['Volumen de la piscina', v, 'm³'],
-      ['Temperatura del agua', t, '°C'],
-      ['Nivel de sal actual', sa, 'g/L'],
-      ['Nivel de sal objetivo', so, 'g/L'],
-      ['Diferencia de sal', diferencia, 'g/L'],
+      [isEN?'Field':'Campo', isEN?'Value':'Valor', isEN?'Unit':'Unidad'],
+      [isEN?'Calculation date':'Fecha de cálculo', fecha, ''],
+      [isEN?'Pool volume':'Volumen de la piscina', v, 'm³'],
+      [isEN?'Water temperature':'Temperatura del agua', t, '°C'],
+      [isEN?'Current salt level':'Nivel de sal actual', sa, 'g/L'],
+      [isEN?'Target salt level':'Nivel de sal objetivo', so, 'g/L'],
+      [isEN?'Salt difference':'Diferencia de sal', diferencia, 'g/L'],
       ['', '', ''],
-      ['RESULTADO: <span data-es="Sal a añadir" data-en="Salt to add">Sal a añadir</span>', kgSal, 'kg'],
+      [isEN?'RESULT: Salt to add':'RESULTADO: Sal a añadir', kgSal, 'kg'],
       ['', '', ''],
-      ['Fórmula aplicada', '(Sal objetivo - Sal actual) × Volumen', ''],
-      ['Sustitución', `(${so} - ${sa}) × ${v}`, `= ${kgSal} kg`],
-      ['Herramienta', 'TSA © Calculadora Piscina Clorador Salino', ''],
+      [isEN?'Formula applied':'Fórmula aplicada', '(Target salt - Current salt) × Volume', ''],
+      [isEN?'Substitution':'Sustitución', `(${so} - ${sa}) × ${v}`, `= ${kgSal} kg`],
+      [isEN?'Tool':'Herramienta', 'TSA © Salt Chlorinator Pool Calculator', ''],
     ];
 
     const csvContent = filas.map(fila =>
@@ -680,10 +647,15 @@ function _p(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_PT[l]&&
       document.querySelectorAll('[data-title-'+l+']').forEach(function(el){
         el.title=el.getAttribute('data-title-'+l);
       });
+      // Switch tooltip data-tip content
+      document.querySelectorAll('[data-tip-es]').forEach(function(el){
+        var tip = el.getAttribute('data-tip-'+l);
+        if(tip) el.setAttribute('data-tip', tip);
+      });
       document.getElementById('flag-es').classList.toggle('active',l==='es');
       document.getElementById('flag-en').classList.toggle('active',l==='en');
     }
-    window.setLang=function(l){ _L=l; localStorage.setItem('pwa_lang',l); applyLang(l); };
+    window.setLang=function(l){ _L=l; localStorage.setItem('pwa_lang',l); applyLang(l); if(typeof calcular==='function') calcular(); };
     document.addEventListener('DOMContentLoaded',function(){
       applyLang(_L);
     });
