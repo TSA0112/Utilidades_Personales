@@ -270,268 +270,309 @@ button:active {
 </head>
 <body>
 
+<script>
+var _HT = {
+  es: {
+    'total_label': 'TOTAL VIVIENDA + GASTOS: ',
+    'dinero_disp': '💎 Dinero disponible para reformas/muebles: ',
+    'anos_label': ' años',
+    'edad_label': ' años'
+  },
+  en: {
+    'total_label': 'TOTAL PROPERTY + COSTS: ',
+    'dinero_disp': '💎 Money available for renovation/furniture: ',
+    'anos_label': ' years',
+    'edad_label': ' years'
+  }
+};
+function _h(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_HT[l]&&_HT[l][key])?_HT[l][key]:_HT['es'][key]; }
+</script>
+
+  <style>
+    .lang-switcher-float { position:fixed; top:10px; right:12px; z-index:9999; display:flex; gap:5px; }
+    .lang-btn-f { background:rgba(255,255,255,0.88); border:2px solid transparent; border-radius:6px;
+      cursor:pointer; padding:2px 3px; opacity:0.72; transition:opacity .2s,border-color .2s; line-height:1;
+      box-shadow:0 1px 5px rgba(0,0,0,0.18); }
+    .lang-btn-f:hover { opacity:1; }
+    .lang-btn-f.active { border-color:#58a6ff; opacity:1; }
+  </style>
+  <div class="lang-switcher-float">
+    <button class="lang-btn-f" id="flag-es" onclick="setLang('es')" title="Español">
+      <svg width="30" height="20" viewBox="0 0 30 20"><rect width="30" height="20" fill="#c60b1e"/><rect y="5" width="30" height="10" fill="#f1bf00"/></svg>
+    </button>
+    <button class="lang-btn-f" id="flag-en" onclick="setLang('en')" title="English">
+      <svg width="30" height="20" viewBox="0 0 30 20"><rect width="30" height="20" fill="#012169"/>
+        <path d="M0,0 L30,20 M30,0 L0,20" stroke="white" stroke-width="3.5"/>
+        <path d="M0,0 L30,20 M30,0 L0,20" stroke="#C8102E" stroke-width="2.2"/>
+        <path d="M15,0 V20 M0,10 H30" stroke="white" stroke-width="5.5"/>
+        <path d="M15,0 V20 M0,10 H30" stroke="#C8102E" stroke-width="3.2"/>
+      </svg>
+    </button>
+  </div>
+
+
 <div class="container">
-  <h1>💰 Calculadora Hipotecaria</h1>
+  <h1><span data-es="💰 Calculadora Hipotecaria" data-en="💰 Mortgage Calculator">💰 Calculadora Hipotecaria</span></h1>
 
   <div class="form-section">
-    <h2>📋 Datos de la Vivienda y Comprador</h2>
+    <h2><span data-es="📋 Datos de la Vivienda y Comprador" data-en="📋 Property and Buyer Data">📋 Datos de la Vivienda y Comprador</span></h2>
     
     <div class="form-grid">
       <div class="form-group">
-        <label>Provincia:</label>
+        <label><span data-es="Provincia:" data-en="Province:">Provincia:</span></label>
         <input type="text" id="provincia" value="Barcelona">
       </div>
       
       <div class="form-group">
-        <label>Nº de compradores:</label>
+        <label><span data-es="Nº de compradores:" data-en="No. of buyers:">Nº de compradores:</span></label>
         <input type="number" id="numCompradores" value="1" min="1">
       </div>
       
       <div class="form-group">
-        <label>Fecha de nacimiento (persona mayor):</label>
+        <label><span data-es="Fecha de nacimiento (persona mayor):" data-en="Date of birth (oldest person):">Fecha de nacimiento (persona mayor):</span></label>
         <input type="date" id="fechaNacimiento" value="1970-12-01" oninput="calcularEdad()">
       </div>
       
       <div class="form-group">
-        <label>Edad:</label>
+        <label><span data-es="Edad:" data-en="Age:">Edad:</span></label>
         <input type="number" id="edad" value="55" readonly style="background: #1c2128;">
       </div>
     </div>
 
     <div class="form-grid">
       <div class="form-group">
-        <label>Tipo de empleo:</label>
+        <label><span data-es="Tipo de empleo:" data-en="Employment type:"><span data-es="Tipo de empleo:" data-en="Employment type:">Tipo de empleo:</span></span></label>
         <select id="tipoEmpleo">
-          <option value="Funcionario" selected>Funcionario</option>
-          <option value="Cuenta ajena">Cuenta ajena</option>
-          <option value="Autónomo">Autónomo</option>
+          <option value="Funcionario" selected><span data-es="Funcionario" data-en="Civil Servant">Funcionario</span></option>
+          <option value="Cuenta ajena"><span data-es="Cuenta ajena" data-en="Employee">Cuenta ajena</span></option>
+          <option value="Autónomo"><span data-es="Autónomo" data-en="Self-employed">Autónomo</span></option>
         </select>
       </div>
       
       <div class="form-group">
-        <label>Años de antigüedad:</label>
+        <label><span data-es="Años de antigüedad:" data-en="Years of employment:"><span data-es="Años de antigüedad:" data-en="Years of employment:">Años de antigüedad:</span></span></label>
         <input type="number" id="antiguedad" value="34" min="0">
       </div>
       
       <div class="form-group">
-        <label>Ingresos mensuales netos (€):</label>
+        <label><span data-es="Ingresos mensuales netos (€):" data-en="Monthly net income (€):">Ingresos mensuales netos (€):</span></label>
         <input type="number" id="ingresosMensuales" value="1750" step="0.01" oninput="calcularIngresoMedio()">
       </div>
       
       <div class="form-group">
-        <label>Número de pagas:</label>
+        <label><span data-es="Número de pagas:" data-en="Number of payments per year:"><span data-es="Número de pagas:" data-en="Number of payments:">Número de pagas:</span></span></label>
         <input type="number" id="numeroPagas" value="15" min="12" oninput="calcularIngresoMedio()">
       </div>
     </div>
 
     <div class="form-grid">
       <div class="form-group">
-        <label>Ingreso medio mensual (€):</label>
+        <label><span data-es="Ingreso medio mensual (€):" data-en="Average monthly income (€):">Ingreso medio mensual (€):</span></label>
         <input type="number" id="ingresoMedio" value="2187.50" readonly style="background: #1c2128; color: #3fb950; font-weight: 700;">
       </div>
       
       <div class="form-group">
-        <label>Otros créditos/pagos mensuales (€):</label>
+        <label><span data-es="Otros créditos/pagos mensuales (€):" data-en="Other monthly loans/payments (€):">Otros créditos/pagos mensuales (€):</span></label>
         <input type="number" id="otrosCreditos" value="0" step="0.01">
       </div>
       
       <div class="form-group">
-        <label>Dinero disponible en cuenta (€):</label>
+        <label><span data-es="Dinero disponible en cuenta (€):" data-en="Available funds in account (€):">Dinero disponible en cuenta (€):</span></label>
         <input type="number" id="dineroCuenta" value="170000" step="0.01" oninput="calcular()">
       </div>
     </div>
   </div>
 
   <div class="form-section">
-    <h2>🏠 Datos de la Vivienda y Gastos</h2>
+    <h2><span data-es="🏠 Datos de la Vivienda y Gastos" data-en="🏠 Property and Expenses">🏠 Datos de la Vivienda y Gastos</span></h2>
     
     <div class="form-grid">
       <div class="form-group">
-        <label>Precio de la vivienda (€):</label>
+        <label><span data-es="Precio de la vivienda (€):" data-en="Property price (€):">Precio de la vivienda (€):</span></label>
         <input type="number" id="precioVivienda" value="205000" step="0.01" oninput="calcular()">
       </div>
       
       <div class="form-group">
-        <label>Coste de tasación (€):</label>
+        <label><span data-es="Coste de tasación (€):" data-en="Valuation cost (€):">Coste de tasación (€):</span></label>
         <input type="number" id="costeTasacion" value="400" step="0.01" oninput="calcular()">
       </div>
       
       <div class="form-group">
-        <label>IVA/ITP (%):</label>
+        <label><span data-es="IVA/ITP (%):" data-en="VAT/Transfer Tax (%):">IVA/ITP (%):</span></label>
         <input type="number" id="porcentajeIVA" value="7" step="0.01" min="0" max="100" oninput="calcular()">
       </div>
       
       <div class="form-group">
-        <label>Notaría + Registro + Gestoría (%):</label>
+        <label><span data-es="Notaría + Registro + Gestoría (%):" data-en="Notary + Registry + Agency (%):">Notaría + Registro + Gestoría (%):</span></label>
         <input type="number" id="gastosNotaria" value="1" step="0.01" min="0" max="100" oninput="calcular()">
       </div>
     </div>
 
     <div class="form-grid">
       <div class="form-group">
-        <label>Otros gastos (Broker, etc) (€):</label>
+        <label><span data-es="Otros gastos (Broker, etc) (€):" data-en="Other costs (Broker, etc.) (€):">Otros gastos (Broker, etc) (€):</span></label>
         <input type="number" id="otrosGastos" value="0" step="0.01" oninput="calcular()">
       </div>
       
       <div class="form-group">
-        <label>Seguro de Vida/Amortización (€/año):</label>
+        <label><span data-es="Seguro de Vida/Amortización (€/año):" data-en="Life/Mortgage Insurance (€/year):">Seguro de Vida/Amortización (€/año):</span></label>
         <input type="number" id="seguroVida" value="0" step="0.01" oninput="calcular()">
       </div>
       
       <div class="form-group">
-        <label>Comisión de apertura (%):</label>
+        <label><span data-es="Comisión de apertura (%):" data-en="Opening fee (%):">Comisión de apertura (%):</span></label>
         <input type="number" id="comisionApertura" value="0" step="0.01" min="0" max="100" oninput="calcular()">
       </div>
     </div>
   </div>
 
   <div class="form-section">
-    <h2>📊 Condiciones del Préstamo</h2>
+    <h2><span data-es="📊 Condiciones del Préstamo" data-en="📊 Loan Conditions">📊 Condiciones del Préstamo</span></h2>
     
     <div class="form-grid">
       <div class="form-group">
-        <label>Años del préstamo:</label>
+        <label><span data-es="Años del préstamo:" data-en="Loan term (years):">Años del préstamo:</span></label>
         <input type="number" id="anosPrestamo" value="20" min="1" max="40" oninput="calcular()">
       </div>
       
       <div class="form-group">
-        <label>Tipo de interés (%):</label>
+        <label><span data-es="Tipo de interés (%):" data-en="Interest rate (%):">Tipo de interés (%):</span></label>
         <input type="number" id="tipoInteres" value="2.29" step="0.01" min="0" oninput="calcular()">
       </div>
       
       <div class="form-group">
-        <label>Comisión cancelación anticipada (%):</label>
+        <label><span data-es="Comisión cancelación anticipada (%):" data-en="Early repayment fee (%):">Comisión cancelación anticipada (%):</span></label>
         <input type="number" id="comisionCancelacion" value="0" step="0.01" min="0">
       </div>
     </div>
 
     <div class="form-grid">
       <div class="form-group">
-        <label>Bonificada con nómina:</label>
+        <label><span data-es="Bonificada con nómina:" data-en="Discounted with payroll:">Bonificada con nómina:</span></label>
         <select id="bonificaNomina">
           <option value="Sí" selected>Sí</option>
-          <option value="No">No</option>
+          <option value="No" data-es="No" data-en="No">No</option>
         </select>
       </div>
       
       <div class="form-group">
-        <label>Bonificada con seguro hogar:</label>
+        <label><span data-es="Bonificada con seguro hogar:" data-en="Discounted with home insurance:">Bonificada con seguro hogar:</span></label>
         <select id="bonificaSeguroHogar">
           <option value="Sí" selected>Sí</option>
-          <option value="No">No</option>
+          <option value="No" data-es="No" data-en="No">No</option>
         </select>
       </div>
       
       <div class="form-group">
-        <label>Bonificada con seguro de vida:</label>
+        <label><span data-es="Bonificada con seguro de vida:" data-en="Discounted with life insurance:">Bonificada con seguro de vida:</span></label>
         <select id="bonificaSeguroVida">
           <option value="Sí" selected>Sí</option>
-          <option value="No">No</option>
+          <option value="No" data-es="No" data-en="No">No</option>
         </select>
       </div>
     </div>
   </div>
 
   <div class="buttons">
-    <button class="btn-calc" onclick="calcular()">🔄 Recalcular</button>
-    <button class="btn-reset" onclick="resetear()">♻️ Resetear</button>
-    <button class="btn-excel" onclick="descargarExcel()">📊 Descargar Excel</button>
+    <button class="btn-calc" onclick="calcular()"><span data-es="🔄 Recalcular" data-en="🔄 Recalculate">🔄 Recalcular</span></button>
+    <button class="btn-reset" onclick="resetear()"><span data-es="♻️ Resetear" data-en="♻️ Reset">♻️ Resetear</span></button>
+    <button class="btn-excel" onclick="descargarExcel()"><span data-es="📊 Descargar Excel" data-en="📊 Download Excel">📊 Descargar Excel</span></button>
   </div>
 
   <div class="form-section">
-    <h2>📈 Resumen de la Hipoteca</h2>
+    <h2><span data-es="📈 Resumen de la Hipoteca" data-en="📈 Mortgage Summary">📈 Resumen de la Hipoteca</span></h2>
 
     <div class="resumen-grid">
       <div class="resumen-column">
-        <h3>📊 Datos Económicos del Solicitante</h3>
+        <h3><span data-es="📊 Datos Económicos del Solicitante" data-en="📊 Applicant Financial Data">📊 Datos Económicos del Solicitante</span></h3>
         <div class="resumen-item">
-          <span>Ingresos mensuales netos:</span>
+          <span><span data-es="Ingresos mensuales netos:" data-en="Monthly net income:">Ingresos mensuales netos:</span></span>
           <span id="resumenIngresos">1.750,00 €</span>
         </div>
         <div class="resumen-item">
-          <span>Número de pagas:</span>
+          <span><span data-es="Número de pagas:" data-en="Number of payments:">Número de pagas:</span></span>
           <span id="resumenPagas">15</span>
         </div>
         <div class="resumen-item">
-          <span>Ingreso medio mensual:</span>
+          <span><span data-es="Ingreso medio mensual:" data-en="Average monthly income:">Ingreso medio mensual:</span></span>
           <span id="resumenIngresoMedio">2.187,50 €</span>
         </div>
         <div class="resumen-item">
-          <span>Otros créditos/pagos:</span>
+          <span><span data-es="Otros créditos/pagos:" data-en="Other loans/payments:">Otros créditos/pagos:</span></span>
           <span id="resumenOtrosCreditos">0,00 €</span>
         </div>
         <div class="resumen-item">
-          <span>Edad del titular:</span>
+          <span><span data-es="Edad del titular:" data-en="Holder's age:">Edad del titular:</span></span>
           <span id="resumenEdad">55 años</span>
         </div>
         <div class="resumen-item">
-          <span>Tipo de empleo:</span>
+          <span><span data-es="Tipo de empleo:" data-en="Employment type:">Tipo de empleo:</span></span>
           <span id="resumenEmpleo">Funcionario</span>
         </div>
         <div class="resumen-item">
-          <span>Años de antigüedad:</span>
+          <span><span data-es="Años de antigüedad:" data-en="Years of seniority:">Años de antigüedad:</span></span>
           <span id="resumenAntiguedad">34 años</span>
         </div>
       </div>
 
       <div class="resumen-column">
-        <h3>🏠 Desglose de Gastos de Compra</h3>
+        <h3><span data-es="🏠 Desglose de Gastos de Compra" data-en="🏠 Purchase Cost Breakdown">🏠 Desglose de Gastos de Compra</span></h3>
         <div class="resumen-item">
-          <span>Precio vivienda:</span>
+          <span><span data-es="Precio vivienda:" data-en="Property price:">Precio vivienda:</span></span>
           <span id="resumenPrecio">205.000,00 €</span>
         </div>
         <div class="resumen-item">
-          <span>Tasación:</span>
+          <span><span data-es="Tasación:" data-en="Valuation:">Tasación:</span></span>
           <span id="resumenTasacion">400,00 €</span>
         </div>
         <div class="resumen-item">
-          <span>IVA/ITP:</span>
+          <span><span data-es="IVA/ITP:" data-en="VAT/Tax:">IVA/ITP:</span></span>
           <span id="resumenIVA">14.350,00 €</span>
         </div>
         <div class="resumen-item">
-          <span>Notaría + Registro + Gestoría:</span>
+          <span><span data-es="Notaría + Registro + Gestoría:" data-en="Notary + Registry + Agency:">Notaría + Registro + Gestoría:</span></span>
           <span id="resumenNotaria">2.665,00 €</span>
         </div>
         <div class="resumen-item">
-          <span>Otros gastos:</span>
+          <span><span data-es="Otros gastos:" data-en="Other costs:">Otros gastos:</span></span>
           <span id="resumenOtros">0,00 €</span>
         </div>
         <div class="resumen-item">
-          <span>Seguro Vida/Amortización:</span>
+          <span><span data-es="Seguro Vida/Amortización:" data-en="Life/Mortgage Insurance:">Seguro Vida/Amortización:</span></span>
           <span id="resumenSeguro">4.534,00 €</span>
         </div>
       </div>
     </div>
 
     <div class="resumen-total" id="resumenTotal">
-      TOTAL VIVIENDA + GASTOS: 226.949,00 €
+      <span id="resumenTotal">TOTAL VIVIENDA + GASTOS: 226.949,00 €</span>
     </div>
 
     <div class="campo-editable">
-      <label>💰 Hipoteca a solicitar (editable):</label>
+      <label><span data-es="💰 Hipoteca a solicitar (editable):" data-en="💰 Mortgage to request (editable):">💰 Hipoteca a solicitar (editable):</span></label>
       <input type="number" id="hipotecaSolicitar" value="95000" step="0.01" oninput="ajustarDesdeHipoteca()">
     </div>
 
     <div class="campo-editable">
-      <label>💵 Dinero a aportar (editable):</label>
+      <label><span data-es="💵 Dinero a aportar (editable):" data-en="💵 Own funds to contribute (editable):">💵 Dinero a aportar (editable):</span></label>
       <input type="number" id="dineroAportar" value="131949" step="0.01" oninput="ajustarDesdeAportacion()">
     </div>
 
     <div class="dinero-disponible" id="dineroDisponible">
-      💎 Dinero disponible para reformas/muebles: 38.051,00 €
+      💎 <span id="dineroDisponible_label" data-es="Dinero disponible para reformas/muebles:" data-en="Money available for renovation/furniture:">Dinero disponible para reformas/muebles:</span> <span id="dineroDisponible_val">38.051,00 €</span>
     </div>
 
     <div class="resultados-cuotas">
       <div class="resultado-item">
-        <label>📅 Cuota mensual:</label>
+        <label><span data-es="📅 Cuota mensual:" data-en="📅 Monthly payment:">📅 Cuota mensual:</span></label>
         <div class="valor" id="cuotaMensual">493,75 €</div>
       </div>
       <div class="resultado-item">
-        <label>💳 Total pagado del crédito:</label>
+        <label><span data-es="💳 Total pagado del crédito:" data-en="💳 Total credit paid:">💳 Total pagado del crédito:</span></label>
         <div class="valor" id="totalPagado">118.498,91 €</div>
       </div>
       <div class="resultado-item">
-        <label>📈 Intereses pagados:</label>
+        <label><span data-es="📈 Intereses pagados:" data-en="📈 Interest paid:">📈 Intereses pagados:</span></label>
         <div class="valor" id="interesesPagados">23.498,91 €</div>
       </div>
     </div>
@@ -594,9 +635,12 @@ function calcular() {
   document.getElementById('resumenPagas').textContent = document.getElementById('numeroPagas').value;
   document.getElementById('resumenIngresoMedio').textContent = formatoCurrency(parseFloat(document.getElementById('ingresoMedio').value) || 0);
   document.getElementById('resumenOtrosCreditos').textContent = formatoCurrency(parseFloat(document.getElementById('otrosCreditos').value) || 0);
-  document.getElementById('resumenEdad').textContent = document.getElementById('edad').value + ' años';
-  document.getElementById('resumenEmpleo').textContent = document.getElementById('tipoEmpleo').value;
-  document.getElementById('resumenAntiguedad').textContent = document.getElementById('antiguedad').value + ' años';
+  document.getElementById('resumenEdad').textContent = document.getElementById('edad').value + _h('anos_label');
+  var empleo = document.getElementById('tipoEmpleo').value;
+    var _empleoMap = {es:{},en:{'Funcionario':'Civil Servant','Cuenta ajena':'Employee','Autónomo':'Self-employed'}};
+    var _l = localStorage.getItem('pwa_lang')||'es';
+    document.getElementById('resumenEmpleo').textContent = (_l==='en'&&_empleoMap.en[empleo])?_empleoMap.en[empleo]:empleo;
+  document.getElementById('resumenAntiguedad').textContent = document.getElementById('antiguedad').value + _h('anos_label');
   
   document.getElementById('resumenPrecio').textContent = formatoCurrency(precioVivienda);
   document.getElementById('resumenTasacion').textContent = formatoCurrency(costeTasacion);
@@ -604,7 +648,7 @@ function calcular() {
   document.getElementById('resumenNotaria').textContent = formatoCurrency(gastosNotariaImporte);
   document.getElementById('resumenOtros').textContent = formatoCurrency(otrosGastos);
   document.getElementById('resumenSeguro').textContent = formatoCurrency(seguroVida);
-  document.getElementById('resumenTotal').textContent = 'TOTAL VIVIENDA + GASTOS: ' + formatoCurrency(totalGastos);
+  document.getElementById('resumenTotal').textContent = _h('total_label') + formatoCurrency(totalGastos);
   
   // Calcular hipoteca y aportación
   const hipoteca = parseFloat(document.getElementById('hipotecaSolicitar').value) || 0;
@@ -614,7 +658,10 @@ function calcular() {
   // Calcular dinero disponible
   const dineroCuenta = parseFloat(document.getElementById('dineroCuenta').value) || 0;
   const dineroDisponible = dineroCuenta - aportacion;
-  document.getElementById('dineroDisponible').textContent = '💎 Dinero disponible para reformas/muebles: ' + formatoCurrency(dineroDisponible);
+  var _dLabel=document.getElementById('dineroDisponible_label');
+    var _dVal=document.getElementById('dineroDisponible_val');
+    if(_dLabel&&_dVal){_dVal.textContent=formatoCurrency(dineroDisponible);}
+    else if(document.getElementById('dineroDisponible')){document.getElementById('dineroDisponible').textContent=_h('dinero_disp')+formatoCurrency(dineroDisponible);}
   
   // Calcular cuota
   const anos = parseFloat(document.getElementById('anosPrestamo').value) || 20;
@@ -802,5 +849,19 @@ window.onload = function() {
 };
 </script>
 
+<script>
+(function(){
+  var _L=localStorage.getItem('pwa_lang')||'es';
+  function applyLang(l){
+    document.querySelectorAll('[data-es]').forEach(function(el){
+      var v=el.getAttribute('data-'+l); if(v===null)return; el.innerHTML=v;
+    });
+    document.getElementById('flag-es').classList.toggle('active',l==='es');
+    document.getElementById('flag-en').classList.toggle('active',l==='en');
+  }
+  window.setLang=function(l){_L=l;localStorage.setItem('pwa_lang',l);applyLang(l);};
+  document.addEventListener('DOMContentLoaded',function(){ applyLang(_L); });
+})();
+</script>
 </body>
 </html>
