@@ -29,6 +29,7 @@
       color: white;
       padding: 30px 20px 24px;
       text-align: center;
+      position: relative;
     }
     header .logo { font-size: 2.4rem; margin-bottom: 8px; }
     header h1 {
@@ -37,6 +38,30 @@
       margin-bottom: 6px;
     }
     header p { font-size: 0.88rem; opacity: 0.82; }
+
+    /* Language switcher */
+    .lang-switcher {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .lang-btn {
+      background: none;
+      border: 2px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      padding: 2px;
+      opacity: 0.6;
+      transition: opacity 0.2s, border-color 0.2s;
+      line-height: 1;
+    }
+    .lang-btn:hover { opacity: 1; }
+    .lang-btn.active { border-color: white; opacity: 1; }
+    .lang-btn img { width: 32px; height: 22px; display: block; border-radius: 3px; }
+
     #menu {
       max-width: 520px;
       margin: 0 auto;
@@ -178,56 +203,77 @@
 <body>
 
 <header>
+  <!-- Language switcher flags -->
+  <div class="lang-switcher">
+    <button class="lang-btn active" id="btn-es" onclick="setLang('es')" title="Español">
+      <!-- Spanish flag SVG inline -->
+      <svg width="32" height="22" viewBox="0 0 32 22" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="22" fill="#c60b1e"/>
+        <rect y="5.5" width="32" height="11" fill="#f1bf00"/>
+      </svg>
+    </button>
+    <button class="lang-btn" id="btn-en" onclick="setLang('en')" title="English">
+      <!-- UK flag SVG inline -->
+      <svg width="32" height="22" viewBox="0 0 32 22" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="22" fill="#012169"/>
+        <path d="M0,0 L32,22 M32,0 L0,22" stroke="white" stroke-width="4"/>
+        <path d="M0,0 L32,22 M32,0 L0,22" stroke="#C8102E" stroke-width="2.5"/>
+        <path d="M16,0 V22 M0,11 H32" stroke="white" stroke-width="6"/>
+        <path d="M16,0 V22 M0,11 H32" stroke="#C8102E" stroke-width="3.5"/>
+      </svg>
+    </button>
+  </div>
+
   <div class="logo">🧮</div>
-  <h1>Mis Calculadoras</h1>
-  <p>Selecciona una herramienta para comenzar</p>
+  <h1 data-es="Mis Calculadoras" data-en="My Calculators">Mis Calculadoras</h1>
+  <p data-es="Selecciona una herramienta para comenzar" data-en="Select a tool to get started">Selecciona una herramienta para comenzar</p>
 </header>
 
 <main id="menu">
-  <p class="menu-label">📱 5 herramientas disponibles</p>
+  <p class="menu-label" data-es="📱 5 herramientas disponibles" data-en="📱 5 tools available">📱 5 herramientas disponibles</p>
   <div class="cards">
 
-    <button class="card" onclick="openApp('hipoteca.html','🏠 Calculadora Hipotecaria')">
+    <button class="card" onclick="openApp('hipoteca.html', currentLang==='es'?'🏠 Calculadora Hipotecaria':'🏠 Mortgage Calculator')">
       <div class="card-icon c1">🏠</div>
       <div class="card-body">
-        <div class="card-title">Calculadora Hipotecaria</div>
-        <div class="card-desc">Gastos de compra, cuota mensual, hipoteca necesaria y dinero requerido</div>
+        <div class="card-title" data-es="Calculadora Hipotecaria" data-en="Mortgage Calculator">Calculadora Hipotecaria</div>
+        <div class="card-desc" data-es="Gastos de compra, cuota mensual, hipoteca necesaria y dinero requerido" data-en="Purchase costs, monthly payment, loan amount and money required">Gastos de compra, cuota mensual, hipoteca necesaria y dinero requerido</div>
       </div>
       <div class="card-arrow">›</div>
     </button>
 
-    <button class="card" onclick="openApp('amortizacion.html','📊 Hipoteca + Amortización')">
+    <button class="card" onclick="openApp('amortizacion.html', currentLang==='es'?'📊 Hipoteca + Amortización':'📊 Mortgage + Amortization')">
       <div class="card-icon c2">📊</div>
       <div class="card-body">
-        <div class="card-title">Hipoteca + Amortización</div>
-        <div class="card-desc">Simula aportaciones parciales: compara reducir cuota vs. reducir plazo</div>
+        <div class="card-title" data-es="Hipoteca + Amortización" data-en="Mortgage + Amortization">Hipoteca + Amortización</div>
+        <div class="card-desc" data-es="Simula aportaciones parciales: compara reducir cuota vs. reducir plazo" data-en="Simulate partial payments: compare reducing installment vs. reducing term">Simula aportaciones parciales: compara reducir cuota vs. reducir plazo</div>
       </div>
       <div class="card-arrow">›</div>
     </button>
 
-    <button class="card" onclick="openApp('imc.html','⚖️ Calculadora de IMC')">
+    <button class="card" onclick="openApp('imc.html', currentLang==='es'?'⚖️ Calculadora de IMC':'⚖️ BMI Calculator')">
       <div class="card-icon c3">⚖️</div>
       <div class="card-body">
-        <div class="card-title">Calculadora de IMC</div>
-        <div class="card-desc">IMC actual y saludable ajustado por edad, sexo, altura y peso</div>
+        <div class="card-title" data-es="Calculadora de IMC" data-en="BMI Calculator">Calculadora de IMC</div>
+        <div class="card-desc" data-es="IMC actual y saludable ajustado por edad, sexo, altura y peso" data-en="Current and healthy BMI adjusted for age, gender, height and weight">IMC actual y saludable ajustado por edad, sexo, altura y peso</div>
       </div>
       <div class="card-arrow">›</div>
     </button>
 
-    <button class="card" onclick="openApp('sal.html','🏊 Calculadora Sal Piscina')">
+    <button class="card" onclick="openApp('sal.html', currentLang==='es'?'🏊 Calculadora Sal Piscina':'🏊 Pool Salt Calculator')">
       <div class="card-icon c4">🏊</div>
       <div class="card-body">
-        <div class="card-title">Calculadora Sal Piscina</div>
-        <div class="card-desc">Kg de sal necesarios para tu piscina con clorador salino</div>
+        <div class="card-title" data-es="Calculadora Sal Piscina" data-en="Pool Salt Calculator">Calculadora Sal Piscina</div>
+        <div class="card-desc" data-es="Kg de sal necesarios para tu piscina con clorador salino" data-en="Kg of salt needed for your pool with a salt chlorinator">Kg de sal necesarios para tu piscina con clorador salino</div>
       </div>
       <div class="card-arrow">›</div>
     </button>
 
-    <button class="card" onclick="openApp('ahorro.html','🎯 Meta de Ahorro')">
+    <button class="card" onclick="openApp('ahorro.html', currentLang==='es'?'🎯 Meta de Ahorro':'🎯 Savings Goal')">
       <div class="card-icon c5">🎯</div>
       <div class="card-body">
-        <div class="card-title">Meta de Ahorro</div>
-        <div class="card-desc">Planifica tu ahorro mensual para alcanzar una meta económica</div>
+        <div class="card-title" data-es="Meta de Ahorro" data-en="Savings Goal">Meta de Ahorro</div>
+        <div class="card-desc" data-es="Planifica tu ahorro mensual para alcanzar una meta económica" data-en="Plan your monthly savings to reach a financial goal">Planifica tu ahorro mensual para alcanzar una meta económica</div>
       </div>
       <div class="card-arrow">›</div>
     </button>
@@ -235,31 +281,42 @@
   </div>
 </main>
 
-<footer>TSA © 2025 · Mis Calculadoras</footer>
+<footer>TSA © 2025 · <span data-es="Mis Calculadoras" data-en="My Calculators">Mis Calculadoras</span></footer>
 
 <div id="viewer">
   <div id="viewer-topbar">
-    <button id="btn-back" onclick="closeApp()">&#8592; Menu</button>
+    <button id="btn-back" onclick="closeApp()">&#8592; <span data-es="Menú" data-en="Menu">Menú</span></button>
     <span id="viewer-title">Calculadora</span>
   </div>
   <iframe id="app-frame" src="" title="Calculadora"></iframe>
 </div>
 
 <div id="install-banner">
-  <span>📲 <strong>Instala la app</strong> en tu dispositivo</span>
-  <button id="btn-install">Instalar</button>
+  <span>📲 <strong data-es="Instala la app" data-en="Install the app">Instala la app</strong> <span data-es="en tu dispositivo" data-en="on your device">en tu dispositivo</span></span>
+  <button id="btn-install" data-es="Instalar" data-en="Install">Instalar</button>
   <button id="btn-close-banner" title="Cerrar">&#x2715;</button>
 </div>
 
 <script>
+  let currentLang = localStorage.getItem('pwa_lang') || 'es';
+
+  function setLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('pwa_lang', lang);
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-es]').forEach(el => {
+      el.textContent = el.getAttribute('data-' + lang);
+    });
+    document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  }
+
+  // Apply language on load
+  setLang(currentLang);
+
   function openApp(src, title) {
-    var frame = document.getElementById('app-frame');
-    frame.src = 'about:blank';
-    frame.onload = null;
-    setTimeout(function() {
-      frame.src = src;
-      document.getElementById('viewer-title').textContent = title;
-    }, 50);
+    document.getElementById('app-frame').src = src;
+    document.getElementById('viewer-title').textContent = title;
     document.getElementById('viewer').classList.add('active');
     document.body.style.overflow = 'hidden';
     history.pushState({ app: src }, title);
