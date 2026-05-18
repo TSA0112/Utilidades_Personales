@@ -99,149 +99,56 @@ svg.figura{display:block;}
 </head>
 <body>
 
-<script>
-// ---- TRANSLATION DICTIONARY FOR DYNAMIC CONTENT ----
-var _T = {
-  es: {
-    'Bajo peso': 'Bajo peso',
-    'Normopeso': 'Normopeso',
-    'Sobrepeso': 'Sobrepeso',
-    'Obesidad I': 'Obesidad I',
-    'Obesidad II': 'Obesidad II',
-    'Obesidad III': 'Obesidad III',
-    'Bajo peso (ajustado)': 'Bajo peso (ajustado)',
-    'Saludable (ajustado)': 'Saludable (ajustado)',
-    'Sobrepeso (ajustado)': 'Sobrepeso (ajustado)',
-    'Obesidad (ajustado)': 'Obesidad (ajustado)',
-    'Atlético/bajo': 'Atlético/bajo',
-    'Saludable': 'Saludable',
-    'Elevado': 'Elevado',
-    'Alto (riesgo)': 'Alto (riesgo)',
-    'Bajo (posible riesgo)': 'Bajo (posible riesgo)',
-    'kg (exceso vs. Devine)': 'kg (exceso vs. Devine)',
-    'kg (déficit vs. Devine)': 'kg (déficit vs. Devine)',
-    'En el peso ideal (Devine)': 'En el peso ideal (Devine)',
-    '18-64 años': '18-64 años',
-    '65+ años': '65+ años',
-    'años': 'años',
-    'Índice Cintura-Cadera (ICC)': 'Índice Cintura-Cadera (ICC)',
-    'Riesgo perímetro cintura': 'Riesgo perímetro cintura',
-    'Alto': 'Alto',
-    'Moderado': 'Moderado',
-    'Bajo': 'Bajo',
-    'Riesgo': 'Riesgo',
-    'Normal': 'Normal',
-    'bajo peso': 'bajo peso',
-    'rango saludable OMS': 'rango saludable OMS',
-    'sobrepeso': 'sobrepeso',
-    'obesidad grado I': 'obesidad grado I',
-    'obesidad grado II': 'obesidad grado II',
-    'obesidad mórbida': 'obesidad mórbida'
-  },
-  en: {
-    'Bajo peso': 'Underweight',
-    'Normopeso': 'Normal weight',
-    'Sobrepeso': 'Overweight',
-    'Obesidad I': 'Obesity I',
-    'Obesidad II': 'Obesity II',
-    'Obesidad III': 'Obesity III',
-    'Bajo peso (ajustado)': 'Underweight (adjusted)',
-    'Saludable (ajustado)': 'Healthy (adjusted)',
-    'Sobrepeso (ajustado)': 'Overweight (adjusted)',
-    'Obesidad (ajustado)': 'Obesity (adjusted)',
-    'Atlético/bajo': 'Athletic/low',
-    'Saludable': 'Healthy',
-    'Elevado': 'High',
-    'Alto (riesgo)': 'High (risk)',
-    'Bajo (posible riesgo)': 'Low (possible risk)',
-    'kg (exceso vs. Devine)': 'kg (excess vs. Devine)',
-    'kg (déficit vs. Devine)': 'kg (deficit vs. Devine)',
-    'En el peso ideal (Devine)': 'At ideal weight (Devine)',
-    '18-64 años': '18-64 years',
-    '65+ años': '65+ years',
-    'años': 'years',
-    'Índice Cintura-Cadera (ICC)': 'Waist-Hip Ratio (WHR)',
-    'Riesgo perímetro cintura': 'Waist circumference risk',
-    'Alto': 'High',
-    'Moderado': 'Moderate',
-    'Bajo': 'Low',
-    'Riesgo': 'Risk',
-    'Normal': 'Normal',
-    'bajo peso': 'underweight',
-    'rango saludable OMS': 'WHO healthy range',
-    'sobrepeso': 'overweight',
-    'obesidad grado I': 'grade I obesity',
-    'obesidad grado II': 'grade II obesity',
-    'obesidad mórbida': 'morbid obesity'
-  }
-};
-function tr(key) {
-  var l = localStorage.getItem('pwa_lang') || 'es';
-  return (_T[l] && _T[l][key]) ? _T[l][key] : key;
-}
-</script>
-
-  <!-- LANGUAGE SWITCHER -->
   <style>
     .lang-switcher-float { position:fixed; top:10px; right:12px; z-index:9999; display:flex; gap:5px; }
     .lang-btn-f { background:rgba(255,255,255,0.88); border:2px solid transparent; border-radius:6px;
-      cursor:pointer; padding:2px 3px; opacity:0.72; transition:opacity .2s,border-color .2s; line-height:1;
-      box-shadow:0 1px 5px rgba(0,0,0,0.18); }
-    .lang-btn-f:hover { opacity:1; }
-    .lang-btn-f.active { border-color:#2b6cb0; opacity:1; }
+                  padding:3px 5px; cursor:pointer; font-size:1.35rem; line-height:1; transition:border .15s; }
+    .lang-btn-f.active { border-color:#2b6cb0; }
+    .lang-btn-f:hover { border-color:#90cdf4; }
   </style>
   <div class="lang-switcher-float">
-    <button class="lang-btn-f" id="flag-es" onclick="setLang('es')" title="Español">
-      <svg width="30" height="20" viewBox="0 0 30 20"><rect width="30" height="20" fill="#c60b1e"/><rect y="5" width="30" height="10" fill="#f1bf00"/></svg>
-    </button>
-    <button class="lang-btn-f" id="flag-en" onclick="setLang('en')" title="English">
-      <svg width="30" height="20" viewBox="0 0 30 20"><rect width="30" height="20" fill="#012169"/>
-        <path d="M0,0 L30,20 M30,0 L0,20" stroke="white" stroke-width="3.5"/>
-        <path d="M0,0 L30,20 M30,0 L0,20" stroke="#C8102E" stroke-width="2.2"/>
-        <path d="M15,0 V20 M0,10 H30" stroke="white" stroke-width="5.5"/>
-        <path d="M15,0 V20 M0,10 H30" stroke="#C8102E" stroke-width="3.2"/>
-      </svg>
-    </button>
+    <button class="lang-btn-f active" id="flag-es" onclick="setLang('es')" title="Español">🇪🇸</button>
+    <button class="lang-btn-f" id="flag-en" onclick="setLang('en')" title="English">🇬🇧</button>
   </div>
 
 <div class="wrap">
 
-<h1>&#128202; Calculadora de IMC</h1>
-<p class="sub">Índice de Masa Corporal &mdash; Resultados ajustados por género y edad</p>
+<h1>&#128202; BMI Calculator</h1>
+<p class="sub">Body Mass Index &mdash; Results adjusted by gender and age</p>
 
 <!-- ENTRADA -->
 <div class="card">
-  <div class="card-title"><span data-es="Datos personales" data-en="Personal data">Datos personales</span></div>
+  <div class="card-title">Datos personales</div>
   <div class="g3">
     <div class="fld">
-      <label><span data-es="Género" data-en="Gender">Género</span> <span class="tip">?<span data-es="Afecta el peso ideal, % grasa saludable, umbrales de riesgo y figura corporal." data-en="Affects ideal weight, healthy fat %, risk thresholds and body figure.">Afecta el peso ideal, % grasa saludable, umbrales de riesgo y figura corporal.</span></span></label>
+      <label>Género <span class="tip">?<span>Afecta al peso ideal, % de grasa saludable, umbrales de riesgo y figura corporal.</span></span></label>
       <select id="xgenero">
-        <option value="hombre"><span data-es="Mujer" data-en="Female">Mujer</span></option>
-        <option value="mujer"><span data-es="Hombre" data-en="Male">Hombre</span></option>
+        <option value="hombre">Hombre</option>
+        <option value="mujer">Mujer</option>
       </select>
     </div>
     <div class="fld">
-      <label><span data-es="Edad (años)" data-en="Age (years)">Edad (años)</span> <span class="tip">?<span data-es="Ajusta el rango saludable de IMC y el % de grasa corporal esperado." data-en="Adjusts the healthy BMI range and expected body fat %.">Ajusta el rango saludable de IMC y el % de grasa corporal esperado.</span></span></label>
+      <label>Edad (años) <span class="tip">?<span>Ajusta el rango de IMC saludable y el % de grasa corporal esperado.</span></span></label>
       <input type="number" id="xedad" value="19" min="18" max="100">
-      <span class="emsg" id="eedad"><span data-es="Edad válida: 18-100" data-en="Valid age: 18-100">Edad válida: 18-100</span></span>
+      <span class="emsg" id="eedad">Edad válida: 18-100</span>
     </div>
     <div class="fld">
-      <label><span data-es="Altura (cm)" data-en="Height (cm)">Altura (cm)</span> <span class="tip">?<span data-es="Introduce tu altura en centímetros. Ejemplo: 173 cm." data-en="Enter your height in centimetres. Example: 173 cm.">Introduce tu altura en centímetros. Ejemplo: 173 cm.</span></span></label>
+      <label>Altura (cm) <span class="tip">?<span>Introduce tu altura en centímetros. Ejemplo: 173 cm.</span></span></label>
       <input type="number" id="xaltura" value="162" min="100" max="250">
-      <span class="emsg" id="ealtura"><span data-es="Altura válida: 100-250 cm" data-en="Valid height: 100-250 cm">Altura válida: 100-250 cm</span></span>
+      <span class="emsg" id="ealtura">Altura válida: 100-250 cm</span>
     </div>
     <div class="fld">
-      <label><span data-es="Peso (kg)" data-en="Weight (kg)">Peso (kg)</span> <span class="tip">?<span data-es="Introduce tu peso en kilogramos. Ejemplo: 80 kg." data-en="Enter your weight in kilograms. Example: 80 kg.">Introduce tu peso en kilogramos. Ejemplo: 80 kg.</span></span></label>
+      <label>Peso (kg) <span class="tip">?<span>Introduce tu peso en kilogramos. Ejemplo: 80 kg.</span></span></label>
       <input type="number" id="xpeso" value="43" min="30" max="300" step="0.1">
-      <span class="emsg" id="epeso"><span data-es="Peso válido: 30-300 kg" data-en="Valid weight: 30-300 kg">Peso válido: 30-300 kg</span></span>
+      <span class="emsg" id="epeso">Peso válido: 30-300 kg</span>
     </div>
     <div class="fld">
-      <label><span data-es="Cintura (cm)" data-en="Waist (cm)">Cintura (cm)</span> <span class="tip">?<span data-es="Opcional. Mide a la altura del ombligo." data-en="Optional. Measure at navel height.">Opcional. Mide a la altura del ombligo.</span></span></label>
-      <input type="number" id="xcintura" placeholder="Opcional" data-ph-es="Opcional" data-ph-en="Optional" min="40" max="200">
+      <label>Cintura (cm) <span class="tip">?<span>Opcional. Mide a la altura del ombligo.</span></span></label>
+      <input type="number" id="xcintura" placeholder="Opcional" min="40" max="200">
     </div>
     <div class="fld">
-      <label><span data-es="Cadera (cm)" data-en="Hip (cm)">Cadera (cm)</span> <span class="tip">?<span data-es="Opcional. Para calcular el Índice Cintura-Cadera (ICC)." data-en="Optional. To calculate the Waist-Hip Ratio (WHR).">Opcional. Para calcular el Índice Cintura-Cadera (ICC).</span></span></label>
-      <input type="number" id="xcadera" placeholder="Opcional" data-ph-es="Opcional" data-ph-en="Optional" min="40" max="200">
+      <label>Cadera (cm) <span class="tip">?<span>Opcional. Para calcular el Índice Cintura-Cadera (ICC).</span></span></label>
+      <input type="number" id="xcadera" placeholder="Opcional" min="40" max="200">
     </div>
   </div>
   <div class="btns">
@@ -253,14 +160,14 @@ function tr(key) {
 
 <!-- RESULTADO -->
 <div class="card">
-  <div class="card-title"><span data-es="Resultado IMC" data-en="BMI Result">Resultado IMC</span></div>
+  <div class="card-title">Resultado IMC</div>
 
   <!-- Figuras + barra -->
   <div class="figure-row">
 
     <!-- Figura actual -->
     <div class="fig-box">
-      <div class="fig-lbl" data-es="Tu figura<br>actual" data-en="Your current<br>figure">Tu figura<br>actual</div>
+      <div class="fig-lbl">Tu figura<br>actual</div>
       <svg id="svgActual" class="figura" width="80" height="180" viewBox="0 0 80 180"></svg>
       <div class="fig-imc" id="figImcActual">—</div>
     </div>
@@ -277,9 +184,9 @@ function tr(key) {
       <div class="barwrap"><div class="pin" id="pin" style="left:30%"></div></div>
     </div>
 
-    <!-- Figura ideal -->
+    <!-- Ideal figure -->
     <div class="fig-box">
-      <div class="fig-lbl" data-es="Figura<br>ideal" data-en="Ideal<br>figure">Figura<br>ideal</div>
+      <div class="fig-lbl">Figura<br>ideal</div>
       <svg id="svgIdeal" class="figura" width="80" height="180" viewBox="0 0 80 180"></svg>
       <div class="fig-imc" id="figImcIdeal">IMC 22</div>
     </div>
@@ -287,62 +194,62 @@ function tr(key) {
 
   <!-- Tabla resultados -->
   <div class="rtable">
-    <div class="section-lbl"><span data-es="IMC estándar" data-en="Standard BMI">IMC estándar</span></div>
-    <div class="rrow"><span class="rl"><span data-es="Tu IMC actual" data-en="Your current BMI">Tu IMC actual</span></span><span class="rv" id="oIMC">—</span></div>
-    <div class="rrow"><span class="rl"><span data-es="Clasificación OMS" data-en="WHO Classification">Clasificación OMS</span></span><span class="rv" id="oCLAS">—</span></div>
-    <div class="rrow"><span class="rl"><span data-es="Rango saludable (peso)" data-en="Healthy range (weight)">Rango saludable (peso)</span></span><span class="rv g" id="oRANGO">—</span></div>
+    <div class="section-lbl">IMC ESTÁNDAR</div>
+    <div class="rrow"><span class="rl">Tu IMC actual</span><span class="rv" id="oIMC">—</span></div>
+    <div class="rrow"><span class="rl">Clasificación OMS</span><span class="rv" id="oCLAS">—</span></div>
+    <div class="rrow"><span class="rl">Rango saludable (peso)</span><span class="rv g" id="oRANGO">—</span></div>
 
-    <div class="section-lbl"><span data-es="Ajuste por edad y género" data-en="Adjustment for age and gender">Ajuste por edad y género</span></div>
-    <div class="rrow"><span class="rl"><span data-es="IMC saludable ajustado" data-en="Adjusted healthy BMI">IMC saludable ajustado</span></span><span class="rv g" id="oIMCajust">—</span></div>
-    <div class="rrow"><span class="rl" data-es="Clasificación ajustada" data-en="Adjusted Classification">Clasificación ajustada</span><span class="rv" id="oCLASajust">—</span></div>
+    <div class="section-lbl">Ajuste por edad y género</div>
+    <div class="rrow"><span class="rl">IMC saludable ajustado</span><span class="rv g" id="oIMCajust">—</span></div>
+    <div class="rrow"><span class="rl">Clasificación ajustada</span><span class="rv" id="oCLASajust">—</span></div>
 
-    <div class="section-lbl"><span data-es="Peso ideal por género" data-en="Ideal weight by gender">Peso ideal por género</span></div>
-    <div class="rrow"><span class="rl" data-es="Peso ideal — Devine" data-en="Ideal weight — Devine">Peso ideal — Devine</span><span class="rv g" id="oDevine">—</span></div>
-    <div class="rrow"><span class="rl" data-es="Peso ideal — Lorentz" data-en="Ideal weight — Lorentz">Peso ideal — Lorentz</span><span class="rv g" id="oLorentz">—</span></div>
-    <div class="rrow"><span class="rl" data-es="Peso ideal — Hamwi" data-en="Ideal weight — Hamwi">Peso ideal — Hamwi</span><span class="rv g" id="oHamwi">—</span></div>
-    <div class="rrow"><span class="rl">Diferencia con Devine</span><span class="rv" id="oDIFF">—</span></div>
+    <div class="section-lbl">Peso ideal por género</div>
+    <div class="rrow"><span class="rl">Peso ideal — Devine</span><span class="rv g" id="oDevine">—</span></div>
+    <div class="rrow"><span class="rl">Peso ideal — Lorentz</span><span class="rv g" id="oLorentz">—</span></div>
+    <div class="rrow"><span class="rl">Peso ideal — Hamwi</span><span class="rv g" id="oHamwi">—</span></div>
+    <div class="rrow"><span class="rl">Diferencia vs. Devine</span><span class="rv" id="oDIFF">—</span></div>
 
-    <div class="section-lbl"><span data-es="% Grasa corporal estimado (Deurenberg)" data-en="Estimated body fat % (Deurenberg)">% Grasa corporal estimado (Deurenberg)</span></div>
+    <div class="section-lbl">% Grasa corporal estimada (Deurenberg)</div>
     <div class="rrow"><span class="rl">% Grasa corporal</span><span class="rv" id="oGRASA">—</span></div>
-    <div class="rrow"><span class="rl" data-es="Rango saludable de grasa" data-en="Healthy fat range">Rango saludable de grasa</span><span class="rv g" id="oGRASARANGO">—</span></div>
-    <div class="rrow"><span class="rl" data-es="Valoración" data-en="Assessment">Valoración</span><span class="rv" id="oGRASACLAS">—</span></div>
+    <div class="rrow"><span class="rl">Rango grasa saludable</span><span class="rv g" id="oGRASARANGO">—</span></div>
+    <div class="rrow"><span class="rl">Valoración</span><span class="rv" id="oGRASACLAS">—</span></div>
 
-    <div class="section-lbl" id="sectICC" style="display:none"><span data-es="Índices abdominales" data-en="Abdominal indices">Índices abdominales</span></div>
+    <div class="section-lbl" id="sectICC" style="display:none">Índices abdominales</div>
     <div class="rrow" id="rowICC" style="display:none"><span class="rl">Índice Cintura-Cadera (ICC)</span><span class="rv" id="oICC">—</span></div>
-    <div class="rrow" id="rowCINT" style="display:none"><span class="rl">Riesgo perímetro cintura</span><span class="rv" id="oCINT">—</span></div>
+    <div class="rrow" id="rowCINT" style="display:none"><span class="rl">Riesgo circunferencia cintura</span><span class="rv" id="oCINT">—</span></div>
   </div>
 
   <div class="fat-bar-wrap">
-    <div style="font-size:.75rem;font-weight:700;color:#4a5568;margin-bottom:4px;"><span data-es="Indicador % grasa corporal" data-en="Body fat % indicator">Indicador % grasa corporal</span></div>
+    <div style="font-size:.75rem;font-weight:700;color:#4a5568;margin-bottom:4px;">Indicador % grasa corporal</div>
     <div class="fat-bar-bg"><div class="fat-pin" id="fatpin" style="left:30%"></div></div>
-    <div class="fat-labels"><span data-es="Bajo" data-en="Low">Bajo</span><span data-es="Atlético" data-en="Athletic">Atlético</span><span data-es="Saludable" data-en="Healthy">Saludable</span><span data-es="Elevado" data-en="High">Elevado</span><span data-es="Alto" data-en="Very high">Alto</span></div>
+    <div class="fat-labels"><span>Bajo</span><span>Atlético</span><span>Saludable</span><span>Alto</span><span>Muy alto</span></div>
   </div>
 
   <div class="formula">
-    <span data-es="<strong>IMC</strong> = Peso(kg)" data-en="<strong>BMI</strong> = Weight(kg)"><strong>IMC</strong> = Peso(kg)</span> / [Altura(m)]² &nbsp;|&nbsp;
-    <strong>Devine(H)</strong>: 50+2.3×pulg.sobre5pies &nbsp;|&nbsp; <strong>Devine(M)</strong>: 45.5+2.3×pulg.sobre5pies<br>
+    <strong>IMC</strong> = Peso(kg) / [Altura(m)]² &nbsp;|&nbsp;
+    <strong>Devine(M)</strong>: 50+2.3×in.above5ft &nbsp;|&nbsp; <strong>Devine(F)</strong>: 45.5+2.3×in.above5ft<br>
     <strong>Lorentz(H)</strong>: Alt-100-(Alt-150)/4 &nbsp;|&nbsp; <strong>Lorentz(M)</strong>: Alt-100-(Alt-150)/2<br>
     <strong>Hamwi(H)</strong>: 48+1.1×cm sobre 152 &nbsp;|&nbsp; <strong>Hamwi(M)</strong>: 45.5+0.9×cm sobre 152<br>
     <strong>%Grasa(Deurenberg)</strong>: 1.20×IMC + 0.23×Edad - 10.8×sexo - 5.4 &nbsp;[H=1, M=0]
   </div>
-  <div class="consejo cok" id="consejo"><span data-es="Pulsa <strong>Calcular</strong> para ver los resultados." data-en="Press <strong>Calculate</strong> to see results.">Pulsa <strong>Calcular</strong> para ver los resultados.</span></div>
+  <div class="consejo cok" id="consejo">Pulsa <strong>Calcular</strong> para ver los resultados.</div>
 </div>
 
 <!-- COMPARATIVA -->
 <div class="card">
-  <div class="card-title"><span data-es="📋 Comparativa: estado actual vs. ideal" data-en="📋 Comparison: current vs. ideal">📋 Comparativa: estado actual vs. ideal</span></div>
+  <div class="card-title">&#128203; Comparativa: actual vs. ideal</div>
   <div class="g2" style="margin-bottom:12px;">
-    <div class="ic"><div class="v" id="cPA">—</div><div class="l" data-es="Peso actual (kg)" data-en="Current weight (kg)">Peso actual (kg)</div></div>
-    <div class="ic hl"><div class="v" id="cPI">—</div><div class="l" data-es="Peso ideal Devine (kg)" data-en="Ideal weight Devine (kg)">Peso ideal Devine (kg)</div></div>
-    <div class="ic"><div class="v" id="cIA">—</div><div class="l" data-es="IMC actual" data-en="Current BMI">IMC actual</div></div>
-    <div class="ic hl"><div class="v" id="cIMCid">—</div><div class="l" data-es="IMC objetivo ajustado" data-en="Adjusted target BMI">IMC objetivo ajustado</div></div>
-    <div class="ic"><div class="v" id="cGA">—</div><div class="l" data-es="% Grasa actual (est.)" data-en="Current fat % (est.)">% Grasa actual (est.)</div></div>
-    <div class="ic hl"><div class="v" id="cGI">—</div><div class="l" data-es="% Grasa saludable ideal" data-en="Ideal healthy fat %">% Grasa saludable ideal</div></div>
-    <div class="ic"><div class="v" id="cCA">—</div><div class="l" data-es="Clasificación actual" data-en="Current classification">Clasificación actual</div></div>
-    <div class="ic hl"><div class="v" data-es="Saludable" data-en="Healthy">Saludable</div><div class="l" data-es="Clasificación objetivo" data-en="Target classification">Clasificación objetivo</div></div>
+    <div class="ic"><div class="v" id="cPA">—</div><div class="l">Peso actual (kg)</div></div>
+    <div class="ic hl"><div class="v" id="cPI">—</div><div class="l">Peso ideal Devine (kg)</div></div>
+    <div class="ic"><div class="v" id="cIA">—</div><div class="l">IMC actual</div></div>
+    <div class="ic hl"><div class="v" id="cIMCid">—</div><div class="l">IMC objetivo ajustado</div></div>
+    <div class="ic"><div class="v" id="cGA">—</div><div class="l">% Grasa actual (est.)</div></div>
+    <div class="ic hl"><div class="v" id="cGI">—</div><div class="l">% Grasa saludable ideal</div></div>
+    <div class="ic"><div class="v" id="cCA">—</div><div class="l">Clasificación actual</div></div>
+    <div class="ic hl"><div class="v">Saludable</div><div class="l">Clasificación objetivo</div></div>
   </div>
   <div class="note">
-    <span data-es="<strong>Nota:</strong> El IMC es un indicador orientativo de uso poblacional. Las fórmulas de peso ideal (Devine, Lorentz, Hamwi) son estimaciones basadas en talla y género. El % de grasa estimado por Deurenberg tiene un margen de ±3-4%. Las figuras son representaciones esquemáticas ilustrativas. Consulta siempre con un profesional de salud." data-en="<strong>Note:</strong> BMI is a population-level orientative indicator. The ideal weight formulas (Devine, Lorentz, Hamwi) are estimates based on height and gender. Body fat % estimated by Deurenberg has a margin of ±3-4%. Figures are schematic illustrations. Always consult a health professional."><strong>Nota:</strong> El IMC es un indicador orientativo de uso poblacional. Las fórmulas de peso ideal (Devine, Lorentz, Hamwi) son estimaciones basadas en talla y género. El % de grasa estimado por Deurenberg tiene un margen de ±3-4%. Las figuras son representaciones esquemáticas ilustrativas. Consulta siempre con un profesional de salud.</span>
+    <strong>Nota:</strong> El IMC es una medida indicativa a nivel poblacional. Las fórmulas de peso ideal (Devine, Lorentz, Hamwi) son estimaciones basadas en altura y género. El % de grasa estimado por Deurenberg tiene un margen de ±3-4%. Las figuras son ilustraciones esquemáticas. Consulta siempre con un profesional de la salud.
   </div>
 </div>
 
@@ -422,7 +329,7 @@ function buildFigura(svgEl, imc, genero, tipo){
   var footW = esH ? 10 : 8;
   var footH = 5;
 
-  /* ---- cabello (mujer) ---- */
+  /* ---- hair (female) ---- */
   var hairSVG = '';
   if(!esH){
     var hc = esIdeal ? '#6b3a2a' : '#8B4513';
@@ -471,7 +378,7 @@ function buildFigura(svgEl, imc, genero, tipo){
   // cuello
   s += '<rect x="'+(cx-5)+'" y="'+neckT+'" width="10" height="'+(neckB-neckT+1)+'" rx="3" fill="'+skinColor+'"/>';
 
-  // cabello mujer (delante del cuello)
+  // female hair (front of neck)
   s += hairSVG;
 
   // cabeza
@@ -495,7 +402,7 @@ function buildFigura(svgEl, imc, genero, tipo){
          '" stroke="#a0522d" stroke-width="1.2" fill="none" stroke-linecap="round"/>';
   }
 
-  // detalle mujer: pecho
+  // female detail: chest
   if(!esH){
     var bustY = shouldY + torsoH*0.22;
     var bustR = 4.5 + w*2;
@@ -503,7 +410,7 @@ function buildFigura(svgEl, imc, genero, tipo){
     s += '<ellipse cx="'+(cx+6)+'" cy="'+bustY+'" rx="'+bustR+'" ry="'+(bustR*0.7)+'" fill="'+strokeC+'" opacity=".35"/>';
   }
 
-  // cinturón/línea cintura hombre
+  // belt/waist line male
   if(esH){
     s += '<rect x="'+(cx-waistW+2)+'" y="'+(waistY-2)+'" width="'+((waistW)*2-4)+'" height="4" rx="2" fill="'+strokeC+'" opacity=".4"/>';
   }
@@ -555,45 +462,45 @@ function run(){
 
   /* clasificacion OMS */
   var label,vcls,bdg,ccls,ctxt;
-  if(imc<18.5){label=tr('Bajo peso');vcls='rv b';bdg='bdg db';ccls='consejo clow';
-    ctxt='&#9660; '+tr('Tu IMC indica')+'... <strong>'+tr('bajo peso')+'</strong>. '+(localStorage.getItem('pwa_lang')==='en'?'See your doctor or nutritionist.':'Consulta con tu médico o nutricionista.');}
-  else if(imc<25){label=tr('Normopeso');vcls='rv g';bdg='bdg dg';ccls='consejo cok';
-    ctxt=_en?'&#10003; Your BMI is in the <strong>WHO healthy range</strong>. Keep healthy habits.':'&#10003; Tu IMC está en el <strong>rango saludable OMS</strong>. Mantén hábitos saludables.';}
-  else if(imc<30){label=tr('Sobrepeso');vcls='rv w';bdg='bdg dw';ccls='consejo cwarn';
-    ctxt=_en?'&#9888; Your BMI indicates <strong>overweight</strong>. Review your habits and increase physical activity.':'&#9888; Tu IMC indica <strong>sobrepeso</strong>. Revisa tus hábitos e incrementa la actividad física.';}
-  else if(imc<35){label=tr('Obesidad I');vcls='rv r';bdg='bdg dr';ccls='consejo cbad';
-    ctxt=_en?'&#9940; Your BMI indicates <strong>grade I obesity</strong>. See a doctor.':'&#9940; Tu IMC indica <strong>obesidad grado I</strong>. Consulta con un médico.';}
-  else if(imc<40){label=tr('Obesidad II');vcls='rv r';bdg='bdg dr';ccls='consejo cbad';
-    ctxt=_en?'&#9940; Your BMI indicates <strong>grade II obesity</strong>. Seek specialist medical care.':'&#9940; Tu IMC indica <strong>obesidad grado II</strong>. Busca atención médica especializada.';}
-  else{label=tr('Obesidad III');vcls='rv r';bdg='bdg dr';ccls='consejo cbad';
-    ctxt=_en?'&#9940; Your BMI indicates <strong>morbid obesity</strong>. Seek urgent medical care.':'&#9940; Tu IMC indica <strong>obesidad mórbida</strong>. Busca atención médica urgente.';}
+  if(imc<18.5){label='Bajo peso';vcls='rv b';bdg='bdg db';ccls='consejo clow';
+    ctxt='&#9660; Tu IMC indica <strong>bajo peso</strong>. Consulta con tu médico o nutricionista.';}
+  else if(imc<25){label='Peso normal';vcls='rv g';bdg='bdg dg';ccls='consejo cok';
+    ctxt='&#10003; Tu IMC está en el <strong>rango saludable OMS</strong>. ¡Mantén tus hábitos saludables!';}
+  else if(imc<30){label='Sobrepeso';vcls='rv w';bdg='bdg dw';ccls='consejo cwarn';
+    ctxt='&#9888; Tu IMC indica <strong>sobrepeso</strong>. Revisa tus hábitos y aumenta la actividad física.';}
+  else if(imc<35){label='Obesidad I';vcls='rv r';bdg='bdg dr';ccls='consejo cbad';
+    ctxt='&#9940; Tu IMC indica <strong>obesidad grado I</strong>. Consulta con tu médico.';}
+  else if(imc<40){label='Obesidad II';vcls='rv r';bdg='bdg dr';ccls='consejo cbad';
+    ctxt='&#9940; Tu IMC indica <strong>obesidad grado II</strong>. Busca atención médica especializada.';}
+  else{label='Obesidad III';vcls='rv r';bdg='bdg dr';ccls='consejo cbad';
+    ctxt='&#9940; Tu IMC indica <strong>obesidad mórbida</strong>. Busca atención médica urgente.';}
 
   /* clasificacion ajustada */
   var labelAj,vclsAj;
-  if(imc<imcAjMin){labelAj=tr('Bajo peso (ajustado)');vclsAj='rv b';}
-  else if(imc<=imcAjMax){labelAj=tr('Saludable (ajustado)')+' &#10003;';vclsAj='rv g';}
-  else if(imc<imcAjMax+5){labelAj=tr('Sobrepeso (ajustado)');vclsAj='rv w';}
-  else{labelAj=tr('Obesidad (ajustado)');vclsAj='rv r';}
+  if(imc<imcAjMin){labelAj='Bajo peso (ajustado)';vclsAj='rv b';}
+  else if(imc<=imcAjMax){labelAj='Saludable (ajustado) &#10003;';vclsAj='rv g';}
+  else if(imc<imcAjMax+5){labelAj='Sobrepeso (ajustado)';vclsAj='rv w';}
+  else{labelAj='Obesidad (ajustada)';vclsAj='rv r';}
 
   /* clasificacion grasa */
   var gLabel,gCls;
-  if(grasa<gMin-5){gLabel=tr('Bajo (posible riesgo)');gCls='rv b';}
-  else if(grasa<gMin){gLabel=tr('Atlético/bajo');gCls='rv b';}
-  else if(grasa<=gMax){gLabel=tr('Saludable')+' &#10003;';gCls='rv g';}
-  else if(grasa<=gMax+5){gLabel=tr('Elevado');gCls='rv w';}
-  else{gLabel=tr('Alto (riesgo)');gCls='rv r';}
+  if(grasa<gMin-5){gLabel='Bajo (posible riesgo)';gCls='rv b';}
+  else if(grasa<gMin){gLabel='Atlético/bajo';gCls='rv b';}
+  else if(grasa<=gMax){gLabel='Saludable &#10003;';gCls='rv g';}
+  else if(grasa<=gMax+5){gLabel='Elevado';gCls='rv w';}
+  else{gLabel='Alto (riesgo)';gCls='rv r';}
 
   /* diferencia Devine */
   var diff=peso-devine, dTxt, dCls;
-  if(diff>0.5){dTxt='+'+f(diff,1)+' '+tr('kg (exceso vs. Devine)');dCls='rv w';}
-  else if(diff<-0.5){dTxt=f(diff,1)+' '+tr('kg (déficit vs. Devine)');dCls='rv w';}
-  else{dTxt=tr('En el peso ideal (Devine)');dCls='rv g';}
+  if(diff>0.5){dTxt='+'+f(diff,1)+' kg (exceso vs. Devine)';dCls='rv w';}
+  else if(diff<-0.5){dTxt=f(diff,1)+' kg (déficit vs. Devine)';dCls='rv w';}
+  else{dTxt='En peso ideal (Devine)';dCls='rv g';}
 
   /* ---- ESCRIBIR ---- */
   setText('oIMC', f(imc,1)+' kg/m²'); setCls('oIMC', vcls);
   setHTML('oCLAS', label+' <span class="'+bdg+'">'+label.split(' ')[0]+'</span>'); setCls('oCLAS',vcls);
   setText('oRANGO', f(pMin,1)+' – '+f(pMax,1)+' kg');
-  setText('oIMCajust', imcAjMin+' – '+imcAjMax+(edad>=65?' ('+tr('65+ años')+')':' ('+tr('18-64 años')+')'));
+  setText('oIMCajust', imcAjMin+' – '+imcAjMax+(edad>=65?' (65+ años)':' (18-64 años)'));
   setHTML('oCLASajust',labelAj); setCls('oCLASajust',vclsAj);
   setText('oDevine', f(devine,1)+' kg');
   setText('oLorentz',f(lorentz,1)+' kg');
@@ -611,12 +518,12 @@ function run(){
   gi('rowCINT').style.display=hayCINT?'':'none';
   if(hayICC){
     var icc=cintura/cadera;
-    var ir=esH?(icc>1.0?tr('Alto'):icc>0.9?tr('Moderado'):tr('Bajo')):(icc>0.85?tr('Alto'):icc>0.8?tr('Moderado'):tr('Bajo'));
-    setText('oICC',f(icc,2)+' → '+(localStorage.getItem('pwa_lang')==='en'?'Risk':'Riesgo')+' '+ir); setCls('oICC','rv '+(ir==='Alto'?'r':ir==='Moderado'?'w':'g'));
+    var ir=esH?(icc>1.0?'Alto':icc>0.9?'Moderado':'Bajo'):(icc>0.85?'Alto':icc>0.8?'Moderado':'Bajo');
+    setText('oICC',f(icc,2)+' → Riesgo '+ir); setCls('oICC','rv '+(ir==='High'?'r':ir==='Moderate'?'w':'g'));
   }
   if(hayCINT){
     var umb=esH?102:88;
-    setText('oCINT',cintura>=umb?(tr('Alto')+' ('+cintura+' cm >= '+umb+' cm)'):(tr('Normal')+' ('+cintura+' cm < '+umb+' cm)'));
+    setText('oCINT',cintura>=umb?'Alto ('+cintura+' cm >= '+umb+' cm)':'Normal ('+cintura+' cm < '+umb+' cm)');
     setCls('oCINT','rv '+(cintura>=umb?'r':'g'));
   }
 
@@ -647,8 +554,8 @@ function run(){
 }
 
 function rst(){
-  gi('xgenero').value='hombre'; gi('xedad').value='57';
-  gi('xaltura').value='173';    gi('xpeso').value='80';
+  gi('xgenero').value='hombre'; gi('xedad').value='35';
+  gi('xaltura').value='170';    gi('xpeso').value='70';
   gi('xcintura').value='';      gi('xcadera').value='';
   ['xedad','xaltura','xpeso'].forEach(function(id){gi(id).className='';});
   ['eedad','ealtura','epeso'].forEach(function(id){gi(id).style.display='none';});
@@ -662,27 +569,27 @@ function exp(){
     '     INFORME DE ÍNDICE DE MASA CORPORAL (IMC)',
     '================================================',
     'Fecha   : '+fecha,
-    'Género  : '+(gi('xgenero').value==='hombre'?'Hombre':'Mujer'),
-    'Edad    : '+gi('xedad').value+' años',
+    'Gender  : '+(gi('xgenero').value==='hombre'?'Male':'Female'),
+    'Age     : '+gi('xedad').value+' years',
     'Altura  : '+gi('xaltura').value+' cm',
     'Peso    : '+gi('xpeso').value+' kg',
     '------------------------------------------------',
     'IMC actual            : '+gi('oIMC').textContent,
-    'Clasificación OMS     : '+gi('oCLAS').textContent,
-    'Rango saludable       : '+gi('oRANGO').textContent,
-    'IMC ajustado          : '+gi('oIMCajust').textContent,
-    'Clasificación ajustada: '+gi('oCLASajust').textContent,
+    'WHO Classification    : '+gi('oCLAS').textContent,
+    'Healthy range         : '+gi('oRANGO').textContent,
+    'Adjusted BMI          : '+gi('oIMCajust').textContent,
+    'Adjusted classification: '+gi('oCLASajust').textContent,
     '------------------------------------------------',
-    'Peso ideal Devine     : '+gi('oDevine').textContent,
-    'Peso ideal Lorentz    : '+gi('oLorentz').textContent,
-    'Peso ideal Hamwi      : '+gi('oHamwi').textContent,
-    'Diferencia vs. Devine : '+gi('oDIFF').textContent,
+    'Ideal weight Devine   : '+gi('oDevine').textContent,
+    'Ideal weight Lorentz  : '+gi('oLorentz').textContent,
+    'Ideal weight Hamwi    : '+gi('oHamwi').textContent,
+    'Difference vs. Devine : '+gi('oDIFF').textContent,
     '------------------------------------------------',
-    '% Grasa corporal      : '+gi('oGRASA').textContent,
+    'Body fat %            : '+gi('oGRASA').textContent,
     'Rango grasa saludable : '+gi('oGRASARANGO').textContent,
     'Valoración grasa      : '+gi('oGRASACLAS').textContent,
     '------------------------------------------------',
-    'AVISO: Indicadores orientativos. Consulte a su médico.',
+    'NOTE: Indicative measures. Consult your doctor.',
     '================================================'
   ].join('\n');
   var a=document.createElement('a');
@@ -691,28 +598,15 @@ function exp(){
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
 
-gi('xgenero').addEventListener('change',run);
-gi('xedad').addEventListener('input',run);
-gi('xaltura').addEventListener('input',run);
-gi('xpeso').addEventListener('input',run);
-gi('xcintura').addEventListener('input',run);
-gi('xcadera').addEventListener('input',run);
-
-run();
-</script>
-<script>
-(function(){
-  var _L=localStorage.getItem('pwa_lang')||'es';
-  function applyLang(l){
-    document.querySelectorAll('[data-es]').forEach(function(el){
-      var v=el.getAttribute('data-'+l); if(v===null)return; el.innerHTML=v;
-    });
-    document.getElementById('flag-es').classList.toggle('active',l==='es');
-    document.getElementById('flag-en').classList.toggle('active',l==='en');
-  }
-  window.setLang=function(l){_L=l;localStorage.setItem('pwa_lang',l);applyLang(l);};
-  document.addEventListener('DOMContentLoaded',function(){ applyLang(_L); });
-})();
+window.addEventListener('load', function() {
+  gi('xgenero').addEventListener('change',run);
+  gi('xedad').addEventListener('input',run);
+  gi('xaltura').addEventListener('input',run);
+  gi('xpeso').addEventListener('input',run);
+  gi('xcintura').addEventListener('input',run);
+  gi('xcadera').addEventListener('input',run);
+  run();
+});
 </script>
 </body>
 </html>

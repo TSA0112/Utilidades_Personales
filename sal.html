@@ -626,7 +626,11 @@
   }
 
   // ---- Cálculo inicial al cargar ----
-  window.addEventListener('DOMContentLoaded', calcular);
+  if(document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', calcular);
+  } else {
+    calcular();
+  }
 </script>
 
   <script>
@@ -656,9 +660,11 @@
       document.getElementById('flag-en').classList.toggle('active',l==='en');
     }
     window.setLang=function(l){ _L=l; localStorage.setItem('pwa_lang',l); applyLang(l); if(typeof calcular==='function') calcular(); };
-    document.addEventListener('DOMContentLoaded',function(){
+    if(document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function(){ applyLang(_L); });
+    } else {
       applyLang(_L);
-    });
+    }
   })();
   </script>
 
