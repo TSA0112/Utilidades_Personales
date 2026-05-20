@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Calculadora Renting o Compra de Vehículo — TSA © IA</title>
+<style>
+  :root {
+    --primary:#1a6fc4;--primary-dark:#145099;--secondary:#27ae60;--secondary-dark:#1e8449;
+    --danger:#e74c3c;--warning:#f39c12;--bg:#f0f4f8;--card:#fff;--border:#d1dce8;393333
+    --text:#222;--text-muted:#6b7a8d;--radius:12px;--shadow:0 4px 18px rgba(0,0,0,.09);
+    --green-win:#d4edda;--red-lose:#fde8e8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  /* HEADER */
+  header{background:linear-gradient(135deg,var(--primary) 0%,#0d3d6e 100%);color:#fff;padding:22px 24px 18px;text-align:center;position:relative;}
+  header h1{font-size:clamp(1.1rem,3vw,1.65rem);font-weight:700;letter-spacing:.3px;}
+  header p{font-size:.82rem;opacity:.82;margin-top:4px;}
+  .lang-switch{position:absolute;top:18px;right:18px;display:flex;gap:8px;align-items:center;}
+  .lang-btn{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);color:#fff;
+    border-radius:8px;padding:5px 11px;font-size:.78rem;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .2s;}
+  .lang-btn.active,.lang-btn:hover{background:rgba(255,255,255,.32);}
+  .flag{font-size:1.1rem;}
+  /* MAIN LAYOUT */
+  main{max-width:1200px;margin:24px auto;padding:0 14px;}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:768px){.grid-2{grid-template-columns:1fr;}}
+  /* CARDS */
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 20px;}
+  .card-title{font-size:1.05rem;font-weight:700;color:var(--primary);margin-bottom:16px;
+    padding-bottom:10px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:8px;}
+  .card-title .icon{font-size:1.2rem;}
+  /* VEHICLE SECTION */
+  .vehicle-card{grid-column:1/-1;}
+  /* FORM ELEMENTS */
+  .form-group{margin-bottom:14px;}
+  label{display:block;font-size:.82rem;font-weight:600;color:var(--text-muted);margin-bottom:4px;display:flex;align-items:center;gap:5px;}
+  input[type=number],input[type=text],select{width:100%;padding:9px 12px;border:1.5px solid var(--border);
+    border-radius:8px;font-size:.92rem;color:var(--text);background:#fff;transition:border .2s;appearance:none;}
+  input:focus,select:focus{outline:none;border-color:var(--primary);}
+  input.error{border-color:var(--danger);}
+  .input-eur{position:relative;}
+  .input-eur input{padding-right:36px;}
+  .input-eur::after{content:'€';position:absolute;right:11px;top:50%;transform:translateY(-50%);
+    color:var(--text-muted);font-size:.88rem;pointer-events:none;}
+  .input-pct{position:relative;}
+  .input-pct input{padding-right:30px;}
+  .input-pct::after{content:'%';position:absolute;right:11px;top:50%;transform:translateY(-50%);
+    color:var(--text-muted);font-size:.88rem;pointer-events:none;}
+  /* TOOLTIP */
+  .tooltip-wrap{position:relative;display:inline-flex;align-items:center;}
+  .tip-icon{width:16px;height:16px;border-radius:50%;background:var(--primary);color:#fff;
+    font-size:.65rem;display:inline-flex;align-items:center;justify-content:center;
+    cursor:help;font-weight:700;flex-shrink:0;}
+  .tip-text{visibility:hidden;opacity:0;background:#1a2d4a;color:#fff;font-size:.76rem;
+    border-radius:8px;padding:8px 11px;position:absolute;z-index:99;bottom:130%;left:50%;
+    transform:translateX(-50%);width:210px;line-height:1.4;transition:opacity .2s;pointer-events:none;
+    box-shadow:0 4px 14px rgba(0,0,0,.25);}
+  .tip-text::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+    border:6px solid transparent;border-top-color:#1a2d4a;}
+  .tooltip-wrap:hover .tip-text{visibility:visible;opacity:1;}
+  /* COMPUTED DISPLAY */
+  .computed-box{background:#eef4fb;border:1.5px solid #b8d4f0;border-radius:8px;
+    padding:10px 13px;font-size:.9rem;margin-top:2px;}
+  .computed-box strong{color:var(--primary);}
+  .formula-note{font-size:.73rem;color:var(--text-muted);margin-top:4px;font-style:italic;line-height:1.4;}
+  /* TOGGLE OPTION ROWS */
+  .toggle-row{display:flex;gap:10px;margin-bottom:14px;}
+  .toggle-btn{flex:1;padding:8px;border:1.5px solid var(--border);border-radius:8px;background:#fff;
+    font-size:.82rem;cursor:pointer;transition:all .2s;text-align:center;font-weight:600;}
+  .toggle-btn.active{background:var(--primary);color:#fff;border-color:var(--primary);}
+  /* RESULTS PANEL */
+  .results-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px;}
+  @media(max-width:600px){.results-grid{grid-template-columns:1fr;}}
+  .result-block{border-radius:var(--radius);padding:18px;border:2px solid var(--border);transition:all .3s;}
+  .result-block.winner{border-color:var(--secondary);background:var(--green-win);}
+  .result-block.loser{border-color:#e0b0b0;background:var(--red-lose);}
+  .result-block h3{font-size:1rem;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+  .badge{font-size:.7rem;padding:3px 9px;border-radius:20px;font-weight:700;}
+  .badge-win{background:var(--secondary);color:#fff;}
+  .badge-lose{background:var(--danger);color:#fff;}
+  .result-row{display:flex;justify-content:space-between;align-items:center;
+    padding:5px 0;border-bottom:1px solid rgba(0,0,0,.06);font-size:.88rem;}
+  .result-row:last-child{border:none;}
+  .result-row .val{font-weight:700;color:var(--primary);}
+  .result-total{font-size:1.2rem;font-weight:800;color:var(--primary-dark);margin-top:8px;text-align:right;}
+  .result-total.winner-val{color:var(--secondary-dark);}
+  /* COMPARISON SUMMARY */
+  .summary-box{background:linear-gradient(135deg,#f8f9fa,#e9f0fb);border:2px solid var(--primary);
+    border-radius:var(--radius);padding:18px;margin-top:16px;text-align:center;}
+  .summary-box h3{color:var(--primary);margin-bottom:8px;font-size:1rem;}
+  .diff-amount{font-size:1.5rem;font-weight:800;}
+  .diff-win{color:var(--secondary-dark);}
+  .diff-lose{color:var(--danger);}
+  /* BREAKDOWN */
+  .breakdown{margin-top:10px;}
+  .breakdown-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:.8rem;}
+  .bar-outer{flex:1;height:8px;background:#e2e8f0;border-radius:4px;overflow:hidden;}
+  .bar-inner{height:100%;border-radius:4px;transition:width .5s;}
+  /* CHART */
+  .chart-wrap{margin-top:20px;padding:18px;background:#fff;border-radius:var(--radius);
+    box-shadow:var(--shadow);}
+  .chart-wrap h3{font-size:.95rem;font-weight:700;color:var(--primary);margin-bottom:14px;}
+  canvas{max-width:100%;}
+  /* BUTTONS */
+  .btn-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;}
+  .btn{padding:10px 18px;border-radius:9px;border:none;font-size:.85rem;font-weight:700;
+    cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;white-space:nowrap;}
+  .btn-primary{background:var(--primary);color:#fff;}
+  .btn-primary:hover{background:var(--primary-dark);}
+  .btn-success{background:var(--secondary);color:#fff;}
+  .btn-success:hover{background:var(--secondary-dark);}
+  .btn-warning{background:var(--warning);color:#fff;}
+  .btn-warning:hover{background:#d68910;}
+  .btn-danger{background:var(--danger);color:#fff;}
+  .btn-danger:hover{background:#c0392b;}
+  .btn-dark{background:#34495e;color:#fff;}
+  .btn-dark:hover{background:#2c3e50;}
+  /* SECTION DIVIDER */
+  .section-label{font-size:.78rem;font-weight:700;color:var(--primary);text-transform:uppercase;
+    letter-spacing:.7px;margin:14px 0 8px;border-left:3px solid var(--primary);padding-left:8px;}
+  /* FOOTER */
+  footer{text-align:center;font-size:.74rem;color:var(--text-muted);padding:24px 14px;
+    border-top:1px solid var(--border);margin-top:30px;}
+  /* PRINT */
+  @media print{
+    .lang-switch,.btn-row,footer{display:none;}
+    body{background:#fff;}
+    .card{box-shadow:none;border:1px solid #ccc;}
+  }
+  /* ALERT */
+  .alert{padding:10px 14px;border-radius:8px;font-size:.83rem;margin-bottom:10px;display:none;}
+  .alert-warn{background:#fff3cd;border:1px solid #ffc107;color:#856404;}
+  /* RESUMEN STICKY */
+  .sticky-bar{position:sticky;bottom:0;background:#1a2d4a;color:#fff;padding:10px 18px;
+    display:flex;gap:20px;justify-content:center;flex-wrap:wrap;font-size:.84rem;z-index:50;
+    border-top:3px solid var(--primary);}
+  .sticky-item{display:flex;flex-direction:column;align-items:center;}
+  .sticky-item span:first-child{font-size:.7rem;opacity:.75;}
+  .sticky-item span:last-child{font-weight:800;font-size:.98rem;}
+  .sticky-win{color:#5dde8a;}
+  .sticky-lose{color:#ff8989;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1 id="h-title" data-es="🚗 Calculadora Renting o Compra de Vehículo" data-en="🚗 Vehicle Renting or Purchase Calculator">🚗 Calculadora Renting o Compra de Vehículo</h1>
+  <p id="h-sub" data-es="TSA © · IA — Estimación orientativa. Compare ambas opciones al detalle." data-en="TSA © · AI — Indicative estimate. Compare both options in detail.">TSA © · IA — Estimación orientativa. Compare ambas opciones al detalle.</p>
+  <div class="lang-switch">
+    <button class="lang-btn active" onclick="setLang('es')" id="btn-es"><span class="flag">🇪🇸</span> ES</button>
+    <button class="lang-btn" onclick="setLang('en')" id="btn-en"><span class="flag">🇬🇧</span> EN</button>
+  </div>
+</header>
+
+<main>
+  <div id="alert-empty" class="alert alert-warn">⚠️ <span data-es="Algunos campos están vacíos o tienen valores no válidos." data-en="Some fields are empty or invalid.">Algunos campos están vacíos o tienen valores no válidos.</span></div>
+
+  <!-- VEHICLE INFO -->
+  <div class="card vehicle-card" style="margin-bottom:18px;">
+    <div class="card-title"><span class="icon">🏭</span> <span data-es="Datos del Vehículo" data-en="Vehicle Data">Datos del Vehículo</span></div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label><span data-es="Marca" data-en="Brand">Marca</span> <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text" data-es="Selecciona o escribe la marca del fabricante." data-en="Select or type the manufacturer brand.">Selecciona o escribe la marca del fabricante.</span></span></label>
+        <select id="sel-marca" oninput="syncMarca();recalc()">
+          <option value="KIA">KIA</option><option value="SEAT">SEAT</option><option value="VOLKSWAGEN">VOLKSWAGEN</option>
+          <option value="RENAULT">RENAULT</option><option value="PEUGEOT">PEUGEOT</option>
+          <option value="OPEL">OPEL</option><option value="FORD">FORD</option><option value="TOYOTA">TOYOTA</option>
+          <option value="HYUNDAI">HYUNDAI</option><option value="SKODA">SKODA</option><option value="DACIA">DACIA</option>
+          <option value="CITROEN">CITROËN</option><option value="NISSAN">NISSAN</option><option value="MAZDA">MAZDA</option>
+          <option value="BMW">BMW</option><option value="MERCEDES">MERCEDES</option><option value="AUDI">AUDI</option>
+          <option value="VOLVO">VOLVO</option><option value="TESLA">TESLA</option><option value="OTRO">Otro...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label><span data-es="Modelo" data-en="Model">Modelo</span></label>
+        <select id="sel-modelo" oninput="recalc()">
+          <!-- filled by JS -->
+        </select>
+      </div>
+      <div class="form-group" style="grid-column:1/-1;">
+        <label><span data-es="Versión / Motor" data-en="Version / Engine">Versión / Motor</span></label>
+        <select id="sel-version" oninput="recalc()">
+          <option value="1.0 T-GDi MHEV 48V 85kW (115CV) 6MT (Gasolina, MT)">1.0 T-GDi MHEV 48V 85kW (115CV) 6MT (Gasolina, MT)</option>
+          <option value="1.0 T-GDi 100CV (Gasolina, MT)">1.0 T-GDi 100CV (Gasolina, MT)</option>
+          <option value="1.5 CRDi 115CV (Diesel, MT)">1.5 CRDi 115CV (Diesel, MT)</option>
+          <option value="Eléctrico (BEV)">Eléctrico (BEV)</option>
+          <option value="Híbrido Enchufable (PHEV)">Híbrido Enchufable (PHEV)</option>
+          <option value="Otro">Otro</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label><span data-es="Precio de Venta del Vehículo" data-en="Vehicle Sale Price">Precio de Venta</span>
+          <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text" data-es="Precio de catálogo o concesionario con IVA incluido." data-en="Catalog or dealer price including VAT.">Precio de catálogo con IVA incluido.</span></span>
+        </label>
+        <div class="input-eur"><input type="number" id="v-precio" value="21000" min="0" step="100" oninput="recalc()"/></div>
+      </div>
+      <div class="form-group">
+        <label><span data-es="Valor de Reventa al final del periodo (Compra)" data-en="Resale Value at end of period (Purchase)">Valor Reventa estimado (Compra)</span>
+          <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text" data-es="Valor de reventa estimado del vehículo al cabo de 48 meses. Se descuenta del coste total de compra." data-en="Estimated resale value of the vehicle after 48 months. Deducted from total purchase cost.">Valor de reventa estimado a 48 meses.</span></span>
+        </label>
+        <div class="input-eur"><input type="number" id="v-reventa" value="8000" min="0" step="100" oninput="recalc()"/></div>
+        <div class="formula-note" data-es="Valor orientativo. Reduce el coste neto de compra." data-en="Indicative value. Reduces net purchase cost.">Valor orientativo. Reduce el coste neto de compra.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RENTING + COMPRA INPUTS -->
+  <div class="grid-2">
+    <!-- RENTING -->
+    <div class="card">
+      <div class="card-title"><span class="icon">📋</span> <span data-es="Opción A — Renting" data-en="Option A — Renting">Opción A — Renting</span></div>
+
+      <div class="form-group">
+        <label><span data-es="Número de Mensualidades" data-en="Number of Monthly Payments">Mensualidades</span>
+          <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text" data-es="Duración total del contrato de renting en meses." data-en="Total duration of the renting contract in months.">Duración del contrato en meses.</span></span>
+        </label>
+        <input type="number" id="r-meses" value="48" min="12" max="96" step="12" oninput="recalc()"/>
+      </div>
+      <div class="form-group">
+        <label><span data-es="Kilometraje anual incluido" data-en="Annual mileage included">Km/año incluidos</span></label>
+        <select id="r-km" oninput="recalc()">
+          <option value="10000">10.000 km/año</option>
+          <option value="15000" selected>15.000 km/año</option>
+          <option value="20000">20.000 km/año</option>
+          <option value="25000">25.000 km/año</option>
+          <option value="30000">30.000 km/año</option>
+        </select>
+      </div>
+
+      <div class="section-label" data-es="Importes" data-en="Amounts">Importes</div>
+
+      <div class="form-group">
+        <label><span data-es="Aportación Inicial (entrada)" data-en="Initial Payment (deposit)">Aportación Inicial</span>
+          <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text" data-es="Pago inicial que se realiza al firmar el contrato de renting. Puede ser 0." data-en="Upfront payment made when signing the renting contract. Can be 0.">Pago inicial al firmar el contrato.</span></span>
+        </label>
+        <div class="input-eur"><input type="number" id="r-entrada" value="3941.25" min="0" step="100" oninput="recalc()"/></div>
+      </div>
+      <div class="form-group">
+        <label><span data-es="Cuota Mensual (IVA inc.)" data-en="Monthly Fee (VAT inc.)">Cuota Mensual</span>
+          <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text" data-es="Cuota fija mensual del contrato de renting con IVA incluido." data-en="Fixed monthly renting fee including VAT.">Cuota fija mensual con IVA incluido.</span></span>
+        </label>
+        <div class="input-eur"><input type="number" id="r-cuota" value="290" min="0" step="1" oninput="recalc()"/></div>
+      </div>
+
+      <div class="section-label" data-es="Servicios incluidos" data-en="Included services">Servicios incluidos</div>
+      <div class="form-group" style="display:flex;gap:14px;flex-wrap:wrap;">
+        <label style="display:flex;align-items:center;gap:5px;font-size:.85rem;cursor:pointer;">
+          <input type="checkbox" id="r-inc-seguro" checked onchange="recalc()"> <span data-es="Seguro incluido" data-en="Insurance included">Seguro incluido</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:.85rem;cursor:pointer;">
+          <input type="checkbox" id="r-inc-mant" checked onchange="recalc()"> <span data-es="Mantenimiento incluido" data-en="Maintenance included">Mantenimiento incluido</span>
+        </label>
+        <label style="display:flex;align-items:center;gap:5px;font-size:.85rem;cursor:pointer;">
+          <input type="checkbox" id="r-inc-ruedas" checked onchange="recalc()"> <span data-es="Ruedas incluidas" data-en="Tyres included">Ruedas incluidas</span>
+        </label>
+      </div>
+      <div class="form-group" id="r-seg-extra-wrap" style="display:none;">
+        <label><span data-es="Seguro (si NO incluido, coste/año)" data-en="Insurance (if NOT included, cost/year)">Seguro extra/año</span></label>
+        <div class="input-eur"><input type="number" id="r-seguro" value="600" min="0" step="10" oninput="recalc()"/></div>
+      </div>
+      <div class="form-group" id="r-mant-extra-wrap" style="display:none;">
+        <label><span data-es="Mantenimiento (si NO incluido, coste/año)" data-en="Maintenance (if NOT included, cost/year)">Mantenimiento extra/año</span></label>
+        <div class="input-eur"><input type="number" id="r-mant" value="350" min="0" step="10" oninput="recalc()"/></div>
+      </div>
+
+      <div class="form-group">
+        <label><span data-es="Valor Final de Compra (opción compra al vencimiento)" data-en="Final Purchase Value (buy-out at end)">Valor Final de Compra</span>
+          <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text" data-es="Importe a pagar para quedarse con el vehículo al terminar el renting." data-en="Amount to pay to keep the vehicle at end of renting contract.">Precio para comprar el vehículo al final del renting.</span></span>
+        </label>
+        <div class="input-eur"><input type="number" id="r-comprafinal" value="11000" min="0" step="100" oninput="recalc()"/></div>
+      </div>
+      <div class="form-group">
+        <label><span data-es="Gastos Extras (total periodo)" data-en="Extra Costs (total period)">Gastos Extras</span>
+          <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text" data-es="Gastos adicionales estimados: exceso de km, daños, etc." data-en="Estimated additional costs: excess km, damages, etc.">Gastos adicionales del periodo.</span></span>
+        </label>
+        <div class="input-eur"><input type="number" id="r-extras" value="0" min="0" step="50" oninput="recalc()"/></div>
+      </div>
+    </div>
+
+    <!-- COMPRA -->
+    <div class="card">
+      <div class="card-title"><span class="icon">🏦</span> <span data-es="Opción B — Compra con Financiación" data-en="Option B — Purchase with Financing">Opción B — Compra con Financiación</span></div>
+
+      <div class="form-group">
+        <label><span data-es="Dinero Aportado (Entrada)" data-en="Down Payment">Dinero Aportado (Entrada)</span>
+          <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text" data-es="Cantidad que pagas de tu bolsillo al inicio. El resto se financia." data-en="Amount you pay upfront. The rest is financed.">Pago inicial propio. El resto se financia.</span></span>
+        </label>
+        <div class="input-eur"><input type="number" id="c-entrada" value="3941.25" min="0" step="500" oninput="recalc()"/></div>
+      </div>
+
+      <div class="form-group">
+        <label><span data-es="Importe del Crédito (calculado)" data-en="Credit Amount (calculated)">Importe del Crédito</span></label>
+        <div class="computed-box"><strong id="c-credito-val">10.820 €</strong></div>
+        <div class="formula-note" data-es="= Precio vehículo − Entrada" data-en="= Vehicle price − Down payment">= Precio vehículo − Entrada</div>
+      </div>
+
+      <div class="form-group">
+        <label><span data-es="TAE del Crédito (%)" data-en="Credit APR (%)">TAE del Crédito</span>
+          <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text" data-es="Tasa Anual Equivalente del préstamo. Se usa para calcular la cuota mensual." data-en="Annual Percentage Rate of the loan. Used to calculate the monthly payment.">Tasa Anual Equivalente del préstamo.</span></span>
+        </label>
+        <div class="input-pct"><input type="number" id="c-tae" value="7.99" min="0" max="30" step="0.01" oninput="recalc()"/></div>
+      </div>
+
+      <div class="form-group">
+        <label><span data-es="Plazo de devolución (meses)" data-en="Repayment term (months)">Plazo devolución</span></label>
+        <input type="number" id="c-plazo" value="48" min="6" max="120" step="6" oninput="recalc()"/>
+      </div>
+
+      <div class="form-group">
+        <label><span data-es="Cuota Mensual del Crédito (calculada)" data-en="Monthly Credit Payment (calculated)">Cuota Mensual Crédito</span></label>
+        <div class="computed-box"><strong id="c-cuota-val">—</strong></div>
+        <div class="formula-note" data-es="= Crédito × [i(1+i)^n / ((1+i)^n-1)], i=TAE/12" data-en="= Credit × [i(1+i)^n / ((1+i)^n-1)], i=APR/12">= Crédito × [i(1+i)^n / ((1+i)^n−1)], i=TAE/12</div>
+      </div>
+
+      <div class="form-group">
+        <label><span data-es="Total a devolver (crédito + intereses)" data-en="Total to repay (credit + interest)">Total a devolver</span></label>
+        <div class="computed-box"><strong id="c-total-credito-val">—</strong></div>
+        <div class="formula-note" data-es="= Cuota mensual × Plazo" data-en="= Monthly payment × Term">= Cuota mensual × Plazo</div>
+      </div>
+
+      <div class="section-label" data-es="Costes Operativos Anuales" data-en="Annual Operating Costs">Costes Operativos Anuales</div>
+
+      <div class="form-group">
+        <label><span data-es="Mantenimiento anual (revisiones)" data-en="Annual maintenance (services)">Mantenimiento / año</span>
+          <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text" data-es="Coste medio anual de revisiones, filtros, aceite, etc." data-en="Average annual cost of services, filters, oil, etc.">Coste medio anual de revisiones.</span></span>
+        </label>
+        <div class="input-eur"><input type="number" id="c-mant" value="350" min="0" step="10" oninput="recalc()"/></div>
+      </div>
+      <div class="form-group">
+        <label><span data-es="Seguro Todo Riesgo (anual)" data-en="Comprehensive Insurance (annual)">Seguro Todo Riesgo / año</span>
+          <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text" data-es="Prima anual estimada del seguro a todo riesgo." data-en="Estimated annual comprehensive insurance premium.">Prima anual estimada del seguro.</span></span>
+        </label>
+        <div class="input-eur"><input type="number" id="c-seguro" value="600" min="0" step="10" oninput="recalc()"/></div>
+      </div>
+      <div class="form-group">
+        <label><span data-es="Gastos Extras anuales (ITV, neumáticos…)" data-en="Annual Extra Costs (MOT, tyres…)">Gastos Extras / año</span>
+          <span class="tooltip-wrap"><span class="tip-icon">?</span><span class="tip-text" data-es="ITV, neumáticos, reparaciones imprevistas, etc." data-en="MOT, tyres, unexpected repairs, etc.">ITV, neumáticos, reparaciones, etc.</span></span>
+        </label>
+        <div class="input-eur"><input type="number" id="c-extras" value="0" min="0" step="50" oninput="recalc()"/></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="btn-row" style="margin-top:16px;">
+    <button class="btn btn-primary" onclick="recalc()">🔄 <span data-es="Calcular" data-en="Calculate">Calcular</span></button>
+    <button class="btn btn-danger" onclick="resetAll()">🗑️ <span data-es="Resetear" data-en="Reset">Resetear</span></button>
+    <button class="btn btn-success" onclick="exportExcel()">📊 <span data-es="Exportar a Excel" data-en="Export to Excel">Exportar a Excel</span></button>
+    <button class="btn btn-warning" onclick="saveHTML()">💾 <span data-es="Guardar HTML" data-en="Save HTML">Guardar HTML</span></button>
+    <button class="btn btn-dark" onclick="window.print()">🖨️ <span data-es="Imprimir" data-en="Print">Imprimir</span></button>
+  </div>
+
+  <!-- RESULTS -->
+  <div style="margin-top:24px;">
+    <div class="card-title" style="margin-bottom:10px;"><span class="icon">📊</span> <span data-es="Resumen Comparativo — 48 meses" data-en="Comparative Summary — 48 months" id="res-title">Resumen Comparativo</span></div>
+
+    <div class="results-grid">
+      <!-- RENTING RESULT -->
+      <div class="result-block" id="block-renting">
+        <h3>📋 <span data-es="RENTING" data-en="RENTING">RENTING</span> <span id="badge-r"></span></h3>
+        <div class="result-row"><span data-es="Aportación inicial" data-en="Initial payment">Aportación inicial</span><span class="val" id="r-res-entrada">—</span></div>
+        <div class="result-row"><span data-es="Total cuotas" data-en="Total fees">Total cuotas</span><span class="val" id="r-res-cuotas">—</span></div>
+        <div class="result-row"><span data-es="Valor compra final" data-en="Buy-out value">Valor compra final</span><span class="val" id="r-res-comprafinal">—</span></div>
+        <div class="result-row" id="r-row-seguro" style="display:none;"><span data-es="Seguro (externo)" data-en="Insurance (external)">Seguro (externo)</span><span class="val" id="r-res-seguro">—</span></div>
+        <div class="result-row" id="r-row-mant" style="display:none;"><span data-es="Mantenimiento (externo)" data-en="Maintenance (external)">Mantenimiento (externo)</span><span class="val" id="r-res-mant">—</span></div>
+        <div class="result-row"><span data-es="Gastos extras" data-en="Extra costs">Gastos extras</span><span class="val" id="r-res-extras">—</span></div>
+        <div class="result-row" style="border-top:2px solid #ccc;margin-top:6px;padding-top:6px;">
+          <span data-es="Coste mensual medio" data-en="Average monthly cost">Coste mensual medio</span><span class="val" id="r-res-mensual">—</span></div>
+        <div class="result-row"><span data-es="Coste anual medio" data-en="Average annual cost">Coste anual medio</span><span class="val" id="r-res-anual">—</span></div>
+        <div class="result-total" id="r-res-total">—</div>
+        <div class="formula-note" data-es="Total = Entrada + (Cuota×meses) + Compra Final + Extras + Seguros y Mantenimiento externos" data-en="Total = Deposit + (Fee×months) + Buy-out + Extras + External insurance & maintenance">Total = Entrada + (Cuota×meses) + Compra Final + Extras</div>
+        <div class="breakdown" id="r-breakdown"></div>
+      </div>
+
+      <!-- COMPRA RESULT -->
+      <div class="result-block" id="block-compra">
+        <h3>🏦 <span data-es="COMPRA" data-en="PURCHASE">COMPRA</span> <span id="badge-c"></span></h3>
+        <div class="result-row"><span data-es="Entrada aportada" data-en="Down payment">Entrada aportada</span><span class="val" id="c-res-entrada">—</span></div>
+        <div class="result-row"><span data-es="Total crédito devuelto" data-en="Total credit repaid">Total crédito devuelto</span><span class="val" id="c-res-credito">—</span></div>
+        <div class="result-row"><span data-es="Intereses pagados" data-en="Interest paid">Intereses pagados</span><span class="val" id="c-res-intereses">—</span></div>
+        <div class="result-row"><span data-es="Seguro (4 años)" data-en="Insurance (4 years)">Seguro (periodo)</span><span class="val" id="c-res-seguro">—</span></div>
+        <div class="result-row"><span data-es="Mantenimiento (4 años)" data-en="Maintenance (4 years)">Mantenimiento (periodo)</span><span class="val" id="c-res-mant">—</span></div>
+        <div class="result-row"><span data-es="Gastos extras (periodo)" data-en="Extra costs (period)">Gastos extras (periodo)</span><span class="val" id="c-res-extras">—</span></div>
+        <div class="result-row" style="color:var(--secondary-dark);"><span data-es="− Valor Reventa estimado" data-en="− Estimated Resale Value">− Valor Reventa</span><span class="val" style="color:var(--secondary-dark);" id="c-res-reventa">—</span></div>
+        <div class="result-row" style="border-top:2px solid #ccc;margin-top:6px;padding-top:6px;">
+          <span data-es="Coste mensual medio" data-en="Average monthly cost">Coste mensual medio</span><span class="val" id="c-res-mensual">—</span></div>
+        <div class="result-row"><span data-es="Coste anual medio" data-en="Average annual cost">Coste anual medio</span><span class="val" id="c-res-anual">—</span></div>
+        <div class="result-total" id="c-res-total">—</div>
+        <div class="formula-note" data-es="Total Neto = Entrada + Total Crédito + Seguro + Mantenimiento + Extras − Reventa" data-en="Net Total = Down payment + Total Credit + Insurance + Maintenance + Extras − Resale">Total Neto = Entrada + Crédito + Seguro + Mant. + Extras − Reventa</div>
+        <div class="breakdown" id="c-breakdown"></div>
+      </div>
+    </div>
+
+    <!-- SUMMARY BOX -->
+    <div class="summary-box" id="summary-box">
+      <h3 data-es="📌 Conclusión Comparativa" data-en="📌 Comparative Conclusion">📌 Conclusión Comparativa</h3>
+      <div id="summary-text" style="font-size:.9rem;line-height:1.7;"></div>
+    </div>
+
+    <!-- CHART -->
+    <div class="chart-wrap">
+      <h3 data-es="📊 Comparativa Visual de Costes" data-en="📊 Visual Cost Comparison">📊 Comparativa Visual de Costes</h3>
+      <canvas id="myChart" height="260"></canvas>
+    </div>
+  </div>
+</main>
+
+<!-- STICKY BAR -->
+<div class="sticky-bar" id="sticky-bar">
+  <div class="sticky-item"><span data-es="Total Renting" data-en="Total Renting">Total Renting</span><span id="st-renting" class="sticky-lose">—</span></div>
+  <div class="sticky-item"><span>vs</span><span>🆚</span></div>
+  <div class="sticky-item"><span data-es="Total Compra" data-en="Total Purchase">Total Compra</span><span id="st-compra" class="sticky-lose">—</span></div>
+  <div class="sticky-item"><span data-es="Diferencia" data-en="Difference">Diferencia</span><span id="st-diff" class="sticky-win">—</span></div>
+</div>
+
+<footer>
+  <p>TSA © · IA — <span data-es="Calculadora orientativa. Los resultados son estimaciones basadas en los datos introducidos y no constituyen asesoramiento financiero." data-en="Indicative calculator. Results are estimates based on data entered and do not constitute financial advice.">Calculadora orientativa. Los resultados son estimaciones basadas en los datos introducidos y no constituyen asesoramiento financiero.</span></p>
+  <p style="margin-top:5px;" data-es="Creada con IA · myGPT Suite · Merck KGaA" data-en="Created with AI · myGPT Suite · Merck KGaA">Creada con IA · myGPT Suite · Merck KGaA</p>
+</footer>
+
+<script>
+// ===================== LANG =====================
+let LANG = 'es';
+const MODELS = {
+  KIA: ['Stonic','Sportage','Niro','EV6','EV9','Picanto','Rio','Ceed','ProCeed','Sorento','Stinger'],
+  SEAT: ['Ibiza','Leon','Arona','Ateca','Tarraco','Mii','Alhambra'],
+  VOLKSWAGEN: ['Polo','Golf','Tiguan','T-Roc','T-Cross','ID.3','ID.4','Passat','Touareg'],
+  RENAULT: ['Clio','Megane','Captur','Kadjar','Zoe','Austral','Arkana','Duster','Scenic E-Tech'],
+  PEUGEOT: ['208','308','2008','3008','5008','e-208','e-2008','508'],
+  OPEL: ['Corsa','Astra','Crossland','Grandland','Mokka','Zafira'],
+  FORD: ['Fiesta','Focus','Puma','Kuga','Mustang Mach-E','Explorer','Tourneo'],
+  TOYOTA: ['Yaris','Corolla','C-HR','RAV4','Camry','bZ4X','Aygo X','Proace City'],
+  HYUNDAI: ['i10','i20','i30','Tucson','Santa Fe','IONIQ 5','IONIQ 6','Kona'],
+  SKODA: ['Fabia','Octavia','Kamiq','Karoq','Kodiaq','Enyaq','Scala','Superb'],
+  DACIA: ['Sandero','Logan','Duster','Spring','Jogger','Bigster'],
+  CITROEN: ['C3','C4','C5 X','Berlingo','C3 Aircross','e-C3'],
+  NISSAN: ['Micra','Juke','Qashqai','X-Trail','Leaf','Ariya'],
+  MAZDA: ['Mazda2','Mazda3','Mazda6','CX-3','CX-5','CX-60','MX-5'],
+  BMW: ['Serie 1','Serie 3','Serie 5','X1','X3','X5','iX','i4','i5'],
+  MERCEDES: ['Clase A','Clase C','Clase E','GLA','GLC','EQA','EQC','EQS'],
+  AUDI: ['A1','A3','A4','A6','Q2','Q3','Q5','Q7','e-tron','Q8 e-tron'],
+  VOLVO: ['XC40','XC60','XC90','C40 Recharge','EX30','V60','S60'],
+  TESLA: ['Model 3','Model Y','Model S','Model X'],
+  OTRO: ['Otro modelo']
+};
+
+function setLang(l) {
+  LANG = l;
+  document.getElementById('btn-es').classList.toggle('active', l==='es');
+  document.getElementById('btn-en').classList.toggle('active', l==='en');
+  document.querySelectorAll('[data-es]').forEach(el => {
+    if(el.tagName === 'INPUT' || el.tagName === 'SELECT') return;
+    el.textContent = l === 'es' ? el.getAttribute('data-es') : el.getAttribute('data-en');
+  });
+  // Update formula notes
+  document.querySelectorAll('.formula-note[data-es]').forEach(el => {
+    el.textContent = l === 'es' ? el.getAttribute('data-es') : el.getAttribute('data-en');
+  });
+  recalc();
+}
+
+// ===================== MODELO DROPDOWN =====================
+function syncMarca() {
+  const marca = document.getElementById('sel-marca').value;
+  const sel = document.getElementById('sel-modelo');
+  sel.innerHTML = '';
+  const models = MODELS[marca] || ['Otro'];
+  models.forEach((m, i) => {
+    const opt = document.createElement('option');
+    opt.value = m; opt.textContent = m;
+    if(marca === 'KIA' && m === 'Stonic') opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+syncMarca();
+
+// ===================== HELPERS =====================
+function fmt(v) {
+  if(isNaN(v) || v === null) return '—';
+  return new Intl.NumberFormat('es-ES', {minimumFractionDigits:2, maximumFractionDigits:2}).format(v) + ' €';
+}
+function getVal(id) {
+  const v = parseFloat(document.getElementById(id).value);
+  return isNaN(v) ? 0 : v;
+}
+function calcCuotaMensual(principal, taeAnual, meses) {
+  if(principal <= 0) return 0;
+  if(taeAnual <= 0) return principal / meses;
+  const i = taeAnual / 100 / 12;
+  return principal * (i * Math.pow(1+i, meses)) / (Math.pow(1+i, meses) - 1);
+}
+function mkBar(label, val, total, color) {
+  const pct = total > 0 ? Math.min(100, (val/total)*100) : 0;
+  return `<div class="breakdown-row">
+    <span style="width:130px;font-size:.75rem;">${label}</span>
+    <div class="bar-outer"><div class="bar-inner" style="width:${pct.toFixed(1)}%;background:${color};"></div></div>
+    <span style="width:70px;text-align:right;font-size:.75rem;">${pct.toFixed(1)}%</span>
+  </div>`;
+}
+
+// ===================== MAIN RECALC =====================
+function recalc() {
+  // Checkboxes extras
+  const rIncSeg = document.getElementById('r-inc-seguro').checked;
+  const rIncMant = document.getElementById('r-inc-mant').checked;
+  document.getElementById('r-seg-extra-wrap').style.display = rIncSeg ? 'none' : '';
+  document.getElementById('r-mant-extra-wrap').style.display = rIncMant ? 'none' : '';
+
+  // Vehicle
+  const precio = getVal('v-precio');
+  const reventa = getVal('v-reventa');
+
+  // Renting
+  const rMeses = Math.max(1, getVal('r-meses'));
+  const rEntrada = getVal('r-entrada');
+  const rCuota = getVal('r-cuota');
+  const rCompraFinal = getVal('r-comprafinal');
+  const rExtras = getVal('r-extras');
+  const rSegExt = rIncSeg ? 0 : getVal('r-seguro') * (rMeses/12);
+  const rMantExt = rIncMant ? 0 : getVal('r-mant') * (rMeses/12);
+
+  const rTotalCuotas = rCuota * rMeses;
+  const rTotal = rEntrada + rTotalCuotas + rCompraFinal + rExtras + rSegExt + rMantExt;
+  const rMensual = rTotal / rMeses;
+  const rAnual = rMensual * 12;
+
+  // Compra
+  const cEntrada = getVal('c-entrada');
+  const cCredito = Math.max(0, precio - cEntrada);
+  const cTAE = getVal('c-tae');
+  const cPlazo = Math.max(1, getVal('c-plazo'));
+  const cCuota = calcCuotaMensual(cCredito, cTAE, cPlazo);
+  const cTotalCredito = cCuota * cPlazo;
+  const cIntereses = cTotalCredito - cCredito;
+  const cSeguro = getVal('c-seguro');
+  const cMant = getVal('c-mant');
+  const cExtras = getVal('c-extras');
+  const cAnios = rMeses / 12; // use same period as renting for fair comparison
+  const cTotalSeg = cSeguro * cAnios;
+  const cTotalMant = cMant * cAnios;
+  const cTotalExtras = cExtras * cAnios;
+  const cTotalBruto = cEntrada + cTotalCredito + cTotalSeg + cTotalMant + cTotalExtras;
+  const cTotalNeto = cTotalBruto - reventa;
+  const cMensual = cTotalNeto / rMeses;
+  const cAnual = cMensual * 12;
+
+  // Update computed displays
+  document.getElementById('c-credito-val').textContent = fmt(cCredito);
+  document.getElementById('c-cuota-val').textContent = fmt(cCuota) + '/mes';
+  document.getElementById('c-total-credito-val').textContent = fmt(cTotalCredito);
+
+  // Renting results
+  document.getElementById('r-res-entrada').textContent = fmt(rEntrada);
+  document.getElementById('r-res-cuotas').textContent = fmt(rTotalCuotas);
+  document.getElementById('r-res-comprafinal').textContent = fmt(rCompraFinal);
+  document.getElementById('r-res-extras').textContent = fmt(rExtras);
+  document.getElementById('r-res-mensual').textContent = fmt(rMensual);
+  document.getElementById('r-res-anual').textContent = fmt(rAnual);
+  document.getElementById('r-res-total').textContent = (LANG==='es'?'Total Renting: ':'Total Renting: ') + fmt(rTotal);
+
+  // seguro/mant externos renting
+  document.getElementById('r-row-seguro').style.display = rIncSeg ? 'none' : '';
+  document.getElementById('r-row-mant').style.display = rIncMant ? 'none' : '';
+  document.getElementById('r-res-seguro').textContent = fmt(rSegExt);
+  document.getElementById('r-res-mant').textContent = fmt(rMantExt);
+
+  // Compra results
+  document.getElementById('c-res-entrada').textContent = fmt(cEntrada);
+  document.getElementById('c-res-credito').textContent = fmt(cTotalCredito);
+  document.getElementById('c-res-intereses').textContent = fmt(cIntereses);
+  document.getElementById('c-res-seguro').textContent = fmt(cTotalSeg);
+  document.getElementById('c-res-mant').textContent = fmt(cTotalMant);
+  document.getElementById('c-res-extras').textContent = fmt(cTotalExtras);
+  document.getElementById('c-res-reventa').textContent = '−' + fmt(reventa);
+  document.getElementById('c-res-mensual').textContent = fmt(cMensual);
+  document.getElementById('c-res-anual').textContent = fmt(cAnual);
+  document.getElementById('c-res-total').textContent = (LANG==='es'?'Total Compra Neto: ':'Net Purchase Total: ') + fmt(cTotalNeto);
+
+  // Winner logic
+  const rWins = rTotal <= cTotalNeto;
+  const diff = Math.abs(rTotal - cTotalNeto);
+  const winnerName = rWins ? (LANG==='es'?'Renting':'Renting') : (LANG==='es'?'Compra':'Purchase');
+  const loserName  = rWins ? (LANG==='es'?'Compra':'Purchase') : (LANG==='es'?'Renting':'Renting');
+
+  const blockR = document.getElementById('block-renting');
+  const blockC = document.getElementById('block-compra');
+  blockR.className = 'result-block ' + (rWins ? 'winner' : 'loser');
+  blockC.className = 'result-block ' + (rWins ? 'loser' : 'winner');
+  document.getElementById('badge-r').innerHTML = rWins
+    ? `<span class="badge badge-win">${LANG==='es'?'✅ MÁS BARATO':'✅ CHEAPEST'}</span>`
+    : `<span class="badge badge-lose">${LANG==='es'?'❌ MÁS CARO':'❌ MORE EXPENSIVE'}</span>`;
+  document.getElementById('badge-c').innerHTML = rWins
+    ? `<span class="badge badge-lose">${LANG==='es'?'❌ MÁS CARO':'❌ MORE EXPENSIVE'}</span>`
+    : `<span class="badge badge-win">${LANG==='es'?'✅ MÁS BARATO':'✅ CHEAPEST'}</span>`;
+
+  // Resumen
+  const resTitle = document.getElementById('res-title');
+  resTitle.textContent = LANG==='es' ? `Resumen Comparativo — ${rMeses} meses` : `Comparative Summary — ${rMeses} months`;
+  const summaryEl = document.getElementById('summary-text');
+  const diffPct = cTotalNeto > 0 ? ((diff/cTotalNeto)*100).toFixed(1) : '—';
+  summaryEl.innerHTML = LANG==='es'
+    ? `La opción <strong>${winnerName}</strong> resulta <strong>${fmt(diff)} más económica</strong> que la opción <strong>${loserName}</strong> a lo largo de <strong>${rMeses} meses</strong> (${diffPct}% de diferencia).<br>
+       <small>📌 Coste mensual Renting: <strong>${fmt(rMensual)}</strong> vs Compra: <strong>${fmt(cMensual)}</strong></small>`
+    : `The <strong>${winnerName}</strong> option is <strong>${fmt(diff)} cheaper</strong> than <strong>${loserName}</strong> over <strong>${rMeses} months</strong> (${diffPct}% difference).<br>
+       <small>📌 Monthly Renting: <strong>${fmt(rMensual)}</strong> vs Purchase: <strong>${fmt(cMensual)}</strong></small>`;
+
+  // Breakdown bars
+  document.getElementById('r-breakdown').innerHTML =
+    mkBar(LANG==='es'?'Entrada':'Deposit',       rEntrada,   rTotal, '#1a6fc4') +
+    mkBar(LANG==='es'?'Cuotas':'Fees',            rTotalCuotas, rTotal, '#27ae60') +
+    mkBar(LANG==='es'?'Compra final':'Buy-out',   rCompraFinal, rTotal, '#e67e22') +
+    (rSegExt>0 ? mkBar(LANG==='es'?'Seguro':'Insurance', rSegExt, rTotal, '#9b59b6') : '') +
+    (rMantExt>0 ? mkBar(LANG==='es'?'Mantenimiento':'Maintenance', rMantExt, rTotal, '#16a085') : '') +
+    (rExtras>0 ? mkBar(LANG==='es'?'Extras':'Extras', rExtras, rTotal, '#95a5a6') : '');
+
+  document.getElementById('c-breakdown').innerHTML =
+    mkBar(LANG==='es'?'Entrada':'Down pay.',      cEntrada,   cTotalBruto, '#1a6fc4') +
+    mkBar(LANG==='es'?'Capital crédito':'Credit', cCredito,   cTotalBruto, '#27ae60') +
+    mkBar(LANG==='es'?'Intereses':'Interest',     cIntereses, cTotalBruto, '#e74c3c') +
+    mkBar(LANG==='es'?'Seguro':'Insurance',       cTotalSeg,  cTotalBruto, '#9b59b6') +
+    mkBar(LANG==='es'?'Mantenimiento':'Mainten.', cTotalMant, cTotalBruto, '#16a085') +
+    (cTotalExtras>0 ? mkBar(LANG==='es'?'Extras':'Extras', cTotalExtras, cTotalBruto, '#95a5a6') : '');
+
+  // Sticky
+  document.getElementById('st-renting').textContent = fmt(rTotal);
+  document.getElementById('st-compra').textContent = fmt(cTotalNeto);
+  document.getElementById('st-diff').textContent = fmt(diff) + (rWins ? ' ✅ Renting' : ' ✅ Compra');
+  document.getElementById('st-renting').className = rWins ? 'sticky-win' : 'sticky-lose';
+  document.getElementById('st-compra').className = rWins ? 'sticky-lose' : 'sticky-win';
+
+  // Chart
+  drawChart(rEntrada, rTotalCuotas, rCompraFinal, rSegExt, rMantExt, rExtras,
+            cEntrada, cCredito, cIntereses, cTotalSeg, cTotalMant, cTotalExtras, reventa, rMeses);
+}
+
+// ===================== CHART =====================
+let chartInstance = null;
+function drawChart(rEnt, rCuotas, rFinal, rSeg, rMant, rExt,
+                   cEnt, cCred, cInt, cSeg, cMant, cExts, rev, meses) {
+  const canvas = document.getElementById('myChart');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.parentElement.clientWidth - 36;
+  canvas.height = 260;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const labelsES = ['Entrada/Depósito','Cuotas/Crédito','Compra Final/Intereses','Seguro','Mantenimiento','Extras','−Reventa'];
+  const labelsEN = ['Deposit/Down pay.','Fees/Credit','Buy-out/Interest','Insurance','Maintenance','Extras','−Resale'];
+  const labels = LANG==='es' ? labelsES : labelsEN;
+
+  const rentingData = [rEnt, rCuotas, rFinal, rSeg, rMant, rExt, 0];
+  const compraData  = [cEnt, cCred, cInt, cSeg, cMant, cExts, -rev];
+
+  const colors = ['#1a6fc4','#27ae60','#e67e22','#9b59b6','#16a085','#95a5a6','#e74c3c'];
+
+  const W = canvas.width, H = 260;
+  const marginLeft = 155, marginRight = 20, marginTop = 32, marginBottom = 32;
+  const chartW = W - marginLeft - marginRight;
+  const barGroupW = chartW / labels.length;
+  const barW = barGroupW * 0.35;
+
+  // Max for scale
+  const allVals = [...rentingData, ...compraData.map(Math.abs)];
+  const maxVal = Math.max(...allVals) * 1.15 || 1;
+
+  // Grid & axes
+  ctx.strokeStyle = '#e2e8f0'; ctx.lineWidth = 1;
+  for(let i=0;i<=4;i++){
+    const y = marginTop + (H-marginTop-marginBottom)*i/4;
+    ctx.beginPath(); ctx.moveTo(marginLeft,y); ctx.lineTo(W-marginRight,y); ctx.stroke();
+    ctx.fillStyle = '#6b7a8d'; ctx.font='10px Segoe UI'; ctx.textAlign='right';
+    ctx.fillText(new Intl.NumberFormat('es-ES',{maximumFractionDigits:0}).format(maxVal*(4-i)/4)+'€', marginLeft-5, y+4);
+  }
+
+  // Bars
+  labels.forEach((lbl, i) => {
+    const x = marginLeft + i * barGroupW;
+    // Renting bar
+    const rV = rentingData[i];
+    const rH = Math.abs(rV) / maxVal * (H - marginTop - marginBottom);
+    const rY = H - marginBottom - rH;
+    ctx.fillStyle = colors[i];
+    ctx.globalAlpha = .85;
+    ctx.fillRect(x + barGroupW*0.08, rY, barW, rH);
+    // Compra bar
+    const cV = compraData[i];
+    const cH = Math.abs(cV) / maxVal * (H - marginTop - marginBottom);
+    const cY = H - marginBottom - cH;
+    ctx.fillStyle = colors[i];
+    ctx.globalAlpha = .45;
+    ctx.fillRect(x + barGroupW*0.08 + barW + 4, cY, barW, cH);
+    ctx.globalAlpha = 1;
+    // Label
+    ctx.fillStyle = '#34495e'; ctx.font='9px Segoe UI'; ctx.textAlign='center';
+    const lblX = x + barGroupW*0.08 + barW;
+    ctx.save(); ctx.translate(lblX, H-marginBottom+5); ctx.rotate(-0.45);
+    ctx.fillText(lbl, 0, 0); ctx.restore();
+  });
+
+  // Legend
+  ctx.fillStyle = '#1a6fc4'; ctx.globalAlpha=.85; ctx.fillRect(marginLeft, 6, 14, 12); ctx.globalAlpha=1;
+  ctx.fillStyle='#222'; ctx.font='11px Segoe UI'; ctx.textAlign='left';
+  ctx.fillText(LANG==='es'?'Renting':'Renting', marginLeft+18, 17);
+  ctx.fillStyle = '#1a6fc4'; ctx.globalAlpha=.45; ctx.fillRect(marginLeft+80, 6, 14, 12); ctx.globalAlpha=1;
+  ctx.fillStyle='#222';
+  ctx.fillText(LANG==='es'?'Compra':'Purchase', marginLeft+98, 17);
+
+  // Title
+  ctx.fillStyle='#1a2d4a'; ctx.font='bold 12px Segoe UI'; ctx.textAlign='center';
+  ctx.fillText(LANG==='es'?`Desglose de costes a ${meses} meses`:`Cost breakdown over ${meses} months`, W/2, H-4);
+}
+
+// ===================== RESET =====================
+function resetAll() {
+  const defaults = {
+    'v-precio':20820,'v-reventa':8000,
+    'r-meses':48,'r-entrada':3941.25,'r-cuota':290,'r-comprafinal':11000,'r-extras':0,
+    'r-seguro':600,'r-mant':350,
+    'c-entrada':10000,'c-tae':8.29,'c-plazo':48,
+    'c-mant':350,'c-seguro':600,'c-extras':0
+  };
+  Object.entries(defaults).forEach(([id,v])=>{ document.getElementById(id).value=v; });
+  document.getElementById('r-inc-seguro').checked = true;
+  document.getElementById('r-inc-mant').checked = true;
+  document.getElementById('r-inc-ruedas').checked = true;
+  document.getElementById('sel-marca').value = 'KIA';
+  syncMarca();
+  recalc();
+}
+
+// ===================== EXPORT EXCEL (CSV) =====================
+function exportExcel() {
+  const precio = document.getElementById('v-precio').value;
+  const rMeses = document.getElementById('r-meses').value;
+  const rEntrada = document.getElementById('r-entrada').value;
+  const rCuota = document.getElementById('r-cuota').value;
+  const rFinal = document.getElementById('r-comprafinal').value;
+  const cEntrada = document.getElementById('c-entrada').value;
+  const cTAE = document.getElementById('c-tae').value;
+  const cPlazo = document.getElementById('c-plazo').value;
+  const cSeg = document.getElementById('c-seguro').value;
+  const cMant = document.getElementById('c-mant').value;
+  const reventa = document.getElementById('v-reventa').value;
+  const marca = document.getElementById('sel-marca').value;
+  const modelo = document.getElementById('sel-modelo').value;
+
+  const getNum = id => parseFloat(document.getElementById(id).value)||0;
+  const rTotal = getNum('r-entrada') + getNum('r-cuota')*getNum('r-meses') + getNum('r-comprafinal') + getNum('r-extras');
+  const cCredito = Math.max(0, getNum('v-precio') - getNum('c-entrada'));
+  const i = getNum('c-tae')/100/12;
+  const n = getNum('c-plazo');
+  const cuota = i>0 ? cCredito*(i*Math.pow(1+i,n))/(Math.pow(1+i,n)-1) : cCredito/n;
+  const cTotal = getNum('c-entrada') + cuota*n + getNum('c-seguro')*(rMeses/12) + getNum('c-mant')*(rMeses/12) - getNum('v-reventa');
+
+  let csv = `sep=;\nCalculadora Renting vs Compra - TSA (c) IA\n\n`;
+  csv += `Vehiculo;${marca} ${modelo}\nPrecio;${precio} EUR\n\n`;
+  csv += `RENTING;;;COMPRA\n`;
+  csv += `Meses;${rMeses};;Entrada;${cEntrada}\n`;
+  csv += `Entrada;${rEntrada};;Credito;${cCredito.toFixed(2)}\n`;
+  csv += `Cuota/mes;${rCuota};;TAE;${cTAE}%\n`;
+  csv += `Compra final;${rFinal};;Plazo;${cPlazo} meses\n`;
+  csv += `;;;Seguro/año;${cSeg}\n`;
+  csv += `;;;Mantenimiento/año;${cMant}\n`;
+  csv += `;;;Valor reventa;-${reventa}\n\n`;
+  csv += `TOTAL RENTING;${rTotal.toFixed(2)} EUR;;TOTAL COMPRA NETO;${cTotal.toFixed(2)} EUR\n`;
+  csv += `\nDiferencia;${Math.abs(rTotal-cTotal).toFixed(2)} EUR;;Opcion mas economica;${rTotal<=cTotal?'Renting':'Compra'}\n`;
+
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'calculadora_renting_compra.csv';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ===================== SAVE HTML =====================
+function saveHTML() {
+  const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+  const blob = new Blob([html], {type:'text/html;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'calculadora_renting_compra.html';
+  a.click(); URL.revokeObjectURL(url);
+}
+
+// ===================== INIT =====================
+window.addEventListener('resize', recalc);
+recalc();
+</script>
+</body>
+</html>

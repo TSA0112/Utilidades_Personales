@@ -113,6 +113,7 @@
     .c3 { background: #f0fdf4; }
     .c4 { background: #ecfeff; }
     .c5 { background: #faf5ff; }
+    .c6 { background: #fff0f0; }
     .card-body { flex: 1; min-width: 0; }
     .card-title { font-size: 0.97rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
     .card-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
@@ -230,7 +231,7 @@
 </header>
 
 <main id="menu">
-  <p class="menu-label" data-es="📱 5 herramientas disponibles" data-en="📱 5 tools available">📱 5 herramientas disponibles</p>
+  <p class="menu-label" data-es="📱 6 herramientas disponibles" data-en="📱 6 tools available">📱 6 herramientas disponibles</p>
   <div class="cards">
 
     <button class="card" onclick="openApp('hipoteca.html', currentLang==='es'?'🏠 Calculadora Hipotecaria':'🏠 Mortgage Calculator')">
@@ -274,6 +275,15 @@
       <div class="card-body">
         <div class="card-title" data-es="Meta de Ahorro" data-en="Savings Goal">Meta de Ahorro</div>
         <div class="card-desc" data-es="Planifica tu ahorro mensual para alcanzar una meta económica" data-en="Plan your monthly savings to reach a financial goal">Planifica tu ahorro mensual para alcanzar una meta económica</div>
+      </div>
+      <div class="card-arrow">›</div>
+    </button>
+
+    <button class="card" onclick="openApp('renting.html', currentLang==='es'?'🚗 Renting vs Compra Vehículo':'🚗 Vehicle Leasing vs Purchase')">
+      <div class="card-icon c6">🚗</div>
+      <div class="card-body">
+        <div class="card-title" data-es="Renting vs Compra Vehículo" data-en="Vehicle Leasing vs Purchase">Renting vs Compra Vehículo</div>
+        <div class="card-desc" data-es="Compara el coste total de renting frente a compra con financiación" data-en="Compare total cost of leasing versus financed purchase">Compara el coste total de renting frente a compra con financiación</div>
       </div>
       <div class="card-arrow">›</div>
     </button>
