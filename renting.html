@@ -141,6 +141,29 @@
   .sticky-item span:last-child{font-weight:800;font-size:.98rem;}
   .sticky-win{color:#5dde8a;}
   .sticky-lose{color:#ff8989;}
+
+/* ===== EXTRAS RENTING: Guardar + Compartir ===== */
+.btn-save-tsa{background:#16a34a;color:#fff;}
+.btn-share-tsa{background:#0ea5e9;color:#fff;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#fff;border-radius:14px;padding:24px;max-width:380px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,0.25);}
+.modal-box h3{color:#1e3a8a;margin-bottom:6px;}
+.modal-box p{color:#64748b;font-size:0.8rem;margin-bottom:14px;}
+.share-options{display:flex;flex-direction:column;gap:10px;}
+.share-opt{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;border:1.5px solid #e2e8f0;background:#f8fafc;cursor:pointer;text-decoration:none;transition:all 0.15s;}
+.share-opt:hover{border-color:#2563eb;background:#eff6ff;}
+.share-opt .so-icon{font-size:1.5rem;width:32px;text-align:center;}
+.share-opt .so-body{display:flex;flex-direction:column;}
+.share-opt .so-title{font-weight:700;color:#1e293b;}
+.share-opt .so-sub{font-size:0.72rem;color:#64748b;}
+.share-opt.wapp{border-color:#25d366;}
+.share-opt.wapp:hover{background:#f0fdf4;}
+.share-opt.email{border-color:#2563eb;}
+.share-opt.copy{border-color:#7c3aed;}
+#tsa-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#16a34a;color:#fff;padding:10px 20px;border-radius:10px;font-size:0.85rem;opacity:0;transition:all 0.3s;z-index:10000;pointer-events:none;}
+#tsa-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
 </style>
 </head>
 <body>
@@ -343,8 +366,10 @@
     <button class="btn btn-primary" onclick="recalc()">🔄 <span data-es="Calcular" data-en="Calculate">Calcular</span></button>
     <button class="btn btn-danger" onclick="resetAll()">🗑️ <span data-es="Resetear" data-en="Reset">Resetear</span></button>
     <button class="btn btn-success" onclick="exportExcel()">📊 <span data-es="Exportar a Excel" data-en="Export to Excel">Exportar a Excel</span></button>
-    <button class="btn btn-warning" onclick="saveHTML()">💾 <span data-es="Guardar HTML" data-en="Save HTML">Guardar HTML</span></button>
+    <button class="btn btn-save-tsa" onclick="tsaSave()">💾 <span data-es="Guardar" data-en="Save">Guardar</span></button>
+    <button class="btn btn-warning" onclick="saveHTML()">🗂 <span data-es="Guardar HTML" data-en="Save HTML">Guardar HTML</span></button>
     <button class="btn btn-dark" onclick="window.print()">🖨️ <span data-es="Imprimir" data-en="Print">Imprimir</span></button>
+    <button class="btn btn-share-tsa" onclick="tsaOpenShare()">📤 <span data-es="Compartir" data-en="Share">Compartir</span></button>
   </div>
 
   <!-- RESULTS -->
@@ -952,5 +977,57 @@ function saveHTML() {
 window.addEventListener('resize', recalc);
 recalc();
 </script>
+
+<div class="modal-overlay" id="tsaShareModal">
+  <div class="modal-box">
+    <h3>📤 <span data-es="Compartir Renting vs Compra" data-en="Share Renting vs Purchase">Compartir Renting vs Compra</span></h3>
+    <p><span data-es="Elige cómo compartir los resultados" data-en="Choose how to share results">Elige cómo compartir los resultados</span></p>
+    <div class="share-options">
+      <a class="share-opt wapp" href="#" onclick="tsaShareWA();return false;"><span class="so-icon">💬</span><span class="so-body"><span class="so-title">WhatsApp</span><span class="so-sub">Enviar por WhatsApp</span></span></a>
+      <a class="share-opt email" href="#" onclick="tsaShareEmail();return false;"><span class="so-icon">📧</span><span class="so-body"><span class="so-title">Email</span><span class="so-sub">Enviar por correo</span></span></a>
+      <a class="share-opt copy" href="#" onclick="tsaShareCopy();return false;"><span class="so-icon">📋</span><span class="so-body"><span class="so-title">Copiar texto</span><span class="so-sub">Copiar al portapapeles</span></span></a>
+    </div>
+    <br>
+    <button onclick="document.getElementById('tsaShareModal').classList.remove('open')" style="background:#f1f5f9;color:#1e293b;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;">Cerrar</button>
+  </div>
+</div>
+<div id="tsa-toast"></div>
+<script>
+var TSA_KEY='tsa_renting_v1';
+function tsaSave(){
+  try{
+    var d={};
+    document.querySelectorAll('input[type=number],input[type=text],select').forEach(function(el){if(el.id&&!el.readOnly)d[el.id]=el.value;});
+    localStorage.setItem(TSA_KEY,JSON.stringify(d));
+    tsaToast('✅ Datos guardados');
+  }catch(e){tsaToast('⚠️ Error al guardar');}
+}
+function tsaLoad(){
+  try{
+    var raw=localStorage.getItem(TSA_KEY);
+    if(!raw)return;
+    var d=JSON.parse(raw);
+    Object.keys(d).forEach(function(id){var el=document.getElementById(id);if(el)el.value=d[id];});
+    if(typeof recalc==='function')recalc();
+  }catch(e){}
+}
+function tsaBuildText(){
+  var lines=['🚗 RENTING VS COMPRA VEHÍCULO',''];
+  document.querySelectorAll('input[type=number],input[type=text]').forEach(function(el){
+    if(el.id&&el.value&&!el.readOnly){var lbl=document.querySelector('label[for='+el.id+']');lines.push((lbl?lbl.textContent.trim():el.id)+': '+el.value);}
+  });
+  var res=document.querySelector('.result-box,.resultado,[class*="result"]');
+  if(res&&res.textContent.trim())lines.push('\nResultado: '+res.textContent.trim().substring(0,400));
+  lines.push('\nCalculado con Mis Calculadoras TSA ©');
+  return lines.join('\n');
+}
+function tsaOpenShare(){document.getElementById('tsaShareModal').classList.add('open');}
+function tsaShareWA(){window.open('https://wa.me/?text='+encodeURIComponent(tsaBuildText()),'_blank');document.getElementById('tsaShareModal').classList.remove('open');}
+function tsaShareEmail(){window.location.href='mailto:?subject='+encodeURIComponent('Renting vs Compra Vehículo')+'&body='+encodeURIComponent(tsaBuildText());document.getElementById('tsaShareModal').classList.remove('open');}
+function tsaShareCopy(){navigator.clipboard?navigator.clipboard.writeText(tsaBuildText()).then(function(){tsaToast('📋 Copiado');}):void 0;document.getElementById('tsaShareModal').classList.remove('open');}
+function tsaToast(msg){var t=document.getElementById('tsa-toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2800);}
+window.addEventListener('load',function(){setTimeout(tsaLoad,400);});
+</script>
+
 </body>
 </html>

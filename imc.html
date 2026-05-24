@@ -95,6 +95,32 @@ svg.figura{display:block;}
 @media(max-width:480px){
   .fig-box svg{width:60px!important;height:auto!important;}
 }
+
+/* ===== BOTONES EXTRA + MODAL ===== */
+.btn-save-tsa{background:#16a34a;color:#fff;}
+.btn-savehtml-tsa{background:#7c3aed;color:#fff;}
+.btn-print-tsa{background:#475569;color:#fff;}
+.btn-share-tsa{background:#0ea5e9;color:#fff;}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9999;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal-box{background:#fff;border-radius:14px;padding:24px;max-width:380px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,0.25);}
+.modal-box h3{color:#2b6cb0;margin-bottom:6px;}
+.modal-box p{color:#64748b;font-size:0.8rem;margin-bottom:14px;}
+.share-options{display:flex;flex-direction:column;gap:10px;}
+.share-opt{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;border:1.5px solid #e2e8f0;background:#f8fafc;cursor:pointer;text-decoration:none;transition:all 0.15s;}
+.share-opt:hover{border-color:#2b6cb0;background:#ebf8ff;}
+.share-opt .so-icon{font-size:1.5rem;width:32px;text-align:center;}
+.share-opt .so-body{display:flex;flex-direction:column;}
+.share-opt .so-title{font-weight:700;color:#1e293b;}
+.share-opt .so-sub{font-size:0.72rem;color:#64748b;}
+.share-opt.wapp{border-color:#25d366;}
+.share-opt.wapp:hover{background:#f0fdf4;}
+.share-opt.email{border-color:#2563eb;}
+.share-opt.copy{border-color:#7c3aed;}
+#tsa-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#16a34a;color:#fff;padding:10px 20px;border-radius:10px;font-size:0.85rem;opacity:0;transition:all 0.3s;z-index:10000;pointer-events:none;}
+#tsa-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+@media print{.btn-row-imc,#tsaShareModal,#tsa-toast{display:none!important;}}
+
 </style>
 </head>
 <body>
@@ -155,6 +181,10 @@ svg.figura{display:block;}
     <button class="btn b1" onclick="run()">&#128290; Calcular</button>
     <button class="btn b2" onclick="rst()">&#8635; Resetear</button>
     <button class="btn b3" onclick="exp()">&#11015; Exportar</button>
+    <button class="btn btn-save-tsa" onclick="tsaSave()">💾 <span data-es="Guardar" data-en="Save">Guardar</span></button>
+    <button class="btn btn-savehtml-tsa" onclick="tsaSaveHTML()">🗂 <span data-es="Guardar HTML" data-en="Save HTML">Guardar HTML</span></button>
+    <button class="btn btn-print-tsa" onclick="window.print()">🖨 <span data-es="Imprimir" data-en="Print">Imprimir</span></button>
+    <button class="btn btn-share-tsa" onclick="tsaOpenShare()">📤 <span data-es="Compartir" data-en="Share">Compartir</span></button>
   </div>
 </div>
 
@@ -608,5 +638,73 @@ window.addEventListener('load', function() {
   run();
 });
 </script>
+
+<!-- MODAL COMPARTIR IMC -->
+<div class="modal-overlay" id="tsaShareModal">
+  <div class="modal-box">
+    <h3>📤 <span data-es="Compartir IMC" data-en="Share BMI">Compartir IMC</span></h3>
+    <p><span data-es="Elige cómo compartir los resultados" data-en="Choose how to share the results">Elige cómo compartir los resultados</span></p>
+    <div class="share-options">
+      <a class="share-opt wapp" href="#" onclick="tsaShareWA();return false;">
+        <span class="so-icon">💬</span>
+        <span class="so-body"><span class="so-title">WhatsApp</span><span class="so-sub">Enviar por WhatsApp</span></span>
+      </a>
+      <a class="share-opt email" href="#" onclick="tsaShareEmail();return false;">
+        <span class="so-icon">📧</span>
+        <span class="so-body"><span class="so-title">Email</span><span class="so-sub">Enviar por correo</span></span>
+      </a>
+      <a class="share-opt copy" href="#" onclick="tsaShareCopy();return false;">
+        <span class="so-icon">📋</span>
+        <span class="so-body"><span class="so-title">Copiar texto</span><span class="so-sub">Copiar al portapapeles</span></span>
+      </a>
+    </div>
+    <br>
+    <button onclick="document.getElementById('tsaShareModal').classList.remove('open')" style="background:#f1f5f9;color:#1e293b;border:none;padding:8px 18px;border-radius:8px;cursor:pointer;">Cerrar</button>
+  </div>
+</div>
+<div id="tsa-toast"></div>
+<script>
+var TSA_KEY='tsa_imc_v1';
+function tsaSave(){
+  try{
+    var ids=['edad','sexo','altura','peso'];
+    var d={};
+    ids.forEach(function(id){var el=document.getElementById(id);if(el)d[id]=el.value;});
+    localStorage.setItem(TSA_KEY,JSON.stringify(d));
+    tsaToast('✅ Datos guardados');
+  }catch(e){tsaToast('⚠️ Error al guardar');}
+}
+function tsaLoad(){
+  try{
+    var raw=localStorage.getItem(TSA_KEY);
+    if(!raw)return;
+    var d=JSON.parse(raw);
+    Object.keys(d).forEach(function(id){var el=document.getElementById(id);if(el)el.value=d[id];});
+    if(typeof run==='function')run();
+  }catch(e){}
+}
+function tsaSaveHTML(){
+  var blob=new Blob([document.documentElement.outerHTML],{type:'text/html;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Calculadora_IMC.html';a.click();
+}
+function tsaBuildText(){
+  var lines=['⚖️ CALCULADORA DE IMC',''];
+  var edad=document.getElementById('edad');var peso=document.getElementById('peso');var altura=document.getElementById('altura');
+  if(edad)lines.push('Edad: '+edad.value+' años');
+  if(peso)lines.push('Peso: '+peso.value+' kg');
+  if(altura)lines.push('Altura: '+altura.value+' cm');
+  var res=document.getElementById('resultado')||document.querySelector('.resultado')||document.querySelector('[id*="imc"]');
+  if(res&&res.textContent.trim())lines.push('Resultado: '+res.textContent.trim().substring(0,200));
+  lines.push('');lines.push('Calculado con Mis Calculadoras TSA ©');
+  return lines.join('\n');
+}
+function tsaOpenShare(){document.getElementById('tsaShareModal').classList.add('open');}
+function tsaShareWA(){window.open('https://wa.me/?text='+encodeURIComponent(tsaBuildText()),'_blank');document.getElementById('tsaShareModal').classList.remove('open');}
+function tsaShareEmail(){window.location.href='mailto:?subject='+encodeURIComponent('Calculadora IMC')+'&body='+encodeURIComponent(tsaBuildText());document.getElementById('tsaShareModal').classList.remove('open');}
+function tsaShareCopy(){navigator.clipboard?navigator.clipboard.writeText(tsaBuildText()).then(function(){tsaToast('📋 Copiado');}):void 0;document.getElementById('tsaShareModal').classList.remove('open');}
+function tsaToast(msg){var t=document.getElementById('tsa-toast');t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},2800);}
+window.addEventListener('load',function(){setTimeout(tsaLoad,400);});
+</script>
+
 </body>
 </html>

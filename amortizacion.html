@@ -76,6 +76,32 @@ tbody tr:hover { background: #f9fafb; }
 .lang-btn.active { border-color: #2a7bd3; background: #e8f0fe; }
 
 @media (max-width: 600px) { body { padding: 10px; } .container { padding: 16px; } .btn { padding: 10px 14px; font-size: 13px; } table { font-size: 0.75rem; } }
+
+/* ===== TSA Buttons ===== */
+.btn-save-tsa    { background:#16a34a!important; color:#fff!important; }
+.btn-savehtml-tsa{ background:#7c3aed!important; color:#fff!important; }
+.btn-print-tsa   { background:#475569!important; color:#fff!important; }
+.btn-share-tsa   { background:#0ea5e9!important; color:#fff!important; }
+/* Share modal */
+.tsa-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;align-items:center;justify-content:center;}
+.tsa-modal-overlay.open{display:flex;}
+.tsa-modal-box{background:#fff;border-radius:14px;padding:24px 22px;width:92%;max-width:370px;box-shadow:0 8px 32px rgba(0,0,0,0.22);}
+.tsa-modal-box h3{color:#1e293b;font-size:1.05rem;margin-bottom:16px;}
+.tsa-modal-close{float:right;background:none;border:none;color:#64748b;font-size:1.5rem;cursor:pointer;line-height:1;padding:0;}
+.share-options{display:flex;flex-direction:column;gap:10px;}
+.share-opt{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;border:1.5px solid #e2e8f0;background:#f8fafc;cursor:pointer;text-decoration:none;transition:all 0.15s;}
+.share-opt:hover{border-color:#2563eb;background:#eff6ff;}
+.share-opt .so-icon{font-size:1.5rem;width:32px;text-align:center;}
+.share-opt .so-body{display:flex;flex-direction:column;}
+.share-opt .so-title{font-weight:700;color:#1e293b;}
+.share-opt .so-sub{font-size:0.72rem;color:#64748b;}
+.share-opt.wapp{border-color:#25d366;}
+.share-opt.wapp:hover{background:#f0fdf4;}
+.share-opt.email{border-color:#2563eb;}
+.share-opt.copy{border-color:#7c3aed;}
+#tsa-toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#1e293b;color:#f1f5f9;padding:10px 22px;border-radius:30px;font-size:0.9rem;font-weight:600;box-shadow:0 4px 18px rgba(0,0,0,0.35);z-index:9999;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+#tsa-toast.show{opacity:1;}
+@media print{.btn-save-tsa,.btn-savehtml-tsa,.btn-print-tsa,.btn-share-tsa,.tsa-modal-overlay,#tsa-toast{display:none!important;}}
 </style>
 </head>
 <body>
@@ -132,6 +158,11 @@ tbody tr:hover { background: #f9fafb; }
     <button class="btn btn-reset" onclick="resetear()">🔄 <span data-es="Resetear" data-en="Reset">Resetear</span></button>
     <button class="btn btn-excel" onclick="exportarExcel()">📊 <span data-es="Exportar Excel" data-en="Export Excel">Exportar Excel</span></button>
     <button class="btn btn-html" onclick="exportarHTML()">💾 <span data-es="Exportar HTML" data-en="Export HTML">Exportar HTML</span></button>
+    <button class="btn btn-save-tsa"     onclick="amoSave()">💾 <span data-es="Guardar" data-en="Save">Guardar</span></button>
+    <button class="btn btn-savehtml-tsa" onclick="amoSaveHTML()">🗂 <span data-es="Guardar HTML" data-en="Save HTML">Guardar HTML</span></button>
+    <button class="btn btn-print-tsa"    onclick="window.print()">🖨️ <span data-es="Imprimir" data-en="Print">Imprimir</span></button>
+    <button class="btn btn-share-tsa"    onclick="amoOpenShare()">📤 <span data-es="Compartir" data-en="Share">Compartir</span></button>
+
   </div>
 
   <div class="resumen-box">
@@ -556,6 +587,92 @@ resetear = function() {
 
 calcular();
 applyStoredLang();
+</script>
+
+<!-- MODAL COMPARTIR AMORTIZACION -->
+<div class="tsa-modal-overlay" id="amoShareModal">
+  <div class="tsa-modal-box">
+    <button class="tsa-modal-close" onclick="amoCloseShare()">✕</button>
+    <h3>📤 <span data-es="Compartir Tabla Amortización" data-en="Share Amortization Table">Compartir Tabla Amortización</span></h3>
+    <div class="share-options">
+      <a class="share-opt wapp" id="amo-wapp" href="#" target="_blank" rel="noopener">
+        <span class="so-icon">💬</span>
+        <span class="so-body">
+          <span class="so-title">WhatsApp</span>
+          <span class="so-sub" data-es="Enviar por WhatsApp" data-en="Send via WhatsApp">Enviar por WhatsApp</span>
+        </span>
+      </a>
+      <a class="share-opt email" id="amo-email" href="#" target="_blank" rel="noopener">
+        <span class="so-icon">📧</span>
+        <span class="so-body">
+          <span class="so-title">Email</span>
+          <span class="so-sub" data-es="Enviar por correo" data-en="Send by email">Enviar por correo</span>
+        </span>
+      </a>
+      <div class="share-opt copy" onclick="amoCopyLink()">
+        <span class="so-icon">🔗</span>
+        <span class="so-body">
+          <span class="so-title" data-es="Copiar enlace" data-en="Copy link">Copiar enlace</span>
+          <span class="so-sub" data-es="Copiar al portapapeles" data-en="Copy to clipboard">Copiar al portapapeles</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="tsa-toast"></div>
+
+<script>
+/* ===== TSA: Guardar / Guardar HTML / Compartir ===== */
+function amoSave(){
+  var data={
+    capital:document.getElementById('capital').value,
+    interes:document.getElementById('interes').value,
+    plazo:document.getElementById('plazo').value,
+    inicio:document.getElementById('inicio').value
+  };
+  localStorage.setItem('amo_saved', JSON.stringify(data));
+  amoToast('✅ ' + (localStorage.getItem('pwa_lang')==='en' ? 'Data saved!' : '¡Datos guardados!'));
+}
+function amoSaveHTML(){
+  var blob=new Blob([document.documentElement.outerHTML],{type:'text/html;charset=utf-8'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='tabla_amortizacion_'+new Date().toISOString().slice(0,10)+'.html';
+  a.click();
+}
+function amoOpenShare(){
+  var msg=(localStorage.getItem('pwa_lang')==='en'?
+    'Amortization Table Calculator: ':
+    'Calculadora Tabla Amortización: ')+location.href;
+  document.getElementById('amo-wapp').href='https://wa.me/?text='+encodeURIComponent(msg);
+  document.getElementById('amo-email').href='mailto:?subject='+(localStorage.getItem('pwa_lang')==='en'?'Amortization Table':'Tabla Amortización')+'&body='+encodeURIComponent(msg);
+  document.getElementById('amoShareModal').classList.add('open');
+}
+function amoCloseShare(){document.getElementById('amoShareModal').classList.remove('open');}
+document.addEventListener('click',function(e){if(e.target===document.getElementById('amoShareModal'))amoCloseShare();});
+function amoCopyLink(){
+  navigator.clipboard.writeText(location.href).then(function(){
+    amoToast('🔗 ' + (localStorage.getItem('pwa_lang')==='en' ? 'Link copied!' : '¡Enlace copiado!'));
+    amoCloseShare();
+  });
+}
+function amoToast(msg){
+  var t=document.getElementById('tsa-toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2500);
+}
+window.addEventListener('load',function(){
+  var d=localStorage.getItem('amo_saved');
+  if(d){
+    try{
+      var o=JSON.parse(d);
+      if(o.capital && document.getElementById('capital')) document.getElementById('capital').value=o.capital;
+      if(o.interes && document.getElementById('interes')) document.getElementById('interes').value=o.interes;
+      if(o.plazo && document.getElementById('plazo')) document.getElementById('plazo').value=o.plazo;
+      if(o.inicio && document.getElementById('inicio')) document.getElementById('inicio').value=o.inicio;
+    }catch(e){}
+  }
+});
 </script>
 </body>
 </html>

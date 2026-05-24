@@ -266,6 +266,35 @@ button:active {
     font-size: 0.9rem;
   }
 }
+
+/* ===== TSA Buttons: Guardar / Guardar HTML / Imprimir / Compartir ===== */
+.btn-tsa { padding:12px 22px; border-radius:8px; border:none; font-weight:700; font-size:0.93rem; cursor:pointer; display:inline-flex; align-items:center; gap:7px; transition:all 0.2s; touch-action:manipulation; }
+.btn-tsa:hover { transform:translateY(-2px); box-shadow:0 4px 14px rgba(0,0,0,0.25); }
+.btn-save-tsa    { background:#16a34a; color:#fff; }
+.btn-savehtml-tsa{ background:#7c3aed; color:#fff; }
+.btn-print-tsa   { background:#475569; color:#fff; }
+.btn-share-tsa   { background:#0ea5e9; color:#fff; }
+.tsa-btn-row { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:12px; }
+/* Share modal */
+.tsa-modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:9000;align-items:center;justify-content:center;}
+.tsa-modal-overlay.open{display:flex;}
+.tsa-modal-box{background:#1e293b;border-radius:14px;padding:24px 22px;width:92%;max-width:370px;box-shadow:0 8px 32px rgba(0,0,0,0.45);}
+.tsa-modal-box h3{color:#f1f5f9;font-size:1.05rem;margin-bottom:16px;}
+.tsa-modal-close{float:right;background:none;border:none;color:#94a3b8;font-size:1.5rem;cursor:pointer;line-height:1;padding:0;}
+.share-options{display:flex;flex-direction:column;gap:10px;}
+.share-opt{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:10px;border:1.5px solid #334155;background:#0f172a;cursor:pointer;text-decoration:none;transition:all 0.15s;}
+.share-opt:hover{border-color:#2563eb;background:#1e3a5f;}
+.share-opt .so-icon{font-size:1.5rem;width:32px;text-align:center;}
+.share-opt .so-body{display:flex;flex-direction:column;}
+.share-opt .so-title{font-weight:700;color:#f1f5f9;}
+.share-opt .so-sub{font-size:0.72rem;color:#94a3b8;}
+.share-opt.wapp{border-color:#25d366;}
+.share-opt.email{border-color:#2563eb;}
+.share-opt.copy{border-color:#7c3aed;}
+/* Toast */
+#tsa-toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#1e293b;color:#f1f5f9;padding:10px 22px;border-radius:30px;font-size:0.9rem;font-weight:600;box-shadow:0 4px 18px rgba(0,0,0,0.35);z-index:9999;opacity:0;transition:opacity 0.3s;pointer-events:none;}
+#tsa-toast.show{opacity:1;}
+@media print{.btn-tsa,.tsa-btn-row,.tsa-modal-overlay,#tsa-toast{display:none!important;}}
 </style>
 </head>
 <body>
@@ -477,6 +506,13 @@ function _h(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_HT[l]&&
     <button class="btn-calc" onclick="calcular()"><span data-es="🔄 Recalcular" data-en="🔄 Recalculate">🔄 Recalcular</span></button>
     <button class="btn-reset" onclick="resetear()"><span data-es="♻️ Resetear" data-en="♻️ Reset">♻️ Resetear</span></button>
     <button class="btn-excel" onclick="descargarExcel()"><span data-es="📊 Descargar Excel" data-en="📊 Download Excel">📊 Descargar Excel</span></button>
+
+  <div class="tsa-btn-row">
+    <button class="btn-tsa btn-save-tsa" onclick="hipSave()">💾 <span data-es="Guardar" data-en="Save">Guardar</span></button>
+    <button class="btn-tsa btn-savehtml-tsa" onclick="hipSaveHTML()">🗂 <span data-es="Guardar HTML" data-en="Save HTML">Guardar HTML</span></button>
+    <button class="btn-tsa btn-print-tsa" onclick="window.print()">🖨️ <span data-es="Imprimir" data-en="Print">Imprimir</span></button>
+    <button class="btn-tsa btn-share-tsa" onclick="hipOpenShare()">📤 <span data-es="Compartir" data-en="Share">Compartir</span></button>
+  </div>
   </div>
 
   <div class="form-section">
@@ -862,6 +898,108 @@ window.onload = function() {
   window.setLang=function(l){_L=l;localStorage.setItem('pwa_lang',l);applyLang(l);};
   document.addEventListener('DOMContentLoaded',function(){ applyLang(_L); });
 })();
+</script>
+
+<!-- MODAL COMPARTIR HIPOTECA -->
+<div class="tsa-modal-overlay" id="hipShareModal">
+  <div class="tsa-modal-box">
+    <button class="tsa-modal-close" onclick="hipCloseShare()">✕</button>
+    <h3>📤 <span data-es="Compartir Calculadora Hipotecaria" data-en="Share Mortgage Calculator">Compartir Calculadora Hipotecaria</span></h3>
+    <div class="share-options">
+      <a class="share-opt wapp" id="hip-wapp" href="#" target="_blank" rel="noopener">
+        <span class="so-icon">💬</span>
+        <span class="so-body">
+          <span class="so-title">WhatsApp</span>
+          <span class="so-sub" data-es="Enviar por WhatsApp" data-en="Send via WhatsApp">Enviar por WhatsApp</span>
+        </span>
+      </a>
+      <a class="share-opt email" id="hip-email" href="#" target="_blank" rel="noopener">
+        <span class="so-icon">📧</span>
+        <span class="so-body">
+          <span class="so-title">Email</span>
+          <span class="so-sub" data-es="Enviar por correo" data-en="Send by email">Enviar por correo</span>
+        </span>
+      </a>
+      <div class="share-opt copy" onclick="hipCopyLink()">
+        <span class="so-icon">🔗</span>
+        <span class="so-body">
+          <span class="so-title" data-es="Copiar enlace" data-en="Copy link">Copiar enlace</span>
+          <span class="so-sub" data-es="Copiar al portapapeles" data-en="Copy to clipboard">Copiar al portapapeles</span>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="tsa-toast"></div>
+
+<script>
+/* ===== TSA: Guardar / Guardar HTML / Compartir ===== */
+function hipSave(){
+  var data={
+    provincia:document.getElementById('provincia').value,
+    numCompradores:document.getElementById('numCompradores').value,
+    fechaNacimiento:document.getElementById('fechaNacimiento').value,
+    tipoEmpleo:document.getElementById('tipoEmpleo').value,
+    antiguedad:document.getElementById('antiguedad').value,
+    ingresosMensuales:document.getElementById('ingresosMensuales').value,
+    numeroPagas:document.getElementById('numeroPagas').value,
+    otrosCreditos:document.getElementById('otrosCreditos').value,
+    dineroCuenta:document.getElementById('dineroCuenta').value,
+    precioVivienda:document.getElementById('precioVivienda').value,
+    anosPrestamo:document.getElementById('anosPrestamo').value,
+    tipoInteres:document.getElementById('tipoInteres').value
+  };
+  localStorage.setItem('hip_saved', JSON.stringify(data));
+  hipToast('✅ ' + (localStorage.getItem('pwa_lang')==='en' ? 'Data saved!' : '¡Datos guardados!'));
+}
+function hipSaveHTML(){
+  var blob=new Blob([document.documentElement.outerHTML],{type:'text/html;charset=utf-8'});
+  var a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='calculadora_hipotecaria_'+new Date().toISOString().slice(0,10)+'.html';
+  a.click();
+}
+function hipOpenShare(){
+  var msg=(localStorage.getItem('pwa_lang')==='en'?
+    'Mortgage Calculator - check it out: ':
+    'Calculadora Hipotecaria - échale un vistazo: ')+location.href;
+  document.getElementById('hip-wapp').href='https://wa.me/?text='+encodeURIComponent(msg);
+  document.getElementById('hip-email').href='mailto:?subject='+(localStorage.getItem('pwa_lang')==='en'?'Mortgage Calculator':'Calculadora Hipotecaria')+'&body='+encodeURIComponent(msg);
+  document.getElementById('hipShareModal').classList.add('open');
+}
+function hipCloseShare(){document.getElementById('hipShareModal').classList.remove('open');}
+document.addEventListener('click',function(e){if(e.target===document.getElementById('hipShareModal'))hipCloseShare();});
+function hipCopyLink(){
+  navigator.clipboard.writeText(location.href).then(function(){
+    hipToast('🔗 ' + (localStorage.getItem('pwa_lang')==='en' ? 'Link copied!' : '¡Enlace copiado!'));
+    hipCloseShare();
+  });
+}
+function hipToast(msg){
+  var t=document.getElementById('tsa-toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(function(){t.classList.remove('show');},2500);
+}
+window.addEventListener('load',function(){
+  var d=localStorage.getItem('hip_saved');
+  if(d){
+    try{
+      var o=JSON.parse(d);
+      if(o.provincia) document.getElementById('provincia').value=o.provincia;
+      if(o.numCompradores) document.getElementById('numCompradores').value=o.numCompradores;
+      if(o.fechaNacimiento) document.getElementById('fechaNacimiento').value=o.fechaNacimiento;
+      if(o.tipoEmpleo) document.getElementById('tipoEmpleo').value=o.tipoEmpleo;
+      if(o.antiguedad) document.getElementById('antiguedad').value=o.antiguedad;
+      if(o.ingresosMensuales) document.getElementById('ingresosMensuales').value=o.ingresosMensuales;
+      if(o.numeroPagas) document.getElementById('numeroPagas').value=o.numeroPagas;
+      if(o.otrosCreditos) document.getElementById('otrosCreditos').value=o.otrosCreditos;
+      if(o.dineroCuenta) document.getElementById('dineroCuenta').value=o.dineroCuenta;
+      if(o.precioVivienda) document.getElementById('precioVivienda').value=o.precioVivienda;
+      if(o.anosPrestamo) document.getElementById('anosPrestamo').value=o.anosPrestamo;
+      if(o.tipoInteres) document.getElementById('tipoInteres').value=o.tipoInteres;
+    }catch(e){}
+  }
+});
 </script>
 </body>
 </html>
