@@ -295,6 +295,87 @@ button:active {
 #tsa-toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#1e293b;color:#f1f5f9;padding:10px 22px;border-radius:30px;font-size:0.9rem;font-weight:600;box-shadow:0 4px 18px rgba(0,0,0,0.35);z-index:9999;opacity:0;transition:opacity 0.3s;pointer-events:none;}
 #tsa-toast.show{opacity:1;}
 @media print{.btn-tsa,.tsa-btn-row,.tsa-modal-overlay,#tsa-toast{display:none!important;}}
+
+/* ===== Bloque Financiación Bancaria ===== */
+.banco-bloque {
+  background: #1c2128;
+  border: 2px solid #1f6feb;
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+}
+.banco-bloque h3 {
+  color: #58a6ff;
+  font-size: 1em;
+  margin-bottom: 14px;
+}
+.banco-grid {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  gap: 10px 16px;
+  align-items: center;
+}
+.banco-grid label {
+  color: #8b949e;
+  font-size: 0.85em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.banco-pct-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.banco-pct-btn {
+  padding: 7px 14px;
+  border-radius: 6px;
+  border: 2px solid #30363d;
+  background: #0d1117;
+  color: #8b949e;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.18s;
+  min-width: auto;
+}
+.banco-pct-btn:hover { border-color: #58a6ff; color: #58a6ff; }
+.banco-pct-btn.active { border-color: #1f6feb; background: #1f6feb; color: #fff; }
+.banco-result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+.banco-result-item {
+  background: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 8px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.banco-result-item .bri-label {
+  color: #8b949e;
+  font-size: 0.78em;
+  font-weight: 600;
+}
+.banco-result-item .bri-val {
+  font-size: 1.1em;
+  font-weight: 700;
+}
+.bri-concedido .bri-val { color: #3fb950; }
+.bri-necesario .bri-val { color: #f0883e; }
+.bri-nota {
+  font-size: 0.75em;
+  color: #8b949e;
+  margin-top: 10px;
+  font-style: italic;
+}
+@media (max-width: 600px) {
+  .banco-result-grid { grid-template-columns: 1fr; }
+  .banco-grid { grid-template-columns: 1fr; }
+}
 </style>
 </head>
 <body>
@@ -584,7 +665,32 @@ function _h(key){ var l=localStorage.getItem('pwa_lang')||'es'; return (_HT[l]&&
       <span id="resumenTotal">TOTAL VIVIENDA + GASTOS: 226.949,00 €</span>
     </div>
 
-    <div class="campo-editable">
+    
+        <!-- BLOQUE FINANCIACIÓN BANCARIA -->
+        <div class="banco-bloque" id="bancoBloque">
+          <h3>🏦 <span data-es="Financiación bancaria (% sobre precio vivienda)" data-en="Bank financing (% of property price)">Financiación bancaria (% sobre precio vivienda)</span></h3>
+          <div class="banco-pct-group" id="bancoPctBtns">
+            <button class="banco-pct-btn" onclick="seleccionarPctBanco(70)">70%</button>
+            <button class="banco-pct-btn" onclick="seleccionarPctBanco(80)">80%</button>
+            <button class="banco-pct-btn active" onclick="seleccionarPctBanco(90)">90%</button>
+            <button class="banco-pct-btn" onclick="seleccionarPctBanco(100)">100%</button>
+          </div>
+          <div class="banco-result-grid">
+            <div class="banco-result-item bri-concedido">
+              <span class="bri-label" data-es="✅ Importe que concedería el banco" data-en="✅ Amount the bank would grant">✅ Importe que concedería el banco</span>
+              <span class="bri-val" id="bancoConcedido">—</span>
+            </div>
+            <div class="banco-result-item bri-necesario">
+              <span class="bri-label" data-es="⚠️ Aportación necesaria (vivienda + gastos)" data-en="⚠️ Required contribution (property + costs)">⚠️ Aportación necesaria (vivienda + gastos)</span>
+              <span class="bri-val" id="bancoNecesario">—</span>
+            </div>
+          </div>
+          <div class="bri-nota" data-es="* El % se aplica sobre el precio de tasación/compraventa de la vivienda. Los gastos asociados (IVA/ITP, notaría, etc.) siempre corren a cargo del comprador." data-en="* The % is applied to the appraisal/sale price of the property. Associated costs (VAT/ITP, notary, etc.) are always borne by the buyer.">
+            * El % se aplica sobre el precio de tasación/compraventa de la vivienda. Los gastos asociados (IVA/ITP, notaría, etc.) siempre corren a cargo del comprador.
+          </div>
+        </div>
+        <!-- FIN BLOQUE FINANCIACIÓN BANCARIA -->
+<div class="campo-editable">
       <label><span data-es="💰 Hipoteca a solicitar (editable):" data-en="💰 Mortgage to request (editable):">💰 Hipoteca a solicitar (editable):</span></label>
       <input type="number" id="hipotecaSolicitar" value="95000" step="0.01" oninput="ajustarDesdeHipoteca()">
     </div>
@@ -999,6 +1105,55 @@ window.addEventListener('load',function(){
       if(o.tipoInteres) document.getElementById('tipoInteres').value=o.tipoInteres;
     }catch(e){}
   }
+});
+</script>
+
+<script>
+/* ===== Financiación Bancaria ===== */
+var _bancoPct = 90; // default 90%
+
+function seleccionarPctBanco(pct) {
+  _bancoPct = pct;
+  // update button styles
+  document.querySelectorAll('.banco-pct-btn').forEach(function(btn) {
+    btn.classList.toggle('active', btn.textContent.trim() === pct + '%');
+  });
+  actualizarBanco();
+}
+
+function actualizarBanco() {
+  var precioVivienda = parseFloat(document.getElementById('precioVivienda').value) || 0;
+  var costeTasacion  = parseFloat(document.getElementById('costeTasacion').value)  || 0;
+  var pIVA           = parseFloat(document.getElementById('porcentajeIVA').value)   || 0;
+  var pNotaria       = parseFloat(document.getElementById('gastosNotaria').value)    || 0;
+  var otrosGastos    = parseFloat(document.getElementById('otrosGastos').value)      || 0;
+  var seguroVida     = parseFloat(document.getElementById('seguroVida').value)       || 0;
+
+  var ivaImporte      = precioVivienda * pIVA / 100;
+  var notariaImporte  = precioVivienda * pNotaria / 100;
+  var totalGastos     = precioVivienda + costeTasacion + ivaImporte + notariaImporte + otrosGastos + seguroVida;
+
+  var concedido  = precioVivienda * _bancoPct / 100;
+  var necesario  = totalGastos - concedido;  // gastos que cubre el comprador
+
+  var fmt = function(v){ return new Intl.NumberFormat('es-ES',{style:'currency',currency:'EUR',minimumFractionDigits:2}).format(v); };
+
+  document.getElementById('bancoConcedido').textContent = precioVivienda > 0 ? fmt(concedido) : '—';
+  document.getElementById('bancoNecesario').textContent = precioVivienda > 0 ? fmt(necesario < 0 ? 0 : necesario) : '—';
+}
+
+// Hook: run actualizarBanco whenever calcular() runs
+var _calcularOriginal = window.calcular || function(){};
+// We need to patch after DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+  var origCalc = window.calcular;
+  if (origCalc) {
+    window.calcular = function() {
+      origCalc();
+      actualizarBanco();
+    };
+  }
+  actualizarBanco();
 });
 </script>
 </body>
