@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora Lista de Compra Semanal — TSA ©, IA</title>
+<style>
+  :root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --secondary: #0ea5e9;
+    --success: #16a34a;
+    --danger: #dc2626;
+    --warning: #d97706;
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --text-light: #64748b;
+    --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+    --radius: 10px;
+    --font: 'Segoe UI', Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+
+  /* ===== HEADER ===== */
+  header {
+    background: linear-gradient(135deg, #1e40af 0%, #2563eb 50%, #0ea5e9 100%);
+    color: #fff; padding: 18px 20px; display: flex; align-items: center;
+    justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.4);
+  }
+  header h1 { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.3px; line-height: 1.2; }
+  header h1 small { display: block; font-size: 0.72rem; font-weight: 400; opacity: 0.85; margin-top: 2px; }
+  .lang-toggle { display: flex; gap: 6px; align-items: center; }
+  .lang-btn {
+    background: rgba(255,255,255,0.2); border: 1.5px solid rgba(255,255,255,0.5);
+    color: #fff; padding: 5px 12px; border-radius: 20px; cursor: pointer;
+    font-size: 0.78rem; font-weight: 600; transition: all 0.2s; display:flex; align-items:center; gap:5px;
+  }
+  .lang-btn.active, .lang-btn:hover { background: rgba(255,255,255,0.35); border-color: #fff; }
+
+  /* ===== MAIN LAYOUT ===== */
+  .container { max-width: 1400px; margin: 0 auto; padding: 16px; }
+  .grid-top { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 16px; }
+  .card { background: var(--card); border-radius: var(--radius); padding: 16px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+  .card-title { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--primary); margin-bottom: 12px; display:flex; align-items:center; gap:6px; }
+  .card-title span.icon { font-size: 1rem; }
+
+  /* ===== FORM CONTROLS ===== */
+  .form-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 110px; }
+  label { font-size: 0.75rem; font-weight: 600; color: var(--text-light); }
+  input[type=text], input[type=number], input[type=date], select, textarea {
+    border: 1.5px solid var(--border); border-radius: 7px; padding: 7px 10px;
+    font-size: 0.85rem; font-family: var(--font); color: var(--text);
+    background: #fff; transition: border-color 0.15s, box-shadow 0.15s; width: 100%;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+  }
+  .date-row { display: flex; gap: 8px; }
+  .date-row input { flex:1; min-width:70px; }
+
+  /* ===== SUPER CARDS ===== */
+  .super-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .super-item {
+    display: flex; align-items: center; gap: 6px; background: #f1f5f9;
+    border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 6px 10px;
+    font-size: 0.8rem; cursor: pointer; transition: all 0.15s; user-select: none;
+  }
+  .super-item input[type=checkbox] { accent-color: var(--primary); width:15px; height:15px; cursor:pointer; }
+  .super-item.checked { background: #dbeafe; border-color: var(--primary); }
+  .super-item.prio-1 { border-color: #16a34a; background: #dcfce7; }
+  .super-item.prio-2 { border-color: #d97706; background: #fef3c7; }
+  .super-item.prio-3 { border-color: #7c3aed; background: #ede9fe; }
+  .prio-badge { font-size: 0.65rem; font-weight: 700; padding: 1px 5px; border-radius: 4px; }
+  .prio-1 .prio-badge { background: #16a34a; color:#fff; }
+  .prio-2 .prio-badge { background: #d97706; color:#fff; }
+  .prio-3 .prio-badge { background: #7c3aed; color:#fff; }
+  .btn-add-super { font-size: 0.75rem; padding: 5px 10px; background: var(--primary); color:#fff; border:none; border-radius:7px; cursor:pointer; }
+  .btn-add-super:hover { background: var(--primary-dark); }
+
+  /* ===== PERSONAS ===== */
+  .persona-selector { display: flex; gap: 8px; flex-wrap: wrap; }
+  .persona-btn {
+    width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--border);
+    background: #f1f5f9; font-size: 1rem; cursor: pointer; font-weight: 700;
+    transition: all 0.15s; display:flex; align-items:center; justify-content:center;
+  }
+  .persona-btn.active { background: var(--primary); color:#fff; border-color: var(--primary); }
+
+  /* ===== TOOLBAR ===== */
+  .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; align-items: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 5px; padding: 8px 14px;
+    border-radius: 8px; border: none; cursor: pointer; font-size: 0.8rem; font-weight: 600;
+    font-family: var(--font); transition: all 0.15s;
+  }
+  .btn-primary { background: var(--primary); color: #fff; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-success { background: var(--success); color: #fff; }
+  .btn-success:hover { background: #15803d; }
+  .btn-warning { background: var(--warning); color: #fff; }
+  .btn-warning:hover { background: #b45309; }
+  .btn-danger { background: var(--danger); color: #fff; }
+  .btn-danger:hover { background: #b91c1c; }
+  .btn-ghost { background: #f1f5f9; color: var(--text); border: 1.5px solid var(--border); }
+  .btn-ghost:hover { background: #e2e8f0; }
+  .btn-purple { background: #7c3aed; color: #fff; }
+  .btn-purple:hover { background: #6d28d9; }
+  .filter-bar { display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
+  .filter-chip {
+    padding: 4px 12px; border-radius: 16px; border: 1.5px solid var(--border);
+    background: #f1f5f9; font-size: 0.75rem; cursor: pointer; font-weight: 500; transition: all 0.15s;
+  }
+  .filter-chip.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .search-box { padding: 6px 12px; border-radius: 20px; border: 1.5px solid var(--border); font-size:0.8rem; min-width:160px; }
+  .search-box:focus { outline:none; border-color:var(--primary); }
+
+  /* ===== TABLE ===== */
+  .table-wrapper { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  thead th {
+    background: linear-gradient(135deg, #1e40af, #2563eb); color: #fff;
+    padding: 10px 10px; text-align: left; font-weight: 600; font-size: 0.75rem;
+    white-space: nowrap; position: sticky; top: 0; z-index: 2;
+  }
+  tbody tr { border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  tbody tr:hover { background: #f0f7ff; }
+  tbody tr.selected-row { background: #dbeafe; }
+  tbody td { padding: 6px 8px; vertical-align: middle; }
+  td input[type=checkbox] { accent-color: var(--primary); width:16px; height:16px; cursor:pointer; }
+  td input[type=number], td input[type=text] {
+    width: 100%; padding: 4px 7px; font-size: 0.8rem; border-radius: 5px;
+    border: 1px solid #cbd5e1; min-width: 55px;
+  }
+  td input[type=number] { max-width: 80px; }
+  td .spec-input { min-width: 100px; max-width: 160px; display: none; margin-top: 3px; }
+  td .spec-input.show { display: inline-block; }
+  .cat-badge {
+    display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.68rem; font-weight: 600;
+    white-space: nowrap;
+  }
+  .cat-alimentacion { background: #dcfce7; color: #15803d; }
+  .cat-congelados { background: #dbeafe; color: #1d4ed8; }
+  .cat-drogueria { background: #fef3c7; color: #92400e; }
+  .cat-lacteos { background: #fce7f3; color: #9d174d; }
+  .cat-carnes { background: #fee2e2; color: #991b1b; }
+  .cat-pescados { background: #e0f2fe; color: #0369a1; }
+  .cat-frutas { background: #f0fdf4; color: #166534; }
+  .cat-verduras { background: #ecfdf5; color: #065f46; }
+  .price-cell { font-weight: 600; color: var(--success); text-align: right; }
+  .total-cell { font-weight: 700; color: var(--primary); text-align: right; }
+  .btn-icon { background:none; border:none; cursor:pointer; font-size:1rem; padding:2px 5px; border-radius:5px; }
+  .btn-icon:hover { background:#fee2e2; }
+
+  /* ===== RESUMEN PANEL ===== */
+  .summary-panel {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 60%, #1d4ed8 100%);
+    color: #fff; border-radius: var(--radius); padding: 18px; margin-top: 16px;
+    box-shadow: var(--shadow-md);
+  }
+  .summary-panel h2 { font-size: 1rem; margin-bottom: 14px; display:flex; align-items:center; gap:6px; }
+  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .summary-card {
+    background: rgba(255,255,255,0.12); border-radius: 8px; padding: 12px 14px;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  .summary-card .sc-label { font-size: 0.7rem; opacity: 0.8; margin-bottom: 4px; }
+  .summary-card .sc-value { font-size: 1.4rem; font-weight: 700; }
+  .summary-card .sc-sub { font-size: 0.72rem; opacity: 0.7; margin-top: 2px; }
+  .formula-note { font-size: 0.68rem; opacity: 0.65; margin-top: 8px; font-style: italic; }
+
+  /* super breakdown */
+  .super-breakdown { margin-top: 14px; }
+  .super-breakdown h3 { font-size: 0.8rem; margin-bottom: 8px; opacity: 0.9; }
+  .sb-table { width: 100%; font-size: 0.78rem; border-collapse: collapse; }
+  .sb-table td { padding: 4px 8px; }
+  .sb-table tr { border-bottom: 1px solid rgba(255,255,255,0.1); }
+  .sb-rank { background: rgba(255,255,255,0.15); border-radius:4px; padding:1px 6px; font-size:0.65rem; font-weight:700; }
+
+
+  /* ===== SHARE MODAL ===== */
+  .share-options { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+  .share-opt {
+    display: flex; align-items: center; gap: 12px; padding: 12px 16px;
+    border-radius: 10px; border: 1.5px solid var(--border); cursor: pointer;
+    font-size: 0.88rem; font-weight: 600; background: #f8fafc; transition: all 0.15s;
+    text-decoration: none; color: var(--text);
+  }
+  .share-opt:hover { background: #f0f7ff; border-color: var(--primary); }
+  .share-opt .so-icon { font-size: 1.5rem; width: 32px; text-align: center; }
+  .share-opt .so-body { display: flex; flex-direction: column; }
+  .share-opt .so-title { font-weight: 700; }
+  .share-opt .so-sub   { font-size: 0.72rem; color: var(--text-light); font-weight: 400; }
+  .share-opt.wapp  { border-color: #25d366; }
+  .share-opt.wapp:hover  { background: #f0fdf4; }
+  .share-opt.email { border-color: #2563eb; }
+  .share-opt.email:hover { background: #eff6ff; }
+  .share-opt.copy  { border-color: #7c3aed; }
+  .share-opt.copy:hover  { background: #f5f3ff; }
+  .share-opt.nativ { border-color: #0ea5e9; }
+  .share-opt.nativ:hover { background: #f0f9ff; }
+
+  /* ===== MODAL ===== */
+  .modal-overlay {
+    position: fixed; inset:0; background: rgba(0,0,0,0.5); z-index:100;
+    display: none; align-items:center; justify-content:center; padding:16px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal { background:#fff; border-radius:12px; padding:20px; max-width:460px; width:100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .modal h3 { margin-bottom:14px; font-size:0.95rem; }
+  .modal .form-group { margin-bottom:10px; }
+  .modal-btns { display:flex; gap:8px; justify-content:flex-end; margin-top:16px; }
+
+  /* ===== TOOLTIP ===== */
+  .tooltip-wrap { position: relative; display: inline-block; }
+  .tooltip-wrap .tip {
+    visibility: hidden; background: #1e293b; color:#fff; font-size:0.72rem;
+    border-radius:6px; padding: 5px 9px; position: absolute; z-index:10;
+    bottom:125%; left:50%; transform:translateX(-50%); white-space:nowrap;
+    box-shadow: var(--shadow-md); pointer-events:none; max-width:200px; white-space:normal; text-align:center;
+  }
+  .tooltip-wrap:hover .tip { visibility: visible; }
+
+  /* ===== FOOTER ===== */
+  footer { text-align: center; padding: 20px; color: var(--text-light); font-size: 0.72rem; margin-top: 16px; }
+
+  /* ===== PRINT ===== */
+  @media print {
+    header, .toolbar, .filter-bar, .btn, .lang-toggle, .btn-icon,
+    .modal-overlay, footer, .mini-summary, .btn-add-super { display: none !important; }
+    body { background: #fff; font-size: 11px; }
+    .summary-panel { color: #000 !important; background: #e8eeff !important; box-shadow: none; page-break-inside: avoid; }
+    .summary-panel * { color: #000 !important; }
+    .container { padding: 0; max-width: 100%; }
+    /* CLAVE: eliminar scroll de la tabla para que imprima todo */
+    .table-wrapper { max-height: none !important; overflow: visible !important; }
+    #tableWrapper  { max-height: none !important; overflow: visible !important; }
+    table { font-size: 10px; }
+    thead th { background: #1e40af !important; color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    tbody tr { page-break-inside: avoid; }
+    tbody tr.print-hide { display: none !important; }
+    /* ocultar inputs de supermercado, mostrar solo el valor */
+    td select { border: none !important; appearance: none; background: transparent; }
+    td input[type=number], td input[type=text] { border: none !important; background: transparent; }
+    .grid-top { page-break-after: avoid; }
+    .card { box-shadow: none; border: 1px solid #ccc; }
+    .super-breakdown { page-break-inside: avoid; }
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 640px) {
+    header h1 { font-size: 1rem; }
+    .btn { padding: 7px 10px; font-size: 0.75rem; }
+    tbody td { padding: 4px 5px; }
+    .summary-card .sc-value { font-size: 1.1rem; }
+  }
+
+  /* notif toast */
+  #toast {
+    position: fixed; bottom: 20px; right: 20px; background: #1e293b; color:#fff;
+    padding: 10px 18px; border-radius:8px; font-size:0.8rem; z-index:200;
+    opacity:0; transition: opacity 0.3s; pointer-events:none;
+  }
+  #toast.show { opacity:1; }
+  .week-label { font-size:0.72rem; color:var(--text-light); margin-top:3px; }
+
+  /* ===== MINI SUMMARY BAR ===== */
+  .mini-summary {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1e40af 55%, #0ea5e9 100%);
+    border-radius: var(--radius); padding: 10px 0; margin-bottom: 14px;
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    box-shadow: var(--shadow-md); color: #fff;
+  }
+  .mini-card {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 8px 12px; border-right: 1px solid rgba(255,255,255,0.18); text-align: center;
+  }
+  .mini-card:last-child { border-right: none; }
+  .mini-card .mini-val { font-size: 1.3rem; font-weight: 800; line-height: 1.15; }
+  .mini-card .mini-lbl { font-size: 0.68rem; opacity: 0.8; margin-top: 2px; }
+  @media (max-width: 600px) {
+    .mini-summary { grid-template-columns: repeat(2, 1fr); }
+    .mini-card:nth-child(2) { border-right: none; }
+    .mini-card { border-bottom: 1px solid rgba(255,255,255,0.12); }
+    .mini-card:nth-child(3), .mini-card:nth-child(4) { border-bottom: none; }
+  }
+
+  </style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<!-- HEADER -->
+<header>
+  <div>
+    <h1 id="mainTitle">🛒 Calculadora Lista de Compra Semanal
+      <small>TSA ©, IA — Gestión inteligente de compra familiar</small>
+    </h1>
+  </div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" onclick="setLang('es')" id="btnES">🇪🇸 ES</button>
+    <button class="lang-btn" onclick="setLang('en')" id="btnEN">🇬🇧 EN</button>
+  </div>
+</header>
+
+<!-- MODAL: Compartir -->
+<div class="modal-overlay" id="shareModalOverlay">
+  <div class="modal" style="max-width:400px;">
+    <h3 id="shareModalTitle">📤 Compartir Lista de Compra</h3>
+    <p style="font-size:0.78rem;color:var(--text-light);margin-bottom:12px;" id="shareModalSub">Elige cómo compartir tu lista de la compra semanal</p>
+    <div class="share-options">
+      <a class="share-opt wapp" id="shareWhatsApp" href="#" onclick="shareWhatsApp(); return false;">
+        <span class="so-icon">💬</span>
+        <span class="so-body">
+          <span class="so-title">WhatsApp</span>
+          <span class="so-sub" id="sSubWhatsApp">Enviar lista por WhatsApp</span>
+        </span>
+      </a>
+      <a class="share-opt email" id="shareEmail" href="#" onclick="shareEmail(); return false;">
+        <span class="so-icon">✉️</span>
+        <span class="so-body">
+          <span class="so-title">Correo electrónico</span>
+          <span class="so-sub" id="sSubEmail">Enviar por email</span>
+        </span>
+      </a>
+      <a class="share-opt copy" id="shareCopy" href="#" onclick="shareCopy(); return false;">
+        <span class="so-icon">📋</span>
+        <span class="so-body">
+          <span class="so-title" id="sCopyTitle">Copiar al portapapeles</span>
+          <span class="so-sub" id="sSubCopy">Copia el texto de la lista</span>
+        </span>
+      </a>
+      <a class="share-opt nativ" id="shareNative" href="#" onclick="shareNative(); return false;" style="display:none;">
+        <span class="so-icon">📱</span>
+        <span class="so-body">
+          <span class="so-title" id="sNativeTitle">Compartir (nativo)</span>
+          <span class="so-sub" id="sSubNative">Usar el sistema de tu dispositivo</span>
+        </span>
+      </a>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeShareModal()" id="btnShareCerrar">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: añadir producto -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 id="modalTitle">➕ Añadir nuevo producto</h3>
+    <div class="form-group">
+      <label id="lbNombre">Nombre del producto</label>
+      <input type="text" id="newName" placeholder="Ej: Pasta integral 500g">
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label id="lbCategoria">Categoría</label>
+        <select id="newCat">
+          <option value="alimentacion">Alimentación</option>
+          <option value="congelados">Congelados</option>
+          <option value="lacteos">Lácteos</option>
+          <option value="carnes">Carnes</option>
+          <option value="pescados">Pescados</option>
+          <option value="frutas">Frutas</option>
+          <option value="verduras">Verduras</option>
+          <option value="drogueria">Droguería</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label id="lbPrecio">Precio aprox (€)</label>
+        <input type="number" id="newPrice" step="0.01" min="0" placeholder="0.00">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label id="lbCantidad">Cantidad defecto</label>
+        <input type="number" id="newQty" step="0.5" min="0.5" value="1">
+      </div>
+      <div class="form-group">
+        <label id="lbEsGenerico">¿Es genérico?</label>
+        <select id="newGeneric">
+          <option value="no">No</option>
+          <option value="si">Sí (especificar tipo)</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="closeModal()" id="btnCancelar">Cancelar</button>
+      <button class="btn btn-primary" onclick="addProduct()" id="btnAnadir">Añadir</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="container">
+
+  <!-- TOP CARDS ROW -->
+  <div class="grid-top">
+
+    <!-- FECHA Y SEMANA -->
+    <div class="card">
+      <div class="card-title"><span class="icon">📅</span> <span id="tFecha">Fecha de Compra</span></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label id="lFechaCompra">Fecha de compra</label>
+          <div class="tooltip-wrap">
+            <input type="date" id="fechaCompra" oninput="onDateChange()">
+            <span class="tip" id="tipFecha">Selecciona la fecha de compra semanal</span>
+          </div>
+        </div>
+      </div>
+      <div id="weekInfo" class="week-label"></div>
+    </div>
+
+    <!-- SUPERMERCADOS -->
+    <div class="card">
+      <div class="card-title"><span class="icon">🏪</span> <span id="tSuper">Supermercados</span></div>
+      <div id="superList" class="super-list"></div>
+      <div style="margin-top:8px; display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+        <input type="text" id="newSuperInput" placeholder="Nuevo supermercado..." style="flex:1; min-width:130px; padding:5px 9px; font-size:0.78rem; border-radius:6px; border:1.5px solid #cbd5e1;">
+        <button class="btn-add-super" onclick="addSupermarket()" id="btnAddSuper">+ Añadir</button>
+      </div>
+      <div style="font-size:0.68rem; color:var(--text-light); margin-top:6px;" id="tSuperHelp">Marca prioridad: 1ª opción (verde), 2ª (naranja), 3ª (morado)</div>
+    </div>
+
+    <!-- FAMILIA -->
+    <div class="card">
+      <div class="card-title"><span class="icon">👨‍👩‍👧‍👦</span> <span id="tFamilia">Grupo Familiar</span></div>
+      <div class="tooltip-wrap">
+        <div id="personaSelector" class="persona-selector"></div>
+        <span class="tip" id="tipPersonas">Número de personas en el hogar</span>
+      </div>
+      <div style="margin-top:8px; font-size:0.75rem; color:var(--text-light);" id="personasLabel">Personas seleccionadas: <strong id="numPersonas">2</strong></div>
+    </div>
+
+  </div>
+
+  <!-- MINI SUMMARY BAR -->
+  <div class="mini-summary" id="miniSummaryBar">
+    <div class="mini-card">
+      <div class="mini-val"><span id="miniSelected">0</span>/<span id="miniTotal">0</span></div>
+      <div class="mini-lbl">Productos selec.</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-val" id="miniCost">0,00 €</div>
+      <div class="mini-lbl">Coste total</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-val" id="miniPerPerson">0,00 €</div>
+      <div class="mini-lbl">Por persona / semana</div>
+    </div>
+    <div class="mini-card">
+      <div class="mini-val" id="miniFood">0,00 €</div>
+      <div class="mini-lbl">Alim. · <span id="miniDrog">0,00 €</span> Drog.</div>
+    </div>
+  </div>
+
+  <!-- TOOLBAR -->
+  <div class="toolbar">
+    <button class="btn btn-primary" onclick="recalculate()" id="btnCalc">🔢 Calcular</button>
+    <button class="btn btn-success" onclick="saveData()" id="btnSave">💾 Guardar</button>
+    <button class="btn btn-warning" onclick="exportExcel()" id="btnExcel">📊 Exportar Excel</button>
+    <button class="btn btn-purple" onclick="saveAsHTML()" id="btnSaveHTML">🗂 Guardar HTML</button>
+    <button class="btn btn-ghost" onclick="printPage()" id="btnPrint">🖨 Imprimir</button>
+    <button class="btn" style="background:#0ea5e9;color:#fff;" onclick="openShareModal()" id="btnShare">📤 <span id="tCompartir">Compartir</span></button>
+    <button class="btn btn-danger" onclick="resetAll()" id="btnReset">🗑 Resetear</button>
+    <button class="btn" style="background:#10b981;color:#fff;" onclick="openCSVModal()" id="btnImportCSV">📥 Importar CSV</button>
+    <button class="btn btn-ghost" onclick="openModal()" id="btnAddProd" style="margin-left:auto;">➕ <span id="tAnadirProd">Añadir Producto</span></button>
+  </div>
+
+  <!-- FILTER BAR -->
+  <div class="filter-bar">
+    <span style="font-size:0.75rem; font-weight:600; color:var(--text-light);" id="tFiltrar">Filtrar:</span>
+    <div id="filterChips"></div>
+    <input type="text" class="search-box" id="searchBox" placeholder="🔍 Buscar producto..." oninput="filterTable()">
+    <label style="font-size:0.75rem; font-weight:600; margin-left:8px;">
+      <input type="checkbox" id="chkOnlySelected" onchange="filterTable()" style="accent-color:var(--primary);"> 
+      <span id="tSoloSelec">Solo seleccionados</span>
+    </label>
+  </div>
+
+  <!-- PRODUCTS TABLE -->
+  <div class="card" style="padding:0; overflow:hidden;">
+    <div class="table-wrapper" id="tableWrapper" style="max-height:480px; overflow-y:auto;">
+      <table id="productsTable">
+        <thead>
+          <tr>
+            <th style="width:32px;"></th>
+            <th id="thProducto">Producto</th>
+            <th id="thCategoria">Categoría</th>
+            <th id="thCantidad" style="width:90px;">Cantidad</th>
+            <th id="thPrecioUnit" style="width:90px;">Precio/ud (€)</th>
+            <th id="thTotal" style="width:90px;">Total (€)</th>
+            <th id="thSuper" style="width:110px;">Supermercado</th>
+            <th style="width:36px;"></th>
+          </tr>
+        </thead>
+        <tbody id="productsTbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SUMMARY PANEL -->
+  <div class="summary-panel" id="summaryPanel">
+    <h2>📊 <span id="tResumen">Resumen de la Cesta Semanal</span></h2>
+    <div class="summary-grid">
+      <div class="summary-card">
+        <div class="sc-label" id="scProductos">Productos seleccionados</div>
+        <div class="sc-value" id="numSelected">0</div>
+        <div class="sc-sub" id="scDe">de <span id="totalProducts">0</span> en lista</div>
+      </div>
+      <div class="summary-card">
+        <div class="sc-label" id="scCosteTotal">Coste Total Estimado</div>
+        <div class="sc-value" id="totalCost">0,00 €</div>
+        <div class="sc-sub" id="scFormulaCosto">Σ (Precio × Cantidad)</div>
+      </div>
+      <div class="summary-card">
+        <div class="sc-label" id="scPorPersona">Por persona / semana</div>
+        <div class="sc-value" id="costPerPerson">0,00 €</div>
+        <div class="sc-sub" id="scFormulaPersona">Total ÷ nº personas</div>
+      </div>
+      <div class="summary-card">
+        <div class="sc-label" id="scAlimentacion">Alimentación</div>
+        <div class="sc-value" id="costFood">0,00 €</div>
+        <div class="sc-sub" id="scDrogueria">Droguería: <span id="costDrog">0,00 €</span></div>
+      </div>
+    </div>
+    <div class="super-breakdown" id="superBreakdown"></div>
+    <div class="formula-note" id="formulaNote">💡 Los precios son estimados de referencia (supermercados España, 2025). Actualízalos manualmente para mayor precisión.</div>
+  </div>
+
+</div>
+
+<footer>TSA ©, IA — Calculadora Lista de Compra Semanal · Diseñado para uso familiar · Precios de referencia España 2025</footer>
+
+<script>
+// =====================================================================
+//  DATOS BASE — Productos (lista inicial desde el Excel del usuario)
+// =====================================================================
+const DEFAULTS = {
+  products: [
+    {id:1,  name:"Aceite Oliva 1L",               cat:"alimentacion", price:3.99,  qty:1,   generic:false, spec:""},
+    {id:2,  name:"Aceite Oliva 2L",               cat:"alimentacion", price:6.99,  qty:1,   generic:false, spec:""},
+    {id:3,  name:"Aguacates 3un",                 cat:"frutas",       price:1.99,  qty:1,   generic:false, spec:""},
+    {id:4,  name:"Arroz tres delicias 1kg",       cat:"alimentacion", price:2.49,  qty:1,   generic:false, spec:""},
+    {id:5,  name:"Bebida Avellana 1L",            cat:"alimentacion", price:1.79,  qty:1,   generic:false, spec:""},
+    {id:6,  name:"Bebida Soja 1L",                cat:"alimentacion", price:1.59,  qty:1,   generic:false, spec:""},
+    {id:7,  name:"Berenjenas 1kg",                cat:"verduras",     price:1.69,  qty:1,   generic:false, spec:""},
+    {id:8,  name:"Brócoli congelado 1kg",         cat:"congelados",   price:1.89,  qty:1,   generic:false, spec:""},
+    {id:9,  name:"Cacahuete en Polvo 200g",       cat:"alimentacion", price:3.99,  qty:1,   generic:false, spec:""},
+    {id:10, name:"Calabacín 1kg",                 cat:"verduras",     price:1.49,  qty:1,   generic:false, spec:""},
+    {id:11, name:"Canelones congelados atún 6u",  cat:"congelados",   price:3.29,  qty:1,   generic:false, spec:""},
+    {id:12, name:"Canelones congelados carne 12u",cat:"congelados",   price:5.49,  qty:1,   generic:false, spec:""},
+    {id:13, name:"Canelones congelados carne 6u", cat:"congelados",   price:3.29,  qty:1,   generic:false, spec:""},
+    {id:14, name:"Carne 1kg (fresca)",            cat:"carnes",       price:7.99,  qty:1,   generic:true,  spec:""},
+    {id:15, name:"Carne picada 1kg",              cat:"carnes",       price:5.99,  qty:1,   generic:false, spec:""},
+    {id:16, name:"Cebolla congelada 1un",         cat:"congelados",   price:1.29,  qty:1,   generic:false, spec:""},
+    {id:17, name:"Cebollas 1kg",                  cat:"verduras",     price:0.99,  qty:1,   generic:false, spec:""},
+    {id:18, name:"Cereales 1 pack",               cat:"alimentacion", price:3.49,  qty:1,   generic:false, spec:""},
+    {id:19, name:"Chocolate 72% tableta",         cat:"alimentacion", price:1.49,  qty:1,   generic:false, spec:""},
+    {id:20, name:"Chocolate 85% tableta",         cat:"alimentacion", price:1.59,  qty:1,   generic:false, spec:""},
+    {id:21, name:"Chocolate con leche tableta",   cat:"alimentacion", price:1.39,  qty:1,   generic:false, spec:""},
+    {id:22, name:"Claras huevo 1L",               cat:"lacteos",      price:2.99,  qty:1,   generic:false, spec:""},
+    {id:23, name:"Crema Cacahuete 1 bote",        cat:"alimentacion", price:3.49,  qty:1,   generic:false, spec:""},
+    {id:24, name:"Cremas (almendra, choc…)",      cat:"alimentacion", price:2.99,  qty:1,   generic:true,  spec:""},
+    {id:25, name:"Edulcorante Stevia líquido",    cat:"alimentacion", price:2.49,  qty:1,   generic:false, spec:""},
+    {id:26, name:"Embutido Fuet",                 cat:"carnes",       price:2.29,  qty:1,   generic:false, spec:""},
+    {id:27, name:"Embutido Jamón Serrano",        cat:"carnes",       price:3.99,  qty:1,   generic:false, spec:""},
+    {id:28, name:"Embutido otros",                cat:"carnes",       price:2.99,  qty:1,   generic:true,  spec:""},
+    {id:29, name:"Embutido Pavo",                 cat:"carnes",       price:3.49,  qty:1,   generic:false, spec:""},
+    {id:30, name:"Embutido Queso",                cat:"lacteos",      price:2.99,  qty:1,   generic:false, spec:""},
+    {id:31, name:"Fruta 1kg (variada)",           cat:"frutas",       price:2.49,  qty:1,   generic:true,  spec:""},
+    {id:32, name:"Galletas",                      cat:"alimentacion", price:1.89,  qty:1,   generic:false, spec:""},
+    {id:33, name:"Gelatinas 0% (6u)",             cat:"alimentacion", price:1.49,  qty:1,   generic:false, spec:""},
+    {id:34, name:"Guisantes congelados 1kg",      cat:"congelados",   price:1.69,  qty:1,   generic:false, spec:""},
+    {id:35, name:"Hamburguesas pollo/pavo 6u",    cat:"carnes",       price:3.49,  qty:1,   generic:false, spec:""},
+    {id:36, name:"Hamburguesas ternera/cerdo 6u", cat:"carnes",       price:4.29,  qty:1,   generic:false, spec:""},
+    {id:37, name:"Huevos 12un",                   cat:"lacteos",      price:2.49,  qty:1,   generic:false, spec:""},
+    {id:38, name:"Huevos 6un",                    cat:"lacteos",      price:1.39,  qty:1,   generic:false, spec:""},
+    {id:39, name:"Judías Verdes congeladas 1kg",  cat:"congelados",   price:1.59,  qty:1,   generic:false, spec:""},
+    {id:40, name:"Lasaña Verdura",                cat:"congelados",   price:4.49,  qty:1,   generic:false, spec:""},
+    {id:41, name:"Leche Desnat Sin Lactosa",      cat:"lacteos",      price:1.35,  qty:1,   generic:false, spec:""},
+    {id:42, name:"Leche Semi Sin Lactosa",        cat:"lacteos",      price:1.25,  qty:1,   generic:false, spec:""},
+    {id:43, name:"Lechuga",                       cat:"verduras",     price:0.99,  qty:1,   generic:false, spec:""},
+    {id:44, name:"Lomo cerdo",                    cat:"carnes",       price:5.49,  qty:1,   generic:false, spec:""},
+    {id:45, name:"Nocilla/Nutella",               cat:"alimentacion", price:2.99,  qty:1,   generic:false, spec:""},
+    {id:46, name:"Nuggets pollo/pavo",            cat:"congelados",   price:3.29,  qty:1,   generic:false, spec:""},
+    {id:47, name:"Palitos Queso",                 cat:"alimentacion", price:2.49,  qty:1,   generic:false, spec:""},
+    {id:48, name:"Patatas congeladas 1kg",        cat:"congelados",   price:1.89,  qty:1,   generic:false, spec:""},
+    {id:49, name:"Patatas 3kg",                   cat:"verduras",     price:2.49,  qty:1,   generic:false, spec:""},
+    {id:50, name:"Pepino crudo 1kg",              cat:"verduras",     price:1.29,  qty:1,   generic:false, spec:""},
+    {id:51, name:"Pescado fresco/congelado",      cat:"pescados",     price:8.99,  qty:1,   generic:true,  spec:""},
+    {id:52, name:"Pimientos congelados 1 pack",   cat:"congelados",   price:1.79,  qty:1,   generic:false, spec:""},
+    {id:53, name:"Pizza fresca pequeña 2un",      cat:"congelados",   price:3.99,  qty:1,   generic:false, spec:""},
+    {id:54, name:"Pizza fresca mediana",          cat:"congelados",   price:3.49,  qty:1,   generic:false, spec:""},
+    {id:55, name:"Pizza fresca grande",           cat:"congelados",   price:4.99,  qty:1,   generic:false, spec:""},
+    {id:56, name:"Sal 1kg",                       cat:"alimentacion", price:0.59,  qty:1,   generic:false, spec:""},
+    {id:57, name:"Salchichas pollo/pavo 1 pack",  cat:"carnes",       price:2.49,  qty:1,   generic:false, spec:""},
+    {id:58, name:"Salchichas ternera/cerdo 1 bote",cat:"carnes",      price:2.99,  qty:1,   generic:false, spec:""},
+    {id:59, name:"Salmón congelado lomos 2u",     cat:"pescados",     price:4.99,  qty:1,   generic:false, spec:""},
+    {id:60, name:"Salsa Ketchup sin azúcar",      cat:"alimentacion", price:1.99,  qty:1,   generic:false, spec:""},
+    {id:61, name:"Salsa Mayonesa Light",          cat:"alimentacion", price:1.89,  qty:1,   generic:false, spec:""},
+    {id:62, name:"Salsa Otras",                   cat:"alimentacion", price:1.79,  qty:1,   generic:true,  spec:""},
+    {id:63, name:"Solomillos de Pavo",            cat:"carnes",       price:4.99,  qty:1,   generic:false, spec:""},
+    {id:64, name:"Tomate ensalada 1kg",           cat:"verduras",     price:1.99,  qty:1,   generic:false, spec:""},
+    {id:65, name:"Tomate untar",                  cat:"alimentacion", price:1.29,  qty:1,   generic:false, spec:""},
+    {id:66, name:"Tortitas Arroz",                cat:"alimentacion", price:1.49,  qty:1,   generic:false, spec:""},
+    {id:67, name:"Tortitas Maíz",                 cat:"alimentacion", price:1.49,  qty:1,   generic:false, spec:""},
+    {id:68, name:"Verduras microondas",           cat:"verduras",     price:1.99,  qty:1,   generic:true,  spec:""},
+    {id:69, name:"Verduras otras",                cat:"verduras",     price:2.49,  qty:1,   generic:true,  spec:""},
+    {id:70, name:"Vinagre Módena",                cat:"alimentacion", price:2.29,  qty:1,   generic:false, spec:""},
+    {id:71, name:"Yogur griego light 1kg",        cat:"lacteos",      price:2.49,  qty:1,   generic:false, spec:""},
+    {id:72, name:"Yogur griego light 0,5kg",      cat:"lacteos",      price:1.49,  qty:1,   generic:false, spec:""},
+    {id:73, name:"Yogures Fruta 0,0",             cat:"lacteos",      price:1.89,  qty:1,   generic:false, spec:""},
+    {id:74, name:"Yogures Naturales sin azúcar",  cat:"lacteos",      price:1.79,  qty:1,   generic:false, spec:""},
+    {id:75, name:"Yogures Nat. Proteínas 0% (4u)",cat:"lacteos",      price:2.29,  qty:1,   generic:false, spec:""},
+    {id:76, name:"Yogures Proteínas",             cat:"lacteos",      price:2.49,  qty:1,   generic:false, spec:""},
+    {id:77, name:"Bolsas Basura negras 30L",      cat:"drogueria",    price:1.99,  qty:1,   generic:false, spec:""},
+    {id:78, name:"Bolsas Basura blancas 50L",     cat:"drogueria",    price:2.49,  qty:1,   generic:false, spec:""},
+    {id:79, name:"Detergente Lavadora",           cat:"drogueria",    price:6.99,  qty:1,   generic:false, spec:""},
+    {id:80, name:"Lavavajillas mano",             cat:"drogueria",    price:2.29,  qty:1,   generic:false, spec:""},
+    {id:81, name:"Lavavajillas máquina",          cat:"drogueria",    price:5.99,  qty:1,   generic:false, spec:""},
+    {id:82, name:"Papel Cocina 600un",            cat:"drogueria",    price:3.49,  qty:1,   generic:false, spec:""},
+    {id:83, name:"Papel WC 6u (2 hojas)",         cat:"drogueria",    price:2.99,  qty:1,   generic:false, spec:""},
+    {id:84, name:"Papel WC 12u (2 hojas)",        cat:"drogueria",    price:4.99,  qty:1,   generic:false, spec:""},
+    {id:85, name:"Sal Lavavajillas",              cat:"drogueria",    price:1.49,  qty:1,   generic:false, spec:""},
+    {id:86, name:"Suavizante Lavadora",           cat:"drogueria",    price:4.49,  qty:1,   generic:false, spec:""},
+    {id:87, name:"Papel Freidora",                cat:"drogueria",    price:3.29,  qty:1,   generic:false, spec:""},
+    {id:88, name:"Lejía 1L",                      cat:"drogueria",    price:1.19,  qty:1,   generic:false, spec:""},
+    {id:89, name:"Limpia suelos PH 0",            cat:"drogueria",    price:2.79,  qty:1,   generic:false, spec:""}
+  ],
+  supermarkets: [
+    {name:"Mercadona", prio:1, checked:true},
+    {name:"Lidl",      prio:2, checked:false},
+    {name:"Aldi",      prio:3, checked:false},
+    {name:"Carrefour", prio:0, checked:false},
+    {name:"Alcampo",   prio:0, checked:false},
+    {name:"Dia",       prio:0, checked:false}
+  ],
+  personas: 2
+};
+
+const CATEGORIES = ["todos","alimentacion","congelados","lacteos","carnes","pescados","frutas","verduras","drogueria"];
+const CAT_LABELS = {
+  es:{todos:"Todos", alimentacion:"Alimentación", congelados:"Congelados", lacteos:"Lácteos",
+      carnes:"Carnes", pescados:"Pescados", frutas:"Frutas", verduras:"Verduras", drogueria:"Droguería"},
+  en:{todos:"All", alimentacion:"Food", congelados:"Frozen", lacteos:"Dairy",
+      carnes:"Meats", pescados:"Fish", frutas:"Fruits", verduras:"Vegetables", drogueria:"Household"}
+};
+
+// =====================================================================
+//  STATE
+// =====================================================================
+let lang = "es";
+let products = [];
+let supermarkets = [];
+let personas = 2;
+let activeFilter = "todos";
+let nextId = 200;
+
+// =====================================================================
+//  TRANSLATIONS
+// =====================================================================
+const T = {
+  es: {
+    mainTitle:"🛒 Calculadora Lista de Compra Semanal",
+    mainSub:"TSA ©, IA — Gestión inteligente de compra familiar",
+    tFecha:"Fecha de Compra", lFechaCompra:"Fecha de compra",
+    tipFecha:"Selecciona la fecha de compra semanal",
+    tSuper:"Supermercados", tSuperHelp:"Marca prioridad: 1ª opción (verde), 2ª (naranja), 3ª (morado)",
+    tFamilia:"Grupo Familiar", tipPersonas:"Número de personas en el hogar",
+    personasLabel:"Personas seleccionadas:",
+    btnCalc:"🔢 Calcular", btnSave:"💾 Guardar", btnExcel:"📊 Exportar Excel",
+    btnSaveHTML:"🗂 Guardar HTML", btnPrint:"🖨 Imprimir", btnReset:"🗑 Resetear",
+    tAnadirProd:"Añadir Producto",
+    tFiltrar:"Filtrar:",
+    searchPlaceholder:"🔍 Buscar producto...",
+    tSoloSelec:"Solo seleccionados",
+    thProducto:"Producto", thCategoria:"Categoría", thCantidad:"Cantidad",
+    thPrecioUnit:"Precio/ud (€)", thTotal:"Total (€)", thSuper:"Supermercado",
+    tResumen:"Resumen de la Cesta Semanal",
+    scProductos:"Productos seleccionados", scDe:"de", scCosteTotal:"Coste Total Estimado",
+    scFormulaCosto:"Σ (Precio × Cantidad)", scPorPersona:"Por persona / semana",
+    scFormulaPersona:"Total ÷ nº personas", scAlimentacion:"Alimentación",
+    scDrogueria:"Droguería:", formulaNote:"💡 Los precios son estimados de referencia (supermercados España, 2025). Actualízalos manualmente para mayor precisión.",
+    modalTitle:"➕ Añadir nuevo producto", lbNombre:"Nombre del producto",
+    lbCategoria:"Categoría", lbPrecio:"Precio aprox (€)", lbCantidad:"Cantidad defecto",
+    lbEsGenerico:"¿Es genérico?", btnCancelar:"Cancelar", btnAnadir:"Añadir",
+    weekLabel:"Semana nº", saved:"✅ Datos guardados correctamente",
+    reset:"🗑 Datos reseteados", added:"✅ Producto añadido",
+    specPlaceholder:"Especificar tipo...",
+    btnAddSuper:"+ Añadir", newSuperPlaceholder:"Nuevo supermercado...",
+    superBreakdownTitle:"Desglose por Supermercado",
+    noProductos:"(sin productos)",
+    exportOk:"📊 CSV exportado correctamente"
+  },
+  en: {
+    mainTitle:"🛒 Weekly Shopping List Calculator",
+    mainSub:"TSA ©, AI — Smart family shopping management",
+    tFecha:"Shopping Date", lFechaCompra:"Shopping date",
+    tipFecha:"Select the weekly shopping date",
+    tSuper:"Supermarkets", tSuperHelp:"Set priority: 1st (green), 2nd (orange), 3rd (purple)",
+    tFamilia:"Family Group", tipPersonas:"Number of people in the household",
+    personasLabel:"People selected:",
+    btnCalc:"🔢 Calculate", btnSave:"💾 Save", btnExcel:"📊 Export Excel",
+    btnSaveHTML:"🗂 Save HTML", btnPrint:"🖨 Print", btnReset:"🗑 Reset",
+    tAnadirProd:"Add Product",
+    tFiltrar:"Filter:",
+    searchPlaceholder:"🔍 Search product...",
+    tSoloSelec:"Selected only",
+    thProducto:"Product", thCategoria:"Category", thCantidad:"Qty",
+    thPrecioUnit:"Unit price (€)", thTotal:"Total (€)", thSuper:"Supermarket",
+    tResumen:"Weekly Basket Summary",
+    scProductos:"Selected products", scDe:"of", scCosteTotal:"Estimated Total Cost",
+    scFormulaCosto:"Σ (Price × Qty)", scPorPersona:"Per person / week",
+    scFormulaPersona:"Total ÷ no. people", scAlimentacion:"Food",
+    scDrogueria:"Household:", formulaNote:"💡 Prices are reference estimates (Spain supermarkets, 2025). Update manually for greater accuracy.",
+    modalTitle:"➕ Add new product", lbNombre:"Product name",
+    lbCategoria:"Category", lbPrecio:"Approx price (€)", lbCantidad:"Default qty",
+    lbEsGenerico:"Generic?", btnCancelar:"Cancel", btnAnadir:"Add",
+    weekLabel:"Week no.", saved:"✅ Data saved successfully",
+    reset:"🗑 Data reset", added:"✅ Product added",
+    specPlaceholder:"Specify type...",
+    btnAddSuper:"+ Add", newSuperPlaceholder:"New supermarket...",
+    superBreakdownTitle:"Breakdown by Supermarket",
+    noProductos:"(no products)",
+    exportOk:"📊 CSV exported successfully"
+  }
+};
+
+function t(key){ return (T[lang]||T.es)[key] || key; }
+
+// =====================================================================
+//  INIT
+// =====================================================================
+window.addEventListener("DOMContentLoaded", () => {
+  loadData();
+  setTodayDate();
+  renderPersonas();
+  renderSupermarkets();
+  renderFilterChips();
+  renderTable();
+  recalculate();
+});
+
+function loadData(){
+  try {
+    const saved = localStorage.getItem("tsa_compra_v3");
+    if(saved){
+      const d = JSON.parse(saved);
+      products = d.products || DEFAULTS.products.map(p=>({...p, selected:false}));
+      supermarkets = d.supermarkets || JSON.parse(JSON.stringify(DEFAULTS.supermarkets));
+      personas = d.personas || DEFAULTS.personas;
+      lang = d.lang || "es";
+      nextId = d.nextId || 200;
+    } else {
+      products = DEFAULTS.products.map(p=>({...p, selected:false}));
+      supermarkets = JSON.parse(JSON.stringify(DEFAULTS.supermarkets));
+      personas = DEFAULTS.personas;
+    }
+  } catch(e){
+    products = DEFAULTS.products.map(p=>({...p, selected:false}));
+    supermarkets = JSON.parse(JSON.stringify(DEFAULTS.supermarkets));
+    personas = DEFAULTS.personas;
+  }
+  setLang(lang, false);
+}
+
+function saveData(){
+  try {
+    collectTableData();
+    const d = { products, supermarkets, personas, lang, nextId, savedAt: new Date().toISOString() };
+    localStorage.setItem("tsa_compra_v3", JSON.stringify(d));
+    showToast(t("saved"));
+  } catch(e){ showToast("⚠️ Error al guardar: " + e.message); }
+}
+
+// Guarda directamente SIN leer del DOM (para no machacar valores recién escritos en el array)
+function saveDataDirect(){
+  try {
+    const d = { products, supermarkets, personas, lang, nextId, savedAt: new Date().toISOString() };
+    localStorage.setItem("tsa_compra_v3", JSON.stringify(d));
+  } catch(e){ console.error("saveDataDirect error:", e); }
+}
+
+function setTodayDate(){
+  const today = new Date();
+  const iso = today.toISOString().split("T")[0];
+  document.getElementById("fechaCompra").value = iso;
+  onDateChange();
+}
+
+function onDateChange(){
+  const v = document.getElementById("fechaCompra").value;
+  if(!v) return;
+  const d = new Date(v + "T12:00:00");
+  const weekNum = getWeekNumber(d);
+  const days = lang==="es"
+    ? ["domingo","lunes","martes","miércoles","jueves","viernes","sábado"]
+    : ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  const months = lang==="es"
+    ? ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"]
+    : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const str = lang==="es"
+    ? `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} — ${t("weekLabel")} ${weekNum}`
+    : `${days[d.getDay()]} ${months[d.getMonth()]} ${d.getDate()} ${d.getFullYear()} — ${t("weekLabel")} ${weekNum}`;
+  document.getElementById("weekInfo").textContent = str;
+}
+
+function getWeekNumber(d){
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const dayNum = date.getUTCDay() || 7;
+  date.setUTCDate(date.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
+  return Math.ceil((((date - yearStart) / 86400000) + 1)/7);
+}
+
+// =====================================================================
+//  LANG
+// =====================================================================
+function setLang(l, redraw=true){
+  lang = l;
+  document.getElementById("btnES").classList.toggle("active", l==="es");
+  document.getElementById("btnEN").classList.toggle("active", l==="en");
+  document.documentElement.lang = l;
+
+  // update all labelled elements
+  const keys = ["mainTitle","tFecha","tSuper","tFamilia","tResumen","tFiltrar","tSoloSelec","tAnadirProd",
+    "tSuperHelp","formulaNote","modalTitle","lbNombre","lbCategoria","lbPrecio","lbCantidad","lbEsGenerico",
+    "btnCancelar","btnAnadir","btnCalc","btnSave","btnExcel","btnSaveHTML","btnPrint","btnReset",
+    "thProducto","thCategoria","thCantidad","thPrecioUnit","thTotal","thSuper",
+    "scProductos","scCosteTotal","scFormulaCosto","scPorPersona","scFormulaPersona","scAlimentacion",
+    "tipFecha","tipPersonas","lFechaCompra","btnAddSuper"];
+  keys.forEach(k => { const el = document.getElementById(k); if(el) el.textContent = t(k); });
+  document.getElementById("searchBox").placeholder = t("searchPlaceholder");
+  document.getElementById("newSuperInput").placeholder = t("newSuperPlaceholder");
+
+  // Share modal labels
+  const shareLabels = {
+    es: { shareModalTitle:"📤 Compartir Lista de Compra", shareModalSub:"Elige cómo compartir tu lista de la compra semanal",
+          sSubWhatsApp:"Enviar lista por WhatsApp", sSubEmail:"Enviar por email",
+          sCopyTitle:"Copiar al portapapeles", sSubCopy:"Copia el texto de la lista",
+          sNativeTitle:"Compartir (nativo)", sSubNative:"Usar el sistema de tu dispositivo",
+          btnShareCerrar:"Cerrar", tCompartir:"Compartir" },
+    en: { shareModalTitle:"📤 Share Shopping List", shareModalSub:"Choose how to share your weekly shopping list",
+          sSubWhatsApp:"Send list via WhatsApp", sSubEmail:"Send by email",
+          sCopyTitle:"Copy to clipboard", sSubCopy:"Copy the list as text",
+          sNativeTitle:"Share (native)", sSubNative:"Use your device's share system",
+          btnShareCerrar:"Close", tCompartir:"Share" }
+  };
+  Object.entries(shareLabels[l]||shareLabels.es).forEach(([k,v])=>{
+    const el = document.getElementById(k); if(el) el.textContent = v;
+  });
+
+  const personasLbl = document.getElementById("personasLabel");
+  if(personasLbl) personasLbl.innerHTML = t("personasLabel") + " <strong id='numPersonas'>" + personas + "</strong>";
+
+  if(redraw){
+    renderFilterChips();
+    renderTable();
+    recalculate();
+    onDateChange();
+  }
+}
+
+// =====================================================================
+//  SUPERMARKETS
+// =====================================================================
+function renderSupermarkets(){
+  const el = document.getElementById("superList");
+  el.innerHTML = "";
+  supermarkets.forEach((s,i) => {
+    const div = document.createElement("div");
+    div.className = "super-item" + (s.checked?" checked":"") + (s.prio>0?" prio-"+s.prio:"");
+    div.innerHTML = `<input type="checkbox" ${s.checked?"checked":""} onchange="toggleSuper(${i})">
+      <span>${s.name}</span>
+      ${s.prio>0?`<span class="prio-badge">${s.prio}ª</span>`:""}
+      <span style="margin-left:auto; cursor:pointer; font-size:0.7rem; color:#64748b;" onclick="cyclePrio(${i})" title="Cambiar prioridad">⭐</span>`;
+    el.appendChild(div);
+  });
+}
+
+function toggleSuper(i){
+  supermarkets[i].checked = !supermarkets[i].checked;
+  renderSupermarkets();
+  recalculate();
+}
+
+function cyclePrio(i){
+  const maxPrio = 3;
+  const used = supermarkets.map(s=>s.prio).filter(p=>p>0);
+  if(supermarkets[i].prio > 0){
+    // remove prio
+    supermarkets[i].prio = 0;
+  } else {
+    // assign next available prio
+    for(let p=1;p<=maxPrio;p++){
+      if(!used.includes(p)){ supermarkets[i].prio = p; break; }
+    }
+  }
+  renderSupermarkets();
+}
+
+function addSupermarket(){
+  const inp = document.getElementById("newSuperInput");
+  const name = inp.value.trim();
+  if(!name) return;
+  supermarkets.push({name, prio:0, checked:true});
+  inp.value = "";
+  renderSupermarkets();
+  showToast("✅ " + name + (lang==="es"?" añadido":" added"));
+}
+
+function getCheckedSupermarkets(){
+  return supermarkets.filter(s=>s.checked).sort((a,b)=>{
+    if(a.prio && b.prio) return a.prio-b.prio;
+    if(a.prio) return -1;
+    if(b.prio) return 1;
+    return 0;
+  });
+}
+
+// =====================================================================
+//  PERSONAS
+// =====================================================================
+function renderPersonas(){
+  const el = document.getElementById("personaSelector");
+  el.innerHTML = "";
+  for(let i=1;i<=8;i++){
+    const btn = document.createElement("button");
+    btn.className = "persona-btn" + (i===personas?" active":"");
+    btn.textContent = i;
+    btn.title = i + (lang==="es"?" persona(s)":" person(s)");
+    btn.onclick = () => setPersonas(i);
+    el.appendChild(btn);
+  }
+  const nl = document.getElementById("numPersonas");
+  if(nl) nl.textContent = personas;
+}
+
+function setPersonas(n){
+  personas = n;
+  renderPersonas();
+  recalculate();
+}
+
+// =====================================================================
+//  FILTER CHIPS
+// =====================================================================
+function renderFilterChips(){
+  const el = document.getElementById("filterChips");
+  el.innerHTML = "";
+  CATEGORIES.forEach(cat => {
+    const span = document.createElement("span");
+    span.className = "filter-chip" + (cat===activeFilter?" active":"");
+    span.textContent = CAT_LABELS[lang][cat] || cat;
+    span.onclick = () => { activeFilter = cat; renderFilterChips(); filterTable(); };
+    el.appendChild(span);
+  });
+}
+
+// =====================================================================
+//  TABLE
+// =====================================================================
+function renderTable(){
+  const tbody = document.getElementById("productsTbody");
+  tbody.innerHTML = "";
+  const superOpts = supermarkets.map(s=>`<option value="${s.name}">${s.name}</option>`).join("");
+
+  products.forEach((p, idx) => {
+    const tr = document.createElement("tr");
+    tr.dataset.id = p.id;
+    tr.dataset.cat = p.cat;
+    tr.className = p.selected ? "selected-row" : "";
+
+    const catLabel = CAT_LABELS[lang][p.cat] || p.cat;
+    const catBadge = `<span class="cat-badge cat-${p.cat}">${catLabel}</span>`;
+    const specShow = p.generic ? "show" : "";
+    const specVal = p.spec || "";
+    // Assign default supermarket (highest priority or first available) if not yet set
+    if(!p.super || !supermarkets.find(s=>s.name===p.super)) {
+      const defSuper = supermarkets.find(s=>s.prio===1) || supermarkets[0];
+      if(defSuper) p.super = defSuper.name;
+    }
+    const superSel = superOpts ? `<select class="super-sel" style="font-size:0.75rem;border-radius:5px;border:1px solid #cbd5e1;padding:3px 4px;width:100%;" onchange="onSuperChange(${p.id}, this.value)">${superOpts}</select>` : `<span style="font-size:0.72rem;color:#94a3b8;">${lang==="es"?"Ninguno":"None"}</span>`;
+
+    tr.innerHTML = `
+      <td><input type="checkbox" ${p.selected?"checked":""} onchange="toggleRow(${p.id})"></td>
+      <td>
+        <div style="font-weight:500;">${p.name}</div>
+        <input type="text" class="spec-input ${specShow}" value="${specVal}" placeholder="${t("specPlaceholder")}" 
+          oninput="onSpecChange(${p.id}, this.value)" title="${lang==='es'?'Especificar tipo de producto':'Specify product type'}">
+      </td>
+      <td>${catBadge}</td>
+      <td>
+        <input type="number" value="${p.qty}" min="0.5" step="0.5" style="text-align:center;"
+          oninput="onQtyChange(${p.id}, this.value)" title="${lang==='es'?'Cantidad (acepta decimales, ej: 0,5)':'Quantity (accepts decimals, e.g. 0.5)'}">
+      </td>
+      <td>
+        <input type="number" value="${p.price.toFixed(2)}" min="0" step="0.01" class="price-cell"
+          oninput="onPriceChange(${p.id}, this.value)" title="${lang==='es'?'Precio por unidad en €':'Unit price in €'}">
+      </td>
+      <td class="total-cell" id="total_${p.id}">${fmtEur(p.qty * p.price)}</td>
+      <td>${superSel}</td>
+      <td><button class="btn-icon" onclick="removeProduct(${p.id})" title="${lang==='es'?'Eliminar producto':'Remove product'}">🗑</button></td>
+    `;
+    // set selected super
+    if(p.super){
+      const sel = tr.querySelector(".super-sel");
+      if(sel){ for(let o of sel.options){ if(o.value===p.super){ o.selected=true; break; } } }
+    }
+    tbody.appendChild(tr);
+  });
+  filterTable();
+}
+
+function filterTable(){
+  const query = (document.getElementById("searchBox").value || "").toLowerCase();
+  const onlySelected = document.getElementById("chkOnlySelected").checked;
+  const tbody = document.getElementById("productsTbody");
+  Array.from(tbody.rows).forEach(tr => {
+    const cat = tr.dataset.cat || "";
+    const txt = tr.textContent.toLowerCase();
+    const pid = parseInt(tr.dataset.id);
+    const prod = products.find(p=>p.id===pid);
+    const catOk = activeFilter==="todos" || cat===activeFilter;
+    const txtOk = !query || txt.includes(query);
+    const selOk = !onlySelected || (prod && prod.selected);
+    tr.style.display = (catOk && txtOk && selOk) ? "" : "none";
+  });
+}
+
+function toggleRow(id){
+  const p = products.find(x=>x.id===id);
+  if(p){ p.selected = !p.selected; }
+  const tr = document.querySelector(`tr[data-id="${id}"]`);
+  if(tr) tr.className = p.selected ? "selected-row" : "";
+  recalculate();
+}
+
+function onQtyChange(id, val){
+  const p = products.find(x=>x.id===id);
+  if(!p) return;
+  p.qty = parseFloat(val)||0;
+  const el = document.getElementById("total_"+id);
+  if(el) el.textContent = fmtEur(p.qty * p.price);
+  recalculate();
+}
+
+function onPriceChange(id, val){
+  const p = products.find(x=>x.id===id);
+  if(!p) return;
+  p.price = parseFloat(val)||0;
+  const el = document.getElementById("total_"+id);
+  if(el) el.textContent = fmtEur(p.qty * p.price);
+  recalculate();
+}
+
+function onSpecChange(id, val){
+  const p = products.find(x=>x.id===id); if(!p) return;
+  p.spec = val;
+  // Si el producto es genérico, al escribir algo verificamos si ya existe
+  // un clon vacío justo debajo; si no existe, lo creamos
+  if(p.generic && val.trim().length > 0) {
+    ensureGenericClone(p);
+  }
+}
+
+function ensureGenericClone(p) {
+  const idx = products.findIndex(x=>x.id===p.id);
+  // Buscar si ya hay un clon vacío inmediatamente después (mismo nombre base, spec vacía)
+  const next = products[idx+1];
+  const baseName = p.name; // mismo nombre base
+  if(next && next.generic && next.name === baseName && (!next.spec || next.spec.trim()==="")) {
+    return; // ya existe el clon vacío, no duplicar
+  }
+  // Crear clon vacío con nuevo id
+  const clone = {
+    id: nextId++,
+    name: baseName,
+    cat: p.cat,
+    price: p.price,
+    qty: p.qty,
+    generic: true,
+    spec: "",
+    selected: false,
+    super: p.super || ""
+  };
+  // Insertar justo después del producto original
+  products.splice(idx+1, 0, clone);
+  // Re-renderizar solo si no estamos en medio de un input activo
+  // Usamos setTimeout para no interrumpir el typing actual
+  setTimeout(() => {
+    renderTable();
+    recalculate();
+    // Re-enfocar el campo spec del clon nuevo para facilitar escritura
+    // (no lo enfocamos para no interrumpir al usuario)
+  }, 0);
+}
+
+function onSuperChange(id, val){
+  const p = products.find(x=>x.id===id); if(p) p.super = val;
+  recalculate();
+}
+
+function removeProduct(id){
+  products = products.filter(p=>p.id!==id);
+  renderTable();
+  recalculate();
+}
+
+function collectTableData(){
+  // sync qty, price, spec from DOM to products array (in case user typed without triggering events)
+  products.forEach(p => {
+    const tr = document.querySelector(`tr[data-id="${p.id}"]`);
+    if(!tr) return;
+    const qtyI = tr.querySelector('input[type=number]');
+    const priceI = tr.querySelectorAll('input[type=number]')[1];
+    if(qtyI) p.qty = parseFloat(qtyI.value)||p.qty;
+    if(priceI) p.price = parseFloat(priceI.value)||p.price;
+    const spec = tr.querySelector('.spec-input');
+    if(spec) p.spec = spec.value;
+    const superS = tr.querySelector('.super-sel');
+    if(superS) p.super = superS.value;
+  });
+}
+
+// =====================================================================
+//  ADD PRODUCT (MODAL)
+// =====================================================================
+function openModal(){
+  document.getElementById("modalOverlay").classList.add("open");
+  document.getElementById("newName").focus();
+}
+function closeModal(){
+  document.getElementById("modalOverlay").classList.remove("open");
+  ["newName","newPrice"].forEach(id=>{ document.getElementById(id).value=""; });
+  document.getElementById("newQty").value=1;
+  document.getElementById("newGeneric").value="no";
+}
+function addProduct(){
+  const name = document.getElementById("newName").value.trim();
+  if(!name){ document.getElementById("newName").focus(); return; }
+  const cat  = document.getElementById("newCat").value;
+  const price = parseFloat(document.getElementById("newPrice").value)||0;
+  const qty   = parseFloat(document.getElementById("newQty").value)||1;
+  const generic = document.getElementById("newGeneric").value==="si";
+  products.push({id:nextId++, name, cat, price, qty, generic, spec:"", selected:false});
+  closeModal();
+  renderTable();
+  recalculate();
+  showToast(t("added"));
+}
+
+// =====================================================================
+//  RECALCULATE
+// =====================================================================
+function recalculate(){
+  const sel = products.filter(p=>p.selected);
+  const total = sel.reduce((s,p)=>s + p.qty*p.price, 0);
+  const perPerson = personas > 0 ? total/personas : 0;
+
+  const foodCats = ["alimentacion","lacteos","carnes","pescados","frutas","verduras","congelados"];
+  const costFood = sel.filter(p=>foodCats.includes(p.cat)).reduce((s,p)=>s+p.qty*p.price,0);
+  const costDrog = sel.filter(p=>p.cat==="drogueria").reduce((s,p)=>s+p.qty*p.price,0);
+
+  document.getElementById("numSelected").textContent = sel.length;
+  document.getElementById("totalProducts").textContent = products.length;
+  document.getElementById("totalCost").textContent = fmtEur(total);
+  document.getElementById("costPerPerson").textContent = fmtEur(perPerson);
+  document.getElementById("costFood").textContent = fmtEur(costFood);
+  document.getElementById("costDrog").textContent = fmtEur(costDrog);
+
+  // mini summary bar
+  const _ms = document.getElementById("miniSelected");
+  const _mt = document.getElementById("miniTotal");
+  const _mc = document.getElementById("miniCost");
+  const _mp = document.getElementById("miniPerPerson");
+  const _mf = document.getElementById("miniFood");
+  const _md = document.getElementById("miniDrog");
+  if(_ms) _ms.textContent = sel.length;
+  if(_mt) _mt.textContent = products.length;
+  if(_mc) _mc.textContent = fmtEur(total);
+  if(_mp) _mp.textContent = fmtEur(perPerson);
+  if(_mf) _mf.textContent = fmtEur(costFood);
+  if(_md) _md.textContent = fmtEur(costDrog);
+
+  // super breakdown
+  renderSuperBreakdown(sel);
+}
+
+function renderSuperBreakdown(sel){
+  const el = document.getElementById("superBreakdown");
+  const checked = getCheckedSupermarkets();
+  if(!checked.length){ el.innerHTML=""; return; }
+
+  let html = `<h3>🏪 ${t("superBreakdownTitle")}</h3><table class="sb-table">`;
+  checked.forEach(s => {
+    const prods = sel.filter(p=>p.super===s.name);
+    const subTotal = prods.reduce((acc,p)=>acc+p.qty*p.price,0);
+    const badge = s.prio>0?`<span class="sb-rank">${s.prio}ª</span>`:"";
+    const prodList = prods.length ? prods.map(p=>`<span style="opacity:0.75">${p.name}${p.spec?" ("+p.spec+")":""} × ${p.qty}</span>`).join(", ") : t("noProductos");
+    html += `<tr>
+      <td style="width:30px;">${badge}</td>
+      <td style="font-weight:600;">${s.name}</td>
+      <td style="text-align:right; font-weight:700;">${fmtEur(subTotal)}</td>
+      <td style="font-size:0.7rem; opacity:0.8; padding-left:8px;">${prodList}</td>
+    </tr>`;
+  });
+  // products without super assigned
+  const noSuper = sel.filter(p=>!p.super || !checked.find(s=>s.name===p.super));
+  if(noSuper.length){
+    const sub = noSuper.reduce((a,p)=>a+p.qty*p.price,0);
+    html += `<tr>
+      <td></td>
+      <td style="opacity:0.7;">${lang==="es"?"Sin asignar":"Unassigned"}</td>
+      <td style="text-align:right;">${fmtEur(sub)}</td>
+      <td style="font-size:0.7rem; opacity:0.7;">${noSuper.map(p=>p.name).join(", ")}</td>
+    </tr>`;
+  }
+  html += "</table>";
+  el.innerHTML = html;
+}
+
+// =====================================================================
+//  EXPORT EXCEL (CSV)
+// =====================================================================
+function exportExcel(){
+  collectTableData();
+  const sel = products.filter(p=>p.selected);
+  if(!sel.length){ showToast(lang==="es"?"⚠️ Selecciona productos primero":"⚠️ Select products first"); return; }
+
+  const headers = [t("thProducto"),"Tipo/Especificación",t("thCategoria"),t("thCantidad"),t("thPrecioUnit"),t("thTotal"),t("thSuper")];
+  const rows = sel.map(p=>[
+    `"${p.name.replace(/"/g,'""')}"`,
+    `"${(p.spec||"").replace(/"/g,'""')}"`,
+    `"${CAT_LABELS[lang][p.cat]||p.cat}"`,
+    String(p.qty).replace(".",","),
+    String(p.price.toFixed(2)).replace(".",","),
+    String((p.qty*p.price).toFixed(2)).replace(".",","),
+    `"${p.super||""}"`
+  ].join(";"));
+
+  const total = sel.reduce((s,p)=>s+p.qty*p.price,0);
+  const fecha = document.getElementById("fechaCompra").value;
+  const meta = [
+    `"${t("tFecha")}":"${fecha}"`,
+    `"${t("tFamilia")}":"${personas} ${lang==="es"?"personas":"people"}"`,
+    `"${t("scCosteTotal")}":"${fmtEur(total)}"`
+  ].join(";");
+
+  const csv = "\uFEFF" + headers.join(";") + "\r\n" + rows.join("\r\n") + "\r\n\r\n" + meta;
+  const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = `Lista_Compra_${fecha||"semanal"}.csv`; a.click();
+  URL.revokeObjectURL(url);
+  showToast(t("exportOk"));
+}
+
+// =====================================================================
+//  SAVE AS HTML
+// =====================================================================
+function saveAsHTML(){
+  collectTableData();
+  const state = JSON.stringify({products, supermarkets, personas, lang, nextId});
+  // inject current state into a copy of this page
+  const html = document.documentElement.outerHTML.replace(
+    /\/\/ INJECTED_STATE_PLACEHOLDER[\s\S]*?\/\/ END_INJECTED/,
+    ""
+  );
+  const injected = html.replace(
+    "window.addEventListener(\"DOMContentLoaded\", () => {",
+    `// INJECTED_STATE_PLACEHOLDER
+    (function(){
+      try {
+        const d = ${state};
+        localStorage.setItem("tsa_compra_v3", JSON.stringify(d));
+      } catch(e){}
+    })();
+    // END_INJECTED
+    window.addEventListener("DOMContentLoaded", () => {`
+  );
+  const blob = new Blob([injected], {type:"text/html;charset=utf-8;"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const fecha = document.getElementById("fechaCompra").value;
+  a.href = url; a.download = `Lista_Compra_${fecha||"semanal"}.html`; a.click();
+  URL.revokeObjectURL(url);
+  showToast(t("saved"));
+}
+
+// =====================================================================
+//  PRINT / RESET
+// =====================================================================
+function printPage(){
+  collectTableData();
+  // Imprimir SOLO lo visible: no tocar las filas, el CSS de print ya respeta display:none
+  // Pero window.print() ignora inline styles en algunos navegadores,
+  // así que añadimos una clase a las filas ocultas y la ocultamos con @media print
+  const tbody = document.getElementById("productsTbody");
+  Array.from(tbody.rows).forEach(tr => {
+    if(tr.style.display === "none"){
+      tr.classList.add("print-hide");
+    } else {
+      tr.classList.remove("print-hide");
+    }
+  });
+  window.print();
+  // Limpiar la clase tras imprimir
+  Array.from(tbody.rows).forEach(tr => tr.classList.remove("print-hide"));
+}
+
+function resetAll(){
+  if(!confirm(lang==="es"?"¿Resetear todos los datos?":"Reset all data?")) return;
+  localStorage.removeItem("tsa_compra_v3");
+  products = DEFAULTS.products.map(p=>({...p, selected:false}));
+  supermarkets = JSON.parse(JSON.stringify(DEFAULTS.supermarkets));
+  personas = DEFAULTS.personas;
+  nextId = 200;
+  renderPersonas();
+  renderSupermarkets();
+  renderTable();
+  setTodayDate();
+  recalculate();
+  showToast(t("reset"));
+}
+
+// =====================================================================
+//  HELPERS
+// =====================================================================
+function fmtEur(n){
+  return n.toLocaleString(lang==="es"?"es-ES":"en-GB", {minimumFractionDigits:2, maximumFractionDigits:2}) + " €";
+}
+
+function showToast(msg){
+  const el = document.getElementById("toast");
+  el.textContent = msg; el.classList.add("show");
+  setTimeout(()=>el.classList.remove("show"), 2800);
+}
+
+// =====================================================================
+//  SHARE
+// =====================================================================
+function buildShareText(){
+  collectTableData();
+  const sel = products.filter(p=>p.selected);
+  const fecha = document.getElementById("fechaCompra").value || "";
+  const total = sel.reduce((s,p)=>s+p.qty*p.price,0);
+  const perPerson = personas>0 ? total/personas : 0;
+  const weekInfo = document.getElementById("weekInfo").textContent || "";
+
+  let lines = [];
+  lines.push(lang==="es"
+    ? "🛒 *Lista de Compra Semanal* — TSA ©"
+    : "🛒 *Weekly Shopping List* — TSA ©");
+  lines.push(`📅 ${fecha}  ${weekInfo}`);
+  lines.push(`👨‍👩‍👧‍👦 ${personas} ${lang==="es"?"personas":"people"}`);
+  lines.push("");
+
+  // Group by supermarket
+  const supers = [...new Set(sel.map(p=>p.super||"—"))];
+  supers.forEach(sup => {
+    const items = sel.filter(p=>(p.super||"—")===sup);
+    if(!items.length) return;
+    lines.push(`🏪 *${sup}*`);
+    items.forEach(p => {
+      const name = p.spec ? `${p.name} (${p.spec})` : p.name;
+      lines.push(`  • ${name}  ×${p.qty}  ${fmtEur(p.qty*p.price)}`);
+    });
+    lines.push("");
+  });
+
+  lines.push("─────────────────────");
+  lines.push(`💰 ${lang==="es"?"Total":"Total"}: *${fmtEur(total)}*`);
+  lines.push(`👤 ${lang==="es"?"Por persona":"Per person"}: ${fmtEur(perPerson)}`);
+  return lines.join("\n");
+}
+
+function openShareModal(){
+  // show native share button only if supported
+  const nativeBtn = document.getElementById("shareNative");
+  if(navigator.share){ nativeBtn.style.display = "flex"; }
+  document.getElementById("shareModalOverlay").classList.add("open");
+}
+function closeShareModal(){
+  document.getElementById("shareModalOverlay").classList.remove("open");
+}
+
+function shareWhatsApp(){
+  const text = encodeURIComponent(buildShareText());
+  window.open("https://wa.me/?text=" + text, "_blank");
+  closeShareModal();
+}
+
+function shareEmail(){
+  const subject = encodeURIComponent(
+    lang==="es" ? "Lista de Compra Semanal — TSA ©" : "Weekly Shopping List — TSA ©"
+  );
+  const body = encodeURIComponent(buildShareText().replace(/\*/g,""));
+  window.location.href = "mailto:?subject=" + subject + "&body=" + body;
+  closeShareModal();
+}
+
+function shareCopy(){
+  const text = buildShareText().replace(/\*/g,"");
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(()=>{
+      showToast(lang==="es"?"📋 Lista copiada al portapapeles":"📋 List copied to clipboard");
+    }).catch(()=> fallbackCopy(text));
+  } else { fallbackCopy(text); }
+  closeShareModal();
+}
+
+function fallbackCopy(text){
+  const ta = document.createElement("textarea");
+  ta.value = text; ta.style.position="fixed"; ta.style.opacity="0";
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); showToast(lang==="es"?"📋 Lista copiada":"📋 List copied"); }
+  catch(e){ showToast("⚠️ No se pudo copiar"); }
+  document.body.removeChild(ta);
+}
+
+function shareNative(){
+  const text = buildShareText().replace(/\*/g,"");
+  const title = lang==="es" ? "Lista de Compra Semanal" : "Weekly Shopping List";
+  if(navigator.share){
+    navigator.share({ title, text }).catch(()=>{});
+  }
+  closeShareModal();
+}
+
+
+
+// =====================================================================
+//  IMPORTAR CSV
+// =====================================================================
+let csvMatchData = [];
+
+function openCSVModal(){
+  document.getElementById("csvModalOverlay").style.display = "flex";
+  document.getElementById("csvPreview").style.display = "none";
+  document.getElementById("btnApplyCSV").style.display = "none";
+  document.getElementById("csvFileInput").value = "";
+  csvMatchData = [];
+}
+
+function closeCSVModal(e){
+  if(!e || e.target === document.getElementById("csvModalOverlay")){
+    document.getElementById("csvModalOverlay").style.display = "none";
+  }
+}
+
+function csvDragOver(e){
+  e.preventDefault();
+  document.getElementById("csvDropZone").style.background = "#dbeafe";
+  document.getElementById("csvDropZone").style.borderColor = "#2563eb";
+}
+
+function csvDragLeave(e){
+  document.getElementById("csvDropZone").style.background = "#f8fafc";
+  document.getElementById("csvDropZone").style.borderColor = "#cbd5e1";
+}
+
+function csvDrop(e){
+  e.preventDefault();
+  csvDragLeave(e);
+  const file = e.dataTransfer.files[0];
+  if(file) processCsvFile(file);
+}
+
+function csvFileSelected(e){
+  const file = e.target.files[0];
+  if(file) processCsvFile(file);
+}
+
+function processCsvFile(file){
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const text = e.target.result;
+    parseCsvAndMatch(text);
+  };
+  reader.readAsText(file, "UTF-8");
+}
+
+function detectSeparator(line){
+  const counts = {",": (line.match(/,/g)||[]).length, ";": (line.match(/;/g)||[]).length, "\t": (line.match(/\t/g)||[]).length};
+  return Object.entries(counts).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+function strSimilarity(a, b){
+  a = a.toLowerCase().trim(); b = b.toLowerCase().trim();
+  if(a === b) return 1;
+  if(a.includes(b) || b.includes(a)) return 0.85;
+  // Simple bigram similarity
+  const bigrams = s => { const r = new Set(); for(let i=0;i<s.length-1;i++) r.add(s[i]+s[i+1]); return r; };
+  const ba = bigrams(a), bb = bigrams(b);
+  let intersection = 0;
+  ba.forEach(g => { if(bb.has(g)) intersection++; });
+  return (2 * intersection) / (ba.size + bb.size + 0.001);
+}
+
+function findBestMatch(csvName){
+  let best = null, bestScore = 0;
+  products.forEach((p, idx) => {
+    const score = strSimilarity(csvName, p.name);
+    if(score > bestScore){ bestScore = score; best = {productId: p.id, idx, score}; }
+  });
+  return bestScore >= 0.35 ? {...best} : null;
+}
+
+function parseCsvAndMatch(text){
+  const lines = text.replace(/\r/g,"").split("\n").filter(l=>l.trim());
+  if(!lines.length){ showToast("⚠️ CSV vacío"); return; }
+
+  const sep = detectSeparator(lines[0]);
+  const header = lines[0].split(sep).map(h=>h.trim().toLowerCase().replace(/"/g,""));
+  
+  // Detectar columnas nombre y precio
+  const nameIdx = header.findIndex(h => ["nombre","name","producto","product","articulo","item","descripcion","description"].some(k=>h.includes(k)));
+  const priceIdx = header.findIndex(h => ["precio","price","coste","cost","importe","amount","pvp","eur","€"].some(k=>h.includes(k)));
+  
+  if(nameIdx === -1 || priceIdx === -1){
+    showToast("⚠️ No se encontraron columnas 'nombre' y 'precio' en el CSV");
+    return;
+  }
+
+  csvMatchData = [];
+  const dataLines = lines.slice(1);
+
+  dataLines.forEach(line => {
+    const cols = line.split(sep).map(c=>c.trim().replace(/"/g,""));
+    const csvName = cols[nameIdx] || "";
+    const csvPriceRaw = (cols[priceIdx] || "").replace(",",".");
+    const csvPrice = parseFloat(csvPriceRaw);
+    if(!csvName || isNaN(csvPrice) || csvPrice <= 0) return;
+
+    const match = findBestMatch(csvName);
+    csvMatchData.push({
+      csvName,
+      csvPrice,
+      match,
+      productId: match ? match.productId : null,
+      productIdx: match ? match.idx : null,
+      score: match ? match.score : 0,
+      apply: match !== null
+    });
+  });
+
+  renderCSVPreview();
+}
+
+function renderCSVPreview(){
+  const tbody = document.getElementById("csvPreviewBody");
+  tbody.innerHTML = "";
+  
+  csvMatchData.forEach((item, i) => {
+    const tr = document.createElement("tr");
+    tr.style.borderBottom = "1px solid #f1f5f9";
+    
+    const currentPrice = item.productIdx !== null ? products[item.productIdx].price : null;
+    const priceChange = currentPrice !== null ? (item.csvPrice - currentPrice) : null;
+    const changeColor = priceChange === null ? "" : priceChange > 0 ? "color:#dc2626;" : priceChange < 0 ? "color:#16a34a;" : "color:#64748b;";
+    const changeArrow = priceChange === null ? "" : priceChange > 0 ? " ▲" : priceChange < 0 ? " ▼" : " =";
+
+    const matchName = item.productIdx !== null ? products[item.productIdx].name : "<span style='color:#94a3b8;font-style:italic;'>Sin coincidencia</span>";
+    const scoreLabel = item.score > 0 ? `<span style="font-size:0.65rem; color:#94a3b8; margin-left:4px;">(${Math.round(item.score*100)}%)</span>` : "";
+
+    tr.innerHTML = `
+      <td style="padding:6px 10px;">${item.csvName}</td>
+      <td style="padding:6px 10px;">${matchName}${scoreLabel}</td>
+      <td style="padding:6px 10px; text-align:right;">${currentPrice !== null ? currentPrice.toFixed(2)+" €" : "-"}</td>
+      <td style="padding:6px 10px; text-align:right; font-weight:600; ${changeColor}">${item.csvPrice.toFixed(2)} €${changeArrow}</td>
+      <td style="padding:6px 10px; text-align:center;">
+        ${item.productIdx !== null ? `<input type="checkbox" ${item.apply?"checked":""} onchange="csvMatchData[${i}].apply=this.checked" style="accent-color:#10b981; width:16px; height:16px;">` : "—"}
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  const matched = csvMatchData.filter(d=>d.productIdx !== null).length;
+  const total = csvMatchData.length;
+  document.getElementById("csvMatchSummary").textContent = `${matched} de ${total} filas del CSV coinciden con productos de la lista.`;
+  
+  document.getElementById("csvPreview").style.display = "block";
+  document.getElementById("btnApplyCSV").style.display = matched > 0 ? "inline-flex" : "none";
+}
+
+function applyCSVPrices(){
+  // Primero sincronizar DOM → array para no perder qty/super editados
+  collectTableData();
+
+  let applied = 0;
+  csvMatchData.forEach(item => {
+    if(item.apply && item.productId != null){
+      const prod = products.find(p => p.id === item.productId);
+      if(prod){
+        prod.price = parseFloat(item.csvPrice);
+        applied++;
+      }
+    }
+  });
+
+  // Cerrar modal antes de tocar el DOM
+  document.getElementById("csvModalOverlay").style.display = "none";
+
+  if(applied > 0){
+    // Guardar DIRECTO en localStorage sin pasar por collectTableData
+    // (que machacaría los precios recién escritos leyendo el DOM antiguo)
+    saveDataDirect();
+    // Re-renderizar con los precios nuevos y recalcular
+    renderTable();
+    recalculate();
+    showToast("✅ " + applied + " precio" + (applied!==1?"s":"") + " actualizado" + (applied!==1?"s":"") + " y guardado");
+  } else {
+    showToast("⚠️ No se aplicó ningún precio");
+  }
+}
+
+
+</script>
+
+
+<!-- MODAL IMPORTAR CSV -->
+<div class="modal-overlay" id="csvModalOverlay" style="display:none;" onclick="closeCSVModal(event)">
+  <div class="modal" style="max-width:600px; width:95%;" onclick="event.stopPropagation()">
+    <h3 style="margin-bottom:10px;">📥 Importar precios desde CSV</h3>
+    <p style="font-size:0.82rem; color:#64748b; margin-bottom:12px;">
+      CSV con cabecera <strong>Nombre;Precio</strong> (separador <code>;</code> o <code>,</code>).
+      Se busca cada producto en la lista y se muestra previsualización antes de aplicar.
+    </p>
+
+    <!-- Zona drag-and-drop SOLO para drag, no para click -->
+    <div id="csvDropZone"
+         style="border:2px dashed #cbd5e1; border-radius:10px; padding:20px 24px; text-align:center;
+                background:#f8fafc; margin-bottom:10px; transition:all 0.2s;"
+         ondragover="csvDragOver(event)" ondragleave="csvDragLeave(event)" ondrop="csvDrop(event)">
+      <div style="font-size:2rem; pointer-events:none;">📄</div>
+      <div style="font-size:0.85rem; color:#64748b; margin-top:6px; pointer-events:none;">
+        Arrastra el CSV aquí
+      </div>
+      <div style="font-size:0.72rem; color:#94a3b8; margin-top:3px; pointer-events:none;">
+        o usa el botón de abajo
+      </div>
+    </div>
+
+    <!-- Botón seleccionar fichero REAL — label sobre input file -->
+    <div style="display:flex; align-items:center; gap:10px; margin-bottom:14px;">
+      <label for="csvFileInput"
+             style="display:inline-flex; align-items:center; gap:6px; padding:8px 16px;
+                    background:#2563eb; color:#fff; border-radius:8px; cursor:pointer;
+                    font-size:0.82rem; font-weight:600; transition:background 0.15s;"
+             onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+        📂 Seleccionar fichero CSV
+      </label>
+      <input type="file" id="csvFileInput" accept=".csv,.txt"
+             style="position:absolute; width:1px; height:1px; opacity:0; overflow:hidden;"
+             onchange="csvFileSelected(event)">
+      <span id="csvFileName" style="font-size:0.78rem; color:#64748b; font-style:italic;">Ningún fichero seleccionado</span>
+    </div>
+
+    <!-- Previsualización -->
+    <div id="csvPreview" style="display:none;">
+      <h4 style="font-size:0.85rem; margin-bottom:8px; color:#1e293b;">Previsualización de coincidencias:</h4>
+      <div style="max-height:260px; overflow-y:auto; border:1px solid #e2e8f0; border-radius:8px;">
+        <table style="width:100%; font-size:0.78rem; border-collapse:collapse;">
+          <thead>
+            <tr style="background:#f1f5f9; position:sticky; top:0; z-index:1;">
+              <th style="padding:7px 10px; text-align:left;">CSV</th>
+              <th style="padding:7px 10px; text-align:left;">Coincide con</th>
+              <th style="padding:7px 10px; text-align:right;">Actual</th>
+              <th style="padding:7px 10px; text-align:right;">Nuevo</th>
+              <th style="padding:7px 10px; text-align:center;">✓</th>
+            </tr>
+          </thead>
+          <tbody id="csvPreviewBody"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:8px; font-size:0.75rem; color:#64748b;" id="csvMatchSummary"></div>
+    </div>
+
+    <div style="display:flex; gap:8px; justify-content:flex-end; margin-top:16px; flex-wrap:wrap; align-items:center;">
+      <button class="btn btn-ghost" onclick="closeCSVModal()">Cancelar</button>
+      <button class="btn" style="background:#10b981;color:#fff;display:none;" id="btnApplyCSV" onclick="applyCSVPrices()">✅ Aplicar precios seleccionados</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

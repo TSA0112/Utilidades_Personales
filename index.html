@@ -1,365 +1,318 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#1e3a8a" />
-  <title>Mis Calculadoras</title>
-  <link rel="manifest" href="manifest.json" />
-  <style>
-    :root {
-      --primary: #1e3a8a;
-      --accent: #3b82f6;
-      --bg: #f0f4ff;
-      --white: #ffffff;
-      --text: #1e293b;
-      --text-muted: #64748b;
-      --radius: 16px;
-      --shadow: 0 4px 24px rgba(30,58,138,0.10);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-    header {
-      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #3b82f6 100%);
-      color: white;
-      padding: 30px 20px 24px;
-      text-align: center;
-      position: relative;
-    }
-    header .logo { font-size: 2.4rem; margin-bottom: 8px; }
-    header h1 {
-      font-size: clamp(1.3rem, 5vw, 1.9rem);
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-    header p { font-size: 0.88rem; opacity: 0.82; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mis Calculadoras</title>
+<meta name="description" content="Herramientas personales: hipoteca, IMC, ahorro, piscina, renting y lista de la compra">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1e3a8a">
+<style>
+:root {
+  --primary: #1e3a8a;
+  --accent:  #3b82f6;
+  --bg:      #f0f4ff;
+  --white:   #ffffff;
+  --text:    #1e293b;
+  --text-muted: #64748b;
+  --radius:  16px;
+  --shadow:  0 4px 24px rgba(30,58,138,0.10);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+       background: var(--bg); color: var(--text); min-height: 100vh; }
 
-    /* Language switcher */
-    .lang-switcher {
-      position: absolute;
-      top: 14px;
-      right: 14px;
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .lang-btn {
-      background: none;
-      border: 2px solid transparent;
-      border-radius: 6px;
-      cursor: pointer;
-      padding: 2px;
-      opacity: 0.6;
-      transition: opacity 0.2s, border-color 0.2s;
-      line-height: 1;
-    }
-    .lang-btn:hover { opacity: 1; }
-    .lang-btn.active { border-color: white; opacity: 1; }
-    .lang-btn img { width: 32px; height: 22px; display: block; border-radius: 3px; }
+/* ===== HEADER ===== */
+header {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #3b82f6 100%);
+  color: white; padding: 30px 20px 24px; text-align: center; position: relative;
+}
+header .logo { font-size: 2.4rem; margin-bottom: 8px; }
+header h1 { font-size: clamp(1.3rem, 5vw, 1.9rem); font-weight: 800; margin-bottom: 6px; }
+header p  { font-size: 0.88rem; opacity: 0.82; }
 
-    #menu {
-      max-width: 520px;
-      margin: 0 auto;
-      padding: 24px 16px 48px;
-    }
-    .menu-label {
-      font-size: 0.72rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      color: var(--text-muted);
-      margin-bottom: 14px;
-      text-align: center;
-    }
-    .cards { display: flex; flex-direction: column; gap: 13px; }
-    .card {
-      background: var(--white);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 16px 18px;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: border-color 0.18s, transform 0.14s, box-shadow 0.18s;
-      width: 100%;
-      text-align: left;
-      -webkit-tap-highlight-color: transparent;
-      appearance: none;
-      background-color: var(--white);
-    }
-    .card:hover, .card:focus {
-      border-color: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: 0 8px 32px rgba(37,99,235,0.16);
-      outline: none;
-    }
-    .card:active { transform: translateY(0); }
-    .card-icon {
-      font-size: 2rem;
-      width: 54px; height: 54px;
-      display: flex; align-items: center; justify-content: center;
-      border-radius: 13px;
-      flex-shrink: 0;
-    }
-    .c1 { background: #eff6ff; }
-    .c2 { background: #fff7ed; }
-    .c3 { background: #f0fdf4; }
-    .c4 { background: #ecfeff; }
-    .c5 { background: #faf5ff; }
-    .c6 { background: #fff0f0; }
-    .card-body { flex: 1; min-width: 0; }
-    .card-title { font-size: 0.97rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
-    .card-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
-    .card-arrow { font-size: 1.3rem; color: var(--accent); flex-shrink: 0; }
+/* ===== LANG SWITCHER ===== */
+.lang-switcher {
+  position: absolute; top: 14px; right: 14px;
+  display: flex; gap: 6px; align-items: center;
+}
+.lang-btn {
+  background: none; border: 2px solid transparent; border-radius: 6px;
+  cursor: pointer; padding: 2px; opacity: 0.6;
+  transition: opacity 0.2s, border-color 0.2s; line-height: 1;
+  font-size: 1.5rem;
+}
+.lang-btn:hover { opacity: 1; }
+.lang-btn.active { border-color: white; opacity: 1; }
 
-    /* VIEWER */
-    #viewer {
-      display: none;
-      position: fixed;
-      inset: 0;
-      flex-direction: column;
-      background: white;
-      z-index: 100;
-    }
-    #viewer.active { display: flex; }
-    #viewer-topbar {
-      background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 14px;
-      flex-shrink: 0;
-      min-height: 52px;
-    }
-    #btn-back {
-      background: rgba(255,255,255,0.18);
-      border: none;
-      color: white;
-      font-size: 1rem;
-      padding: 7px 13px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      white-space: nowrap;
-      transition: background 0.15s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    #btn-back:hover { background: rgba(255,255,255,0.28); }
-    #viewer-title {
-      font-size: 0.93rem;
-      font-weight: 700;
-      flex: 1;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    #app-frame { flex: 1; border: none; width: 100%; background: white; }
+/* ===== MAIN GRID ===== */
+#menu {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 16px 48px;
+}
+.menu-label {
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--text-muted);
+  margin-bottom: 20px; text-align: center;
+}
 
-    #install-banner {
-      position: fixed;
-      bottom: 16px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #1e3a8a;
-      color: white;
-      border-radius: 14px;
-      padding: 14px 18px;
-      box-shadow: 0 8px 32px rgba(30,58,138,0.35);
-      z-index: 200;
-      max-width: calc(100vw - 32px);
-      display: none;
-      align-items: center;
-      gap: 12px;
-      font-size: 0.87rem;
-    }
-    #install-banner span { flex: 1; line-height: 1.4; }
-    #btn-install {
-      background: white; color: #1e3a8a;
-      border: none; padding: 8px 14px;
-      border-radius: 8px; font-weight: 700;
-      font-size: 0.84rem; cursor: pointer; white-space: nowrap;
-    }
-    #btn-close-banner {
-      background: none; border: none;
-      color: rgba(255,255,255,0.7);
-      font-size: 1.2rem; cursor: pointer; padding: 2px;
-    }
-    footer {
-      text-align: center; padding: 16px;
-      font-size: 0.74rem; color: var(--text-muted);
-    }
-  </style>
+/* 3-column grid — falls back to 2 then 1 */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+@media (max-width: 780px) {
+  .cards-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 480px) {
+  .cards-grid { grid-template-columns: 1fr; }
+}
+
+/* ===== CARD ===== */
+.card {
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 16px; cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.18s, transform 0.14s, box-shadow 0.18s;
+  width: 100%; text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  appearance: none; background-color: var(--white);
+}
+.card:hover, .card:focus {
+  border-color: var(--accent);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(37,99,235,0.16);
+  outline: none;
+}
+.card:active { transform: translateY(0); }
+
+.card-icon {
+  font-size: 1.8rem; min-width: 50px; height: 50px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 12px; flex-shrink: 0;
+}
+.c1 { background: #eff6ff; }
+.c2 { background: #fff7ed; }
+.c3 { background: #f0fdf4; }
+.c4 { background: #ecfeff; }
+.c5 { background: #faf5ff; }
+.c6 { background: #fef9ec; }
+.c7 { background: #f0fff4; }
+
+.card-body { flex: 1; min-width: 0; }
+.card-title { font-size: 0.92rem; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.card-desc  { font-size: 0.74rem; color: var(--text-muted); line-height: 1.4; }
+.card-arrow { font-size: 1.2rem; color: var(--accent); flex-shrink: 0; }
+
+/* ===== VIEWER (iframe fullscreen) ===== */
+#viewer { display: none; position: fixed; inset: 0; flex-direction: column; background: white; z-index: 100; }
+#viewer.active { display: flex; }
+#viewer-topbar {
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 100%);
+  color: white; display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; flex-shrink: 0; min-height: 52px;
+}
+#btn-back {
+  background: rgba(255,255,255,0.18); border: none; color: white;
+  font-size: 1rem; padding: 7px 13px; border-radius: 8px; cursor: pointer;
+  font-weight: 700; display: flex; align-items: center; gap: 5px;
+  white-space: nowrap; transition: background 0.15s;
+}
+#btn-back:hover { background: rgba(255,255,255,0.28); }
+#viewer-title {
+  font-size: 0.93rem; font-weight: 700; flex: 1;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#app-frame { flex: 1; border: none; width: 100%; background: white; }
+
+/* ===== INSTALL BANNER ===== */
+#install-banner {
+  position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+  background: #1e3a8a; color: white; border-radius: 14px; padding: 14px 18px;
+  box-shadow: 0 8px 32px rgba(30,58,138,0.35); z-index: 200;
+  max-width: calc(100vw - 32px); display: none; align-items: center; gap: 12px; font-size: 0.87rem;
+}
+#install-banner span { flex: 1; line-height: 1.4; }
+#btn-install {
+  background: white; color: #1e3a8a; border: none; padding: 8px 14px;
+  border-radius: 8px; font-weight: 700; font-size: 0.84rem; cursor: pointer; white-space: nowrap;
+}
+#btn-close-banner { background: none; border: none; color: rgba(255,255,255,0.7); font-size: 1.2rem; cursor: pointer; padding: 2px; }
+
+footer { text-align: center; padding: 16px; font-size: 0.74rem; color: var(--text-muted); }
+</style>
 </head>
 <body>
 
 <header>
-  <!-- Language switcher flags -->
   <div class="lang-switcher">
-    <button class="lang-btn active" id="btn-es" onclick="setLang('es')" title="Español">
-      <!-- Spanish flag SVG inline -->
-      <svg width="32" height="22" viewBox="0 0 32 22" xmlns="http://www.w3.org/2000/svg">
-        <rect width="32" height="22" fill="#c60b1e"/>
-        <rect y="5.5" width="32" height="11" fill="#f1bf00"/>
-      </svg>
-    </button>
-    <button class="lang-btn" id="btn-en" onclick="setLang('en')" title="English">
-      <!-- UK flag SVG inline -->
-      <svg width="32" height="22" viewBox="0 0 32 22" xmlns="http://www.w3.org/2000/svg">
-        <rect width="32" height="22" fill="#012169"/>
-        <path d="M0,0 L32,22 M32,0 L0,22" stroke="white" stroke-width="4"/>
-        <path d="M0,0 L32,22 M32,0 L0,22" stroke="#C8102E" stroke-width="2.5"/>
-        <path d="M16,0 V22 M0,11 H32" stroke="white" stroke-width="6"/>
-        <path d="M16,0 V22 M0,11 H32" stroke="#C8102E" stroke-width="3.5"/>
-      </svg>
-    </button>
+    <button class="lang-btn active" id="btn-es" onclick="setLang('es')" title="Español">🇪🇸</button>
+    <button class="lang-btn"        id="btn-en" onclick="setLang('en')" title="English">🇬🇧</button>
   </div>
-
   <div class="logo">🧮</div>
   <h1 data-es="Mis Calculadoras" data-en="My Calculators">Mis Calculadoras</h1>
-  <p data-es="Selecciona una herramienta para comenzar" data-en="Select a tool to get started">Selecciona una herramienta para comenzar</p>
+  <p  data-es="Selecciona una herramienta para comenzar" data-en="Select a tool to get started">Selecciona una herramienta para comenzar</p>
 </header>
 
 <main id="menu">
-  <p class="menu-label" data-es="📱 6 herramientas disponibles" data-en="📱 6 tools available">📱 6 herramientas disponibles</p>
-  <div class="cards">
+  <div class="menu-label">
+    <span data-es="🛠 7 herramientas disponibles" data-en="🛠 7 tools available">🛠 7 herramientas disponibles</span>
+  </div>
 
-    <button class="card" onclick="openApp('hipoteca.html', currentLang==='es'?'🏠 Calculadora Hipotecaria':'🏠 Mortgage Calculator')">
-      <div class="card-icon c1">🏠</div>
-      <div class="card-body">
-        <div class="card-title" data-es="Calculadora Hipotecaria" data-en="Mortgage Calculator">Calculadora Hipotecaria</div>
-        <div class="card-desc" data-es="Gastos de compra, cuota mensual, hipoteca necesaria y dinero requerido" data-en="Purchase costs, monthly payment, loan amount and money required">Gastos de compra, cuota mensual, hipoteca necesaria y dinero requerido</div>
-      </div>
-      <div class="card-arrow">›</div>
+  <div class="cards-grid">
+
+    <!-- 1. Hipoteca -->
+    <button class="card" onclick="openApp('hipoteca.html', this.querySelector('.card-title').textContent)">
+      <span class="card-icon c1">🏠</span>
+      <span class="card-body">
+        <span class="card-title" data-es="Calculadora Hipotecaria" data-en="Mortgage Calculator">Calculadora Hipotecaria</span>
+        <span class="card-desc"  data-es="Gastos de compra, cuota mensual, hipoteca necesaria y dinero requerido"
+                                 data-en="Purchase costs, monthly payment, required mortgage and money needed">Gastos de compra, cuota mensual, hipoteca necesaria y dinero requerido</span>
+      </span>
+      <span class="card-arrow">›</span>
     </button>
 
-    <button class="card" onclick="openApp('amortizacion.html', currentLang==='es'?'📊 Hipoteca + Amortización':'📊 Mortgage + Amortization')">
-      <div class="card-icon c2">📊</div>
-      <div class="card-body">
-        <div class="card-title" data-es="Hipoteca + Amortización" data-en="Mortgage + Amortization">Hipoteca + Amortización</div>
-        <div class="card-desc" data-es="Simula aportaciones parciales: compara reducir cuota vs. reducir plazo" data-en="Simulate partial payments: compare reducing installment vs. reducing term">Simula aportaciones parciales: compara reducir cuota vs. reducir plazo</div>
-      </div>
-      <div class="card-arrow">›</div>
+    <!-- 2. Amortización -->
+    <button class="card" onclick="openApp('amortizacion.html', this.querySelector('.card-title').textContent)">
+      <span class="card-icon c2">📊</span>
+      <span class="card-body">
+        <span class="card-title" data-es="Hipoteca + Amortización" data-en="Mortgage + Amortisation">Hipoteca + Amortización</span>
+        <span class="card-desc"  data-es="Simula aportaciones parciales: compara reducir cuota vs. reducir plazo"
+                                 data-en="Simulate partial payments: compare reducing instalment vs. term">Simula aportaciones parciales: compara reducir cuota vs. reducir plazo</span>
+      </span>
+      <span class="card-arrow">›</span>
     </button>
 
-    <button class="card" onclick="openApp('imc.html', currentLang==='es'?'⚖️ Calculadora de IMC':'⚖️ BMI Calculator')">
-      <div class="card-icon c3">⚖️</div>
-      <div class="card-body">
-        <div class="card-title" data-es="Calculadora de IMC" data-en="BMI Calculator">Calculadora de IMC</div>
-        <div class="card-desc" data-es="IMC actual y saludable ajustado por edad, sexo, altura y peso" data-en="Current and healthy BMI adjusted for age, gender, height and weight">IMC actual y saludable ajustado por edad, sexo, altura y peso</div>
-      </div>
-      <div class="card-arrow">›</div>
+    <!-- 3. IMC -->
+    <button class="card" onclick="openApp('imc.html', this.querySelector('.card-title').textContent)">
+      <span class="card-icon c3">⚖️</span>
+      <span class="card-body">
+        <span class="card-title" data-es="Calculadora de IMC" data-en="BMI Calculator">Calculadora de IMC</span>
+        <span class="card-desc"  data-es="IMC actual y saludable ajustado por edad, sexo, altura y peso"
+                                 data-en="Current and healthy BMI adjusted for age, sex, height and weight">IMC actual y saludable ajustado por edad, sexo, altura y peso</span>
+      </span>
+      <span class="card-arrow">›</span>
     </button>
 
-    <button class="card" onclick="openApp('sal.html', currentLang==='es'?'🏊 Calculadora Sal Piscina':'🏊 Pool Salt Calculator')">
-      <div class="card-icon c4">🏊</div>
-      <div class="card-body">
-        <div class="card-title" data-es="Calculadora Sal Piscina" data-en="Pool Salt Calculator">Calculadora Sal Piscina</div>
-        <div class="card-desc" data-es="Kg de sal necesarios para tu piscina con clorador salino" data-en="Kg of salt needed for your pool with a salt chlorinator">Kg de sal necesarios para tu piscina con clorador salino</div>
-      </div>
-      <div class="card-arrow">›</div>
+    <!-- 4. Sal Piscina -->
+    <button class="card" onclick="openApp('sal.html', this.querySelector('.card-title').textContent)">
+      <span class="card-icon c4">🏊</span>
+      <span class="card-body">
+        <span class="card-title" data-es="Calculadora Sal Piscina" data-en="Pool Salt Calculator">Calculadora Sal Piscina</span>
+        <span class="card-desc"  data-es="Kg de sal necesarios para tu piscina con clorador salino"
+                                 data-en="Kg of salt needed for your pool with salt chlorinator">Kg de sal necesarios para tu piscina con clorador salino</span>
+      </span>
+      <span class="card-arrow">›</span>
     </button>
 
-    <button class="card" onclick="openApp('ahorro.html', currentLang==='es'?'🎯 Meta de Ahorro':'🎯 Savings Goal')">
-      <div class="card-icon c5">🎯</div>
-      <div class="card-body">
-        <div class="card-title" data-es="Meta de Ahorro" data-en="Savings Goal">Meta de Ahorro</div>
-        <div class="card-desc" data-es="Planifica tu ahorro mensual para alcanzar una meta económica" data-en="Plan your monthly savings to reach a financial goal">Planifica tu ahorro mensual para alcanzar una meta económica</div>
-      </div>
-      <div class="card-arrow">›</div>
+    <!-- 5. Meta de Ahorro -->
+    <button class="card" onclick="openApp('ahorro.html', this.querySelector('.card-title').textContent)">
+      <span class="card-icon c5">🎯</span>
+      <span class="card-body">
+        <span class="card-title" data-es="Meta de Ahorro" data-en="Savings Goal">Meta de Ahorro</span>
+        <span class="card-desc"  data-es="Planifica tu ahorro mensual para alcanzar una meta económica"
+                                 data-en="Plan your monthly savings to reach a financial goal">Planifica tu ahorro mensual para alcanzar una meta económica</span>
+      </span>
+      <span class="card-arrow">›</span>
     </button>
 
-    <button class="card" onclick="openApp('renting.html', currentLang==='es'?'🚗 Renting vs Compra Vehículo':'🚗 Vehicle Leasing vs Purchase')">
-      <div class="card-icon c6">🚗</div>
-      <div class="card-body">
-        <div class="card-title" data-es="Renting vs Compra Vehículo" data-en="Vehicle Leasing vs Purchase">Renting vs Compra Vehículo</div>
-        <div class="card-desc" data-es="Compara el coste total de renting frente a compra con financiación" data-en="Compare total cost of leasing versus financed purchase">Compara el coste total de renting frente a compra con financiación</div>
-      </div>
-      <div class="card-arrow">›</div>
+    <!-- 6. Renting -->
+    <button class="card" onclick="openApp('renting.html', this.querySelector('.card-title').textContent)">
+      <span class="card-icon c6">🚗</span>
+      <span class="card-body">
+        <span class="card-title" data-es="Renting vs Compra Vehículo" data-en="Vehicle Renting vs Purchase">Renting vs Compra Vehículo</span>
+        <span class="card-desc"  data-es="Compara el coste total de renting frente a compra con financiación"
+                                 data-en="Compare total cost of renting vs financed purchase">Compara el coste total de renting frente a compra con financiación</span>
+      </span>
+      <span class="card-arrow">›</span>
+    </button>
+
+    <!-- 7. Lista de la Compra -->
+    <button class="card" onclick="openApp('lista_compra.html', this.querySelector('.card-title').textContent)">
+      <span class="card-icon c7">🛒</span>
+      <span class="card-body">
+        <span class="card-title" data-es="Lista Compra Supermercado" data-en="Supermarket Shopping List">Lista Compra Supermercado</span>
+        <span class="card-desc"  data-es="Gestión inteligente de la lista semanal con precios y supermercados"
+                                 data-en="Smart weekly shopping list with prices and supermarkets">Gestión inteligente de la lista semanal con precios y supermercados</span>
+      </span>
+      <span class="card-arrow">›</span>
     </button>
 
   </div>
 </main>
 
-<footer>TSA © 2025 · <span data-es="Mis Calculadoras" data-en="My Calculators">Mis Calculadoras</span></footer>
+<footer>TSA © 2025 · Mis Calculadoras</footer>
 
+<!-- VIEWER (iframe fullscreen) -->
 <div id="viewer">
   <div id="viewer-topbar">
-    <button id="btn-back" onclick="closeApp()">&#8592; <span data-es="Menú" data-en="Menu">Menú</span></button>
+    <button id="btn-back" onclick="closeApp()">← <span data-es="Menú" data-en="Menu">Menú</span></button>
     <span id="viewer-title">Calculadora</span>
   </div>
   <iframe id="app-frame" src="" title="Calculadora"></iframe>
 </div>
 
+<!-- INSTALL BANNER -->
 <div id="install-banner">
   <span>📲 <strong data-es="Instala la app" data-en="Install the app">Instala la app</strong> <span data-es="en tu dispositivo" data-en="on your device">en tu dispositivo</span></span>
   <button id="btn-install" data-es="Instalar" data-en="Install">Instalar</button>
-  <button id="btn-close-banner" title="Cerrar">&#x2715;</button>
+  <button id="btn-close-banner">✕</button>
 </div>
 
 <script>
-  let currentLang = localStorage.getItem('pwa_lang') || 'es';
+let currentLang = localStorage.getItem('pwa_lang') || 'es';
 
-  function setLang(lang) {
-    currentLang = lang;
-    localStorage.setItem('pwa_lang', lang);
-    document.documentElement.lang = lang;
-    document.querySelectorAll('[data-es]').forEach(el => {
-      el.textContent = el.getAttribute('data-' + lang);
-    });
-    document.getElementById('btn-es').classList.toggle('active', lang === 'es');
-    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
-  }
-
-  // Apply language on load
-  setLang(currentLang);
-
-  function openApp(src, title) {
-    document.getElementById('app-frame').src = src;
-    document.getElementById('viewer-title').textContent = title;
-    document.getElementById('viewer').classList.add('active');
-    document.body.style.overflow = 'hidden';
-    history.pushState({ app: src }, title);
-  }
-  function closeApp() {
-    document.getElementById('viewer').classList.remove('active');
-    document.getElementById('app-frame').src = '';
-    document.body.style.overflow = '';
-  }
-  window.addEventListener('popstate', function() {
-    if (document.getElementById('viewer').classList.contains('active')) closeApp();
+function setLang(lang) {
+  currentLang = lang;
+  localStorage.setItem('pwa_lang', lang);
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-es]').forEach(el => {
+    el.textContent = el.getAttribute('data-' + lang);
   });
+  document.getElementById('btn-es').classList.toggle('active', lang === 'es');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+}
+setLang(currentLang);
 
-  let deferredPrompt;
-  window.addEventListener('beforeinstallprompt', (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-    document.getElementById('install-banner').style.display = 'flex';
-  });
-  document.getElementById('btn-install').addEventListener('click', async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    document.getElementById('install-banner').style.display = 'none';
-  });
-  document.getElementById('btn-close-banner').addEventListener('click', () => {
-    document.getElementById('install-banner').style.display = 'none';
-  });
+function openApp(src, title) {
+  document.getElementById('app-frame').src = src;
+  document.getElementById('viewer-title').textContent = title;
+  document.getElementById('viewer').classList.add('active');
+  document.body.style.overflow = 'hidden';
+  history.pushState({ app: src }, title);
+}
+function closeApp() {
+  document.getElementById('viewer').classList.remove('active');
+  document.getElementById('app-frame').src = '';
+  document.body.style.overflow = '';
+}
+window.addEventListener('popstate', function() {
+  if (document.getElementById('viewer').classList.contains('active')) closeApp();
+});
 
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  }
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-banner').style.display = 'flex';
+});
+document.getElementById('btn-install').addEventListener('click', async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('install-banner').style.display = 'none';
+});
+document.getElementById('btn-close-banner').addEventListener('click', () => {
+  document.getElementById('install-banner').style.display = 'none';
+});
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
 </script>
 </body>
 </html>
