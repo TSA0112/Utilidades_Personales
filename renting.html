@@ -456,21 +456,6 @@ function setLang(l) {
   recalc();
 }
 
-// ===================== MODELO DROPDOWN =====================
-function syncMarca() {
-  const marca = document.getElementById('sel-marca').value;
-  const sel = document.getElementById('sel-modelo');
-  sel.innerHTML = '';
-  const models = MODELS[marca] || ['Otro'];
-  models.forEach((m, i) => {
-    const opt = document.createElement('option');
-    opt.value = m; opt.textContent = m;
-    if(marca === 'KIA' && m === 'Stonic') opt.selected = true;
-    sel.appendChild(opt);
-  });
-}
-syncMarca();
-syncVersion();
 
 // ===================== VERSIONS DROPDOWN =====================
 const VERSIONS = {
@@ -492,23 +477,23 @@ const VERSIONS = {
   "SEAT|Tarraco":  ["1.5 TSI 150CV (MT)","2.0 TDI 150CV (DSG)","2.0 TSI 4Drive 245CV (DSG)","1.4 eHybrid 245CV PHEV (DSG)","Otro"],
   "SEAT|Mii":      ["1.0 MPI 65CV (MT)","Electrico (BEV)","Otro"],
   "SEAT|Alhambra": ["2.0 TDI 150CV (DSG)","1.4 TSI 150CV (DSG)","Otro"],
-  "VOLKSWAGEN|Polo":    ["1.0 TSI 80CV (MT)","1.0 TSI 95CV (MT)","1.0 TSI 110CV (AT)","Otro"],
-  "VOLKSWAGEN|Golf":    ["1.0 eTSI 110CV MHEV (DSG)","1.5 eTSI 130CV MHEV (DSG)","1.5 eTSI 150CV MHEV (DSG)","2.0 TDI 115CV (MT)","GTE 245CV PHEV (DSG)","Otro"],
-  "VOLKSWAGEN|Tiguan":  ["1.5 eTSI 130CV MHEV (DSG)","1.5 eTSI 150CV MHEV (DSG)","2.0 TDI 150CV (DSG)","eHybrid 272CV PHEV (DSG)","Otro"],
-  "VOLKSWAGEN|T-Roc":   ["1.0 TSI 110CV (MT)","1.5 TSI ACT 150CV (DSG)","2.0 TDI 150CV (DSG)","Electrico (BEV)","Otro"],
+  "VOLKSWAGEN|Polo":     ["1.0 TSI 80CV (MT)","1.0 TSI 95CV (MT)","1.0 TSI 110CV (AT)","Otro"],
+  "VOLKSWAGEN|Golf":     ["1.0 eTSI 110CV MHEV (DSG)","1.5 eTSI 130CV MHEV (DSG)","1.5 eTSI 150CV MHEV (DSG)","2.0 TDI 115CV (MT)","GTE 245CV PHEV (DSG)","Otro"],
+  "VOLKSWAGEN|Tiguan":   ["1.5 eTSI 130CV MHEV (DSG)","1.5 eTSI 150CV MHEV (DSG)","2.0 TDI 150CV (DSG)","eHybrid 272CV PHEV (DSG)","Otro"],
+  "VOLKSWAGEN|T-Roc":    ["1.0 TSI 110CV (MT)","1.5 TSI ACT 150CV (DSG)","2.0 TDI 150CV (DSG)","Electrico (BEV)","Otro"],
   "VOLKSWAGEN|T-Cross":  ["1.0 TSI 95CV (MT)","1.0 TSI 110CV (DSG)","1.5 TSI 150CV (ACT)","Otro"],
-  "VOLKSWAGEN|ID.3":    ["ID.3 58kWh (BEV)","ID.3 Pro S 77kWh (BEV)","Otro"],
-  "VOLKSWAGEN|ID.4":    ["ID.4 52kWh (BEV)","ID.4 Pro 77kWh RWD (BEV)","ID.4 GTX 77kWh AWD (BEV)","Otro"],
-  "VOLKSWAGEN|Passat":  ["2.0 TDI 122CV (MT)","1.5 eTSI 150CV MHEV (DSG)","GTE 272CV PHEV (DSG)","Otro"],
-  "VOLKSWAGEN|Touareg": ["3.0 TDI 231CV (AT)","3.0 TSI eHybrid 462CV (AT)","Otro"],
-  "RENAULT|Clio":   ["1.0 SCe 65CV (MT)","1.0 TCe 100CV (MT)","E-Tech Hibrido 140CV","Otro"],
-  "RENAULT|Megane": ["1.3 TCe 115CV (MT)","1.3 TCe 140CV (EDC)","1.5 Blue dCi 115CV (MT)","E-Tech PHEV 160CV","Otro"],
-  "RENAULT|Captur": ["1.0 TCe 90CV (MT)","1.3 TCe 130CV (EDC)","E-Tech PHEV 160CV","Otro"],
-  "RENAULT|Kadjar": ["1.3 TCe 140CV (EDC)","1.5 dCi 115CV (MT)","Otro"],
-  "RENAULT|Zoe":    ["Electrico 52kWh (BEV)","Otro"],
+  "VOLKSWAGEN|ID.3":     ["ID.3 58kWh (BEV)","ID.3 Pro S 77kWh (BEV)","Otro"],
+  "VOLKSWAGEN|ID.4":     ["ID.4 52kWh (BEV)","ID.4 Pro 77kWh RWD (BEV)","ID.4 GTX 77kWh AWD (BEV)","Otro"],
+  "VOLKSWAGEN|Passat":   ["2.0 TDI 122CV (MT)","1.5 eTSI 150CV MHEV (DSG)","GTE 272CV PHEV (DSG)","Otro"],
+  "VOLKSWAGEN|Touareg":  ["3.0 TDI 231CV (AT)","3.0 TSI eHybrid 462CV (AT)","Otro"],
+  "RENAULT|Clio":    ["1.0 SCe 65CV (MT)","1.0 TCe 100CV (MT)","E-Tech Hibrido 140CV","Otro"],
+  "RENAULT|Megane":  ["1.3 TCe 115CV (MT)","1.3 TCe 140CV (EDC)","1.5 Blue dCi 115CV (MT)","E-Tech PHEV 160CV","Otro"],
+  "RENAULT|Captur":  ["1.0 TCe 90CV (MT)","1.3 TCe 130CV (EDC)","E-Tech PHEV 160CV","Otro"],
+  "RENAULT|Kadjar":  ["1.3 TCe 140CV (EDC)","1.5 dCi 115CV (MT)","Otro"],
+  "RENAULT|Zoe":     ["Electrico 52kWh (BEV)","Otro"],
   "RENAULT|Austral": ["1.2 TCe 130CV MHEV (MT)","1.2 TCe 160CV MHEV (EDC)","E-Tech Full Hybrid 200CV","Otro"],
-  "RENAULT|Arkana": ["1.3 TCe 140CV (EDC)","E-Tech Hibrido 145CV","Otro"],
-  "RENAULT|Duster": ["1.0 TCe 90CV (MT)","1.3 TCe 130CV (AT)","1.5 Blue dCi 115CV (MT)","Otro"],
+  "RENAULT|Arkana":  ["1.3 TCe 140CV (EDC)","E-Tech Hibrido 145CV","Otro"],
+  "RENAULT|Duster":  ["1.0 TCe 90CV (MT)","1.3 TCe 130CV (AT)","1.5 Blue dCi 115CV (MT)","Otro"],
   "RENAULT|Scenic E-Tech": ["Electrico 60kWh (BEV)","Electrico 87kWh (BEV)","Otro"],
   "PEUGEOT|208":    ["1.2 PureTech 75CV (MT)","1.2 PureTech 100CV (AT)","1.5 BlueHDi 100CV (MT)","Electrico e-208 (BEV)","Otro"],
   "PEUGEOT|308":    ["1.2 PureTech 110CV (AT)","1.2 PureTech 130CV (AT)","1.5 BlueHDi 130CV (AT)","Hibrido PHEV 180CV","Otro"],
@@ -518,35 +503,35 @@ const VERSIONS = {
   "PEUGEOT|e-208":  ["Electrico 50kWh (BEV)","Otro"],
   "PEUGEOT|e-2008": ["Electrico 50kWh (BEV)","Otro"],
   "PEUGEOT|508":    ["1.2 PureTech 130CV (AT)","2.0 BlueHDi 163CV (AT)","Hibrido PHEV 225CV","Otro"],
-  "OPEL|Corsa":   ["1.2 75CV (MT)","1.2 Turbo 100CV (AT)","1.5 Diesel 100CV (MT)","Electrico Corsa-e (BEV)","Otro"],
-  "OPEL|Astra":   ["1.2 Turbo 110CV (AT)","1.5 Diesel 130CV (AT)","Hibrido PHEV 180CV","Electrico (BEV)","Otro"],
-  "OPEL|Crossland":  ["1.2 83CV (MT)","1.2 Turbo 110CV (AT)","1.5 Diesel 110CV (MT)","Otro"],
-  "OPEL|Grandland":  ["1.2 Turbo 130CV (AT)","1.5 Diesel 130CV (AT)","PHEV 225CV (AT)","Electrico (BEV)","Otro"],
-  "OPEL|Mokka":   ["1.2 Turbo 100CV (AT)","1.5 Diesel 110CV (AT)","Electrico Mokka-e (BEV)","Otro"],
-  "OPEL|Zafira":  ["Electrico (BEV)","1.5 Diesel 120CV (AT)","Otro"],
-  "FORD|Fiesta":  ["1.0 EcoBoost 95CV (MT)","1.0 EcoBoost 125CV (AT)","1.5 EcoBlue 85CV (MT)","Otro"],
-  "FORD|Focus":   ["1.0 EcoBoost 125CV (MT)","1.5 EcoBoost 150CV (AT)","1.5 EcoBlue 120CV (AT)","Otro"],
-  "FORD|Puma":    ["1.0 EcoBoost MHEV 125CV (DCT)","1.0 EcoBoost MHEV 155CV (DCT)","1.5 EcoBlue 120CV (AT)","Otro"],
-  "FORD|Kuga":    ["1.5 EcoBoost 150CV (AT)","2.0 EcoBlue 150CV (AT)","PHEV 225CV (AT)","FHEV 190CV (AT)","Otro"],
+  "OPEL|Corsa":     ["1.2 75CV (MT)","1.2 Turbo 100CV (AT)","1.5 Diesel 100CV (MT)","Electrico Corsa-e (BEV)","Otro"],
+  "OPEL|Astra":     ["1.2 Turbo 110CV (AT)","1.5 Diesel 130CV (AT)","Hibrido PHEV 180CV","Electrico (BEV)","Otro"],
+  "OPEL|Crossland": ["1.2 83CV (MT)","1.2 Turbo 110CV (AT)","1.5 Diesel 110CV (MT)","Otro"],
+  "OPEL|Grandland": ["1.2 Turbo 130CV (AT)","1.5 Diesel 130CV (AT)","PHEV 225CV (AT)","Electrico (BEV)","Otro"],
+  "OPEL|Mokka":     ["1.2 Turbo 100CV (AT)","1.5 Diesel 110CV (AT)","Electrico Mokka-e (BEV)","Otro"],
+  "OPEL|Zafira":    ["Electrico (BEV)","1.5 Diesel 120CV (AT)","Otro"],
+  "FORD|Fiesta":    ["1.0 EcoBoost 95CV (MT)","1.0 EcoBoost 125CV (AT)","1.5 EcoBlue 85CV (MT)","Otro"],
+  "FORD|Focus":     ["1.0 EcoBoost 125CV (MT)","1.5 EcoBoost 150CV (AT)","1.5 EcoBlue 120CV (AT)","Otro"],
+  "FORD|Puma":      ["1.0 EcoBoost MHEV 125CV (DCT)","1.0 EcoBoost MHEV 155CV (DCT)","1.5 EcoBlue 120CV (AT)","Otro"],
+  "FORD|Kuga":      ["1.5 EcoBoost 150CV (AT)","2.0 EcoBlue 150CV (AT)","PHEV 225CV (AT)","FHEV 190CV (AT)","Otro"],
   "FORD|Mustang Mach-E": ["Electrico 75kWh RWD (BEV)","Electrico 99kWh RWD (BEV)","Electrico 99kWh AWD (BEV)","Otro"],
-  "FORD|Explorer": ["Electrico 77kWh (BEV)","Otro"],
-  "FORD|Tourneo":  ["1.0 EcoBoost 125CV (MT)","2.0 EcoBlue 150CV (AT)","Otro"],
-  "TOYOTA|Yaris":   ["1.5 Hibrido 116CV (eCVT)","1.0 72CV (MT)","Otro"],
-  "TOYOTA|Corolla": ["1.8 Hibrido 122CV (eCVT)","2.0 Hibrido 196CV (eCVT)","PHEV 225CV (eCVT)","Otro"],
-  "TOYOTA|C-HR":    ["1.8 Hibrido 122CV (eCVT)","2.0 Hibrido 197CV (eCVT)","PHEV 223CV (eCVT)","Electrico (BEV)","Otro"],
-  "TOYOTA|RAV4":    ["2.5 Hibrido 218CV (eCVT)","2.5 PHEV 306CV (eCVT)","2.5 AWD-i 222CV (eCVT)","Otro"],
-  "TOYOTA|Camry":   ["2.5 Hibrido 218CV (eCVT)","Otro"],
-  "TOYOTA|bZ4X":    ["Electrico 71.4kWh FWD (BEV)","Electrico 71.4kWh AWD (BEV)","Otro"],
-  "TOYOTA|Aygo X":  ["1.0 VVT-i 72CV (MT)","Otro"],
+  "FORD|Explorer":  ["Electrico 77kWh (BEV)","Otro"],
+  "FORD|Tourneo":   ["1.0 EcoBoost 125CV (MT)","2.0 EcoBlue 150CV (AT)","Otro"],
+  "TOYOTA|Yaris":    ["1.5 Hibrido 116CV (eCVT)","1.0 72CV (MT)","Otro"],
+  "TOYOTA|Corolla":  ["1.8 Hibrido 122CV (eCVT)","2.0 Hibrido 196CV (eCVT)","PHEV 225CV (eCVT)","Otro"],
+  "TOYOTA|C-HR":     ["1.8 Hibrido 122CV (eCVT)","2.0 Hibrido 197CV (eCVT)","PHEV 223CV (eCVT)","Electrico (BEV)","Otro"],
+  "TOYOTA|RAV4":     ["2.5 Hibrido 218CV (eCVT)","2.5 PHEV 306CV (eCVT)","2.5 AWD-i 222CV (eCVT)","Otro"],
+  "TOYOTA|Camry":    ["2.5 Hibrido 218CV (eCVT)","Otro"],
+  "TOYOTA|bZ4X":     ["Electrico 71.4kWh FWD (BEV)","Electrico 71.4kWh AWD (BEV)","Otro"],
+  "TOYOTA|Aygo X":   ["1.0 VVT-i 72CV (MT)","Otro"],
   "TOYOTA|Proace City": ["1.5 D-4D 100CV (MT)","Electrico (BEV)","Otro"],
-  "HYUNDAI|i10":     ["1.0 67CV (MT)","1.0 T-GDi 100CV (MT)","Otro"],
-  "HYUNDAI|i20":     ["1.0 T-GDi MHEV 100CV (iMT)","1.0 T-GDi MHEV 120CV (DCT)","Hibrido 120CV","Otro"],
-  "HYUNDAI|i30":     ["1.0 T-GDi 110CV (MT)","1.5 T-GDi MHEV 160CV (DCT)","1.6 CRDi 136CV (DCT)","Otro"],
-  "HYUNDAI|Tucson":  ["1.6 T-GDi MHEV 150CV (DCT)","1.6 T-GDi HEV 230CV (AT)","1.6 T-GDi PHEV 265CV (AT)","Otro"],
+  "HYUNDAI|i10":      ["1.0 67CV (MT)","1.0 T-GDi 100CV (MT)","Otro"],
+  "HYUNDAI|i20":      ["1.0 T-GDi MHEV 100CV (iMT)","1.0 T-GDi MHEV 120CV (DCT)","Hibrido 120CV","Otro"],
+  "HYUNDAI|i30":      ["1.0 T-GDi 110CV (MT)","1.5 T-GDi MHEV 160CV (DCT)","1.6 CRDi 136CV (DCT)","Otro"],
+  "HYUNDAI|Tucson":   ["1.6 T-GDi MHEV 150CV (DCT)","1.6 T-GDi HEV 230CV (AT)","1.6 T-GDi PHEV 265CV (AT)","Otro"],
   "HYUNDAI|Santa Fe": ["1.6 T-GDi PHEV 291CV (AT)","2.2 CRDi 200CV (AT)","Electrico (BEV)","Otro"],
-  "HYUNDAI|IONIQ 5": ["Electrico 58kWh (BEV)","Electrico 73kWh RWD (BEV)","Electrico 73kWh AWD (BEV)","N 84kWh (BEV)","Otro"],
-  "HYUNDAI|IONIQ 6": ["Electrico 53kWh (BEV)","Electrico 77.4kWh RWD (BEV)","Electrico 77.4kWh AWD (BEV)","Otro"],
-  "HYUNDAI|Kona":    ["1.0 T-GDi 120CV (MT)","1.6 GDi HEV 141CV (DCT)","Electrico 48.4kWh (BEV)","Electrico 65.4kWh (BEV)","Otro"],
+  "HYUNDAI|IONIQ 5":  ["Electrico 58kWh (BEV)","Electrico 73kWh RWD (BEV)","Electrico 73kWh AWD (BEV)","N 84kWh (BEV)","Otro"],
+  "HYUNDAI|IONIQ 6":  ["Electrico 53kWh (BEV)","Electrico 77.4kWh RWD (BEV)","Electrico 77.4kWh AWD (BEV)","Otro"],
+  "HYUNDAI|Kona":     ["1.0 T-GDi 120CV (MT)","1.6 GDi HEV 141CV (DCT)","Electrico 48.4kWh (BEV)","Electrico 65.4kWh (BEV)","Otro"],
   "SKODA|Fabia":   ["1.0 MPI 65CV (MT)","1.0 TSI 95CV (MT)","1.0 TSI 110CV (MT)","Otro"],
   "SKODA|Octavia": ["1.0 TSI 110CV (MT)","1.5 TSI 150CV (DSG)","2.0 TDI 115CV (MT)","iV 204CV PHEV (DSG)","Otro"],
   "SKODA|Kamiq":   ["1.0 TSI 95CV (MT)","1.0 TSI 110CV (DSG)","1.5 TSI 150CV (DSG)","Otro"],
@@ -561,12 +546,12 @@ const VERSIONS = {
   "DACIA|Spring":  ["Electrico 33kWh (BEV)","Otro"],
   "DACIA|Jogger":  ["TCe 110 (MT)","TCe 110 ECO-G (bifuel)","Hibrido 140CV (MT)","Otro"],
   "DACIA|Bigster": ["TCe 130 (MT)","Hibrido 155CV (AT)","Otro"],
-  "CITROEN|C3":         ["1.2 PureTech 83CV (MT)","1.2 PureTech 110CV (AT)","Electrico e-C3 (BEV)","Otro"],
-  "CITROEN|C4":         ["1.2 PureTech 100CV (AT)","1.5 BlueHDi 110CV (AT)","Electrico e-C4 (BEV)","Otro"],
-  "CITROEN|C5 X":       ["1.2 PureTech 130CV (AT)","1.6 PHEV 225CV (AT)","Electrico (BEV)","Otro"],
-  "CITROEN|Berlingo":   ["1.2 PureTech 110CV (AT)","1.5 BlueHDi 100CV (MT)","Electrico e-Berlingo (BEV)","Otro"],
-  "CITROEN|C3 Aircross":["1.2 PureTech 100CV (AT)","Electrico (BEV)","Otro"],
-  "CITROEN|e-C3":       ["Electrico 44kWh (BEV)","Otro"],
+  "CITROEN|C3":          ["1.2 PureTech 83CV (MT)","1.2 PureTech 110CV (AT)","Electrico e-C3 (BEV)","Otro"],
+  "CITROEN|C4":          ["1.2 PureTech 100CV (AT)","1.5 BlueHDi 110CV (AT)","Electrico e-C4 (BEV)","Otro"],
+  "CITROEN|C5 X":        ["1.2 PureTech 130CV (AT)","1.6 PHEV 225CV (AT)","Electrico (BEV)","Otro"],
+  "CITROEN|Berlingo":    ["1.2 PureTech 110CV (AT)","1.5 BlueHDi 100CV (MT)","Electrico e-Berlingo (BEV)","Otro"],
+  "CITROEN|C3 Aircross": ["1.2 PureTech 100CV (AT)","Electrico (BEV)","Otro"],
+  "CITROEN|e-C3":        ["Electrico 44kWh (BEV)","Otro"],
   "NISSAN|Micra":   ["1.0 71CV (MT)","Electrico (BEV)","Otro"],
   "NISSAN|Juke":    ["1.0 DIG-T 114CV (MT)","1.0 DIG-T 114CV (DCT)","Hibrido 143CV (AT)","Otro"],
   "NISSAN|Qashqai": ["1.3 DIG-T MHEV 140CV (MT)","1.3 DIG-T MHEV 158CV (AT)","e-POWER 190CV (AT)","Otro"],
@@ -580,15 +565,15 @@ const VERSIONS = {
   "MAZDA|CX-5":    ["2.0 SkyActiv-G 165CV (MT)","2.5 SkyActiv-G 194CV (AT)","2.2 SkyActiv-D 184CV (AT)","Otro"],
   "MAZDA|CX-60":   ["2.5 e-SkyActiv PHEV 327CV (AT)","3.3 SkyActiv-D 254CV (AT)","Otro"],
   "MAZDA|MX-5":    ["1.5 SkyActiv-G 132CV (MT)","2.0 SkyActiv-G 184CV (MT)","Otro"],
-  "BMW|Serie 1":  ["118i 136CV (AT)","120i 170CV (AT)","120d 150CV (AT)","Otro"],
-  "BMW|Serie 3":  ["320i 184CV (AT)","330i 245CV (AT)","320d 197CV (AT)","330e PHEV 292CV (AT)","Otro"],
-  "BMW|Serie 5":  ["520i 184CV (AT)","530i 245CV (AT)","520d 197CV (AT)","530e PHEV 299CV (AT)","i5 Electrico (BEV)","Otro"],
-  "BMW|X1":       ["sDrive18i 136CV (AT)","xDrive20i 204CV (AT)","xDrive20d 150CV (AT)","xDrive30e PHEV 245CV (AT)","iX1 Electrico (BEV)","Otro"],
-  "BMW|X3":       ["xDrive20i 184CV (AT)","xDrive20d 190CV (AT)","xDrive30e PHEV 292CV (AT)","iX3 Electrico (BEV)","Otro"],
-  "BMW|X5":       ["xDrive40i 340CV (AT)","xDrive30d 298CV (AT)","xDrive50e PHEV 489CV (AT)","Otro"],
-  "BMW|iX":       ["iX xDrive40 (BEV)","iX xDrive50 (BEV)","iX M60 (BEV)","Otro"],
-  "BMW|i4":       ["i4 eDrive35 (BEV)","i4 eDrive40 (BEV)","i4 M50 (BEV)","Otro"],
-  "BMW|i5":       ["i5 eDrive40 (BEV)","i5 M60 xDrive (BEV)","Otro"],
+  "BMW|Serie 1":   ["118i 136CV (AT)","120i 170CV (AT)","120d 150CV (AT)","Otro"],
+  "BMW|Serie 3":   ["320i 184CV (AT)","330i 245CV (AT)","320d 197CV (AT)","330e PHEV 292CV (AT)","Otro"],
+  "BMW|Serie 5":   ["520i 184CV (AT)","530i 245CV (AT)","520d 197CV (AT)","530e PHEV 299CV (AT)","i5 Electrico (BEV)","Otro"],
+  "BMW|X1":        ["sDrive18i 136CV (AT)","xDrive20i 204CV (AT)","xDrive20d 150CV (AT)","xDrive30e PHEV 245CV (AT)","iX1 Electrico (BEV)","Otro"],
+  "BMW|X3":        ["xDrive20i 184CV (AT)","xDrive20d 190CV (AT)","xDrive30e PHEV 292CV (AT)","iX3 Electrico (BEV)","Otro"],
+  "BMW|X5":        ["xDrive40i 340CV (AT)","xDrive30d 298CV (AT)","xDrive50e PHEV 489CV (AT)","Otro"],
+  "BMW|iX":        ["iX xDrive40 (BEV)","iX xDrive50 (BEV)","iX M60 (BEV)","Otro"],
+  "BMW|i4":        ["i4 eDrive35 (BEV)","i4 eDrive40 (BEV)","i4 M50 (BEV)","Otro"],
+  "BMW|i5":        ["i5 eDrive40 (BEV)","i5 M60 xDrive (BEV)","Otro"],
   "MERCEDES|Clase A":  ["A 180 136CV (DCT)","A 200 163CV (DCT)","A 220 4MATIC 190CV (DCT)","Otro"],
   "MERCEDES|Clase C":  ["C 180 170CV (AT)","C 200 204CV (AT)","C 220 d 200CV (AT)","C 300 e PHEV (AT)","Otro"],
   "MERCEDES|Clase E":  ["E 200 204CV (AT)","E 220 d 197CV (AT)","E 300 e PHEV (AT)","Otro"],
@@ -597,27 +582,27 @@ const VERSIONS = {
   "MERCEDES|EQA":      ["EQA 250 190CV (BEV)","EQA 300 4MATIC 228CV (BEV)","Otro"],
   "MERCEDES|EQC":      ["EQC 400 4MATIC 408CV (BEV)","Otro"],
   "MERCEDES|EQS":      ["EQS 450+ (BEV)","EQS 580 4MATIC (BEV)","Otro"],
-  "AUDI|A1":  ["30 TFSI 110CV (MT)","35 TFSI 150CV (S tronic)","Otro"],
-  "AUDI|A3":  ["30 TFSI 110CV (MT)","35 TFSI 150CV (S tronic)","35 TDI 150CV (S tronic)","45 TFSI e PHEV 245CV (S tronic)","Otro"],
-  "AUDI|A4":  ["35 TFSI MHEV 150CV (S tronic)","40 TFSI MHEV 204CV (S tronic)","35 TDI MHEV 163CV (S tronic)","Otro"],
-  "AUDI|A6":  ["40 TFSI MHEV 204CV (S tronic)","45 TFSI MHEV 245CV (S tronic)","40 TDI MHEV 204CV (S tronic)","55 TFSI e PHEV (S tronic)","Otro"],
-  "AUDI|Q2":  ["30 TFSI 110CV (MT)","35 TFSI 150CV (S tronic)","Otro"],
-  "AUDI|Q3":  ["35 TFSI 150CV (S tronic)","35 TDI 150CV (S tronic)","45 TFSI e PHEV 245CV (S tronic)","Otro"],
-  "AUDI|Q5":  ["40 TFSI MHEV 204CV (S tronic)","40 TDI MHEV 204CV (S tronic)","50 TFSI e PHEV 299CV (S tronic)","Otro"],
-  "AUDI|Q7":  ["55 TFSI MHEV 340CV (tiptronic)","50 TDI MHEV 286CV (tiptronic)","60 TFSI e PHEV 462CV (tiptronic)","Otro"],
-  "AUDI|e-tron":    ["50 e-tron (BEV)","55 e-tron (BEV)","Otro"],
-  "AUDI|Q8 e-tron": ["50 Q8 e-tron (BEV)","55 Q8 e-tron (BEV)","Q8 SQ8 e-tron (BEV)","Otro"],
-  "VOLVO|XC40":         ["B3 163CV MHEV (AT)","B4 197CV MHEV (AT)","Recharge PHEV T5 262CV (AT)","Electrico Recharge (BEV)","Otro"],
-  "VOLVO|XC60":         ["B4 197CV MHEV (AT)","B5 250CV MHEV (AT)","Recharge PHEV T8 462CV (AT)","Otro"],
-  "VOLVO|XC90":         ["B5 250CV MHEV (AT)","B6 300CV MHEV (AT)","Recharge PHEV T8 462CV (AT)","Otro"],
-  "VOLVO|C40 Recharge": ["Electrico Single 231CV (BEV)","Electrico Twin AWD 408CV (BEV)","Otro"],
-  "VOLVO|EX30":         ["Electrico Single 272CV (BEV)","Electrico Twin AWD 428CV (BEV)","Otro"],
-  "VOLVO|V60":          ["B4 197CV MHEV (AT)","Recharge PHEV T6 350CV (AT)","Otro"],
-  "VOLVO|S60":          ["B4 197CV MHEV (AT)","Recharge PHEV T6 350CV (AT)","Otro"],
-  "TESLA|Model 3": ["Standard Range (BEV)","Long Range AWD (BEV)","Performance (BEV)","Otro"],
-  "TESLA|Model Y": ["Standard Range (BEV)","Long Range AWD (BEV)","Performance (BEV)","Otro"],
-  "TESLA|Model S": ["Model S (BEV)","Model S Plaid (BEV)","Otro"],
-  "TESLA|Model X": ["Model X (BEV)","Model X Plaid (BEV)","Otro"],
+  "AUDI|A1":         ["30 TFSI 110CV (MT)","35 TFSI 150CV (S tronic)","Otro"],
+  "AUDI|A3":         ["30 TFSI 110CV (MT)","35 TFSI 150CV (S tronic)","35 TDI 150CV (S tronic)","45 TFSI e PHEV 245CV (S tronic)","Otro"],
+  "AUDI|A4":         ["35 TFSI MHEV 150CV (S tronic)","40 TFSI MHEV 204CV (S tronic)","35 TDI MHEV 163CV (S tronic)","Otro"],
+  "AUDI|A6":         ["40 TFSI MHEV 204CV (S tronic)","45 TFSI MHEV 245CV (S tronic)","40 TDI MHEV 204CV (S tronic)","55 TFSI e PHEV (S tronic)","Otro"],
+  "AUDI|Q2":         ["30 TFSI 110CV (MT)","35 TFSI 150CV (S tronic)","Otro"],
+  "AUDI|Q3":         ["35 TFSI 150CV (S tronic)","35 TDI 150CV (S tronic)","45 TFSI e PHEV 245CV (S tronic)","Otro"],
+  "AUDI|Q5":         ["40 TFSI MHEV 204CV (S tronic)","40 TDI MHEV 204CV (S tronic)","50 TFSI e PHEV 299CV (S tronic)","Otro"],
+  "AUDI|Q7":         ["55 TFSI MHEV 340CV (tiptronic)","50 TDI MHEV 286CV (tiptronic)","60 TFSI e PHEV 462CV (tiptronic)","Otro"],
+  "AUDI|e-tron":     ["50 e-tron (BEV)","55 e-tron (BEV)","Otro"],
+  "AUDI|Q8 e-tron":  ["50 Q8 e-tron (BEV)","55 Q8 e-tron (BEV)","Q8 SQ8 e-tron (BEV)","Otro"],
+  "VOLVO|XC40":          ["B3 163CV MHEV (AT)","B4 197CV MHEV (AT)","Recharge PHEV T5 262CV (AT)","Electrico Recharge (BEV)","Otro"],
+  "VOLVO|XC60":          ["B4 197CV MHEV (AT)","B5 250CV MHEV (AT)","Recharge PHEV T8 462CV (AT)","Otro"],
+  "VOLVO|XC90":          ["B5 250CV MHEV (AT)","B6 300CV MHEV (AT)","Recharge PHEV T8 462CV (AT)","Otro"],
+  "VOLVO|C40 Recharge":  ["Electrico Single 231CV (BEV)","Electrico Twin AWD 408CV (BEV)","Otro"],
+  "VOLVO|EX30":          ["Electrico Single 272CV (BEV)","Electrico Twin AWD 428CV (BEV)","Otro"],
+  "VOLVO|V60":           ["B4 197CV MHEV (AT)","Recharge PHEV T6 350CV (AT)","Otro"],
+  "VOLVO|S60":           ["B4 197CV MHEV (AT)","Recharge PHEV T6 350CV (AT)","Otro"],
+  "TESLA|Model 3":  ["Standard Range (BEV)","Long Range AWD (BEV)","Performance (BEV)","Otro"],
+  "TESLA|Model Y":  ["Standard Range (BEV)","Long Range AWD (BEV)","Performance (BEV)","Otro"],
+  "TESLA|Model S":  ["Model S (BEV)","Model S Plaid (BEV)","Otro"],
+  "TESLA|Model X":  ["Model X (BEV)","Model X Plaid (BEV)","Otro"],
   "OTRO|Otro modelo": ["Version 1","Version 2","Otro"]
 };
 
@@ -637,6 +622,22 @@ function syncVersion() {
     sel.appendChild(opt);
   });
 }
+
+// ===================== MODELO DROPDOWN =====================
+function syncMarca() {
+  const marca = document.getElementById('sel-marca').value;
+  const sel = document.getElementById('sel-modelo');
+  sel.innerHTML = '';
+  const models = MODELS[marca] || ['Otro'];
+  models.forEach((m, i) => {
+    const opt = document.createElement('option');
+    opt.value = m; opt.textContent = m;
+    if(marca === 'KIA' && m === 'Stonic') opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+syncMarca();
+syncVersion();
 
 
 // ===================== HELPERS =====================
