@@ -1,4 +1,4 @@
-const CACHE = 'mis-calc-v5';
+const CACHE = 'mis-calc-v6';
 const PRECACHE = [
   './',
   './index.html',
@@ -8,8 +8,8 @@ const PRECACHE = [
   './imc.html',
   './sal.html',
   './ahorro.html',
-  './lista_compra.html',
-  './renting.html'
+  './renting.html',
+  './lista_compra.html'
 ];
 
 self.addEventListener('install', e => {
@@ -27,6 +27,20 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  // Network-first para HTML: siempre intenta red antes que cache
+  if (e.request.destination === 'document' || e.request.url.endsWith('.html')) {
+    e.respondWith(
+      fetch(e.request)
+        .then(r => {
+          const clone = r.clone();
+          caches.open(CACHE).then(c => c.put(e.request, clone));
+          return r;
+        })
+        .catch(() => caches.match(e.request))
+    );
+    return;
+  }
+  // Cache-first para el resto (js, css, png...)
   e.respondWith(
     caches.match(e.request).then(cached => cached || fetch(e.request).catch(() => cached))
   );
